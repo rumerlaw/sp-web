@@ -194,3 +194,17 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
   .facts{gap:22px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* RESERVATION FORM / A11Y */
+.skip{position:absolute;left:-999px;top:8px;background:var(--ink);color:#fff;padding:10px 16px;z-index:100}
+.skip:focus{left:8px}
+.cart-foot{display:flex;flex-direction:column;gap:10px;overflow:auto;max-height:70vh}
+.cart-foot label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.cart-foot input,.cart-foot select,.cart-foot textarea{font:inherit;font-size:.95rem;letter-spacing:0;text-transform:none;color:var(--ink);padding:9px 11px;border:1px solid var(--line);background:var(--card);border-radius:var(--radius);width:100%}
+.cart-foot input:focus,.cart-foot select:focus,.cart-foot textarea:focus{outline:1px solid var(--gold)}
+.hp{position:absolute!important;left:-9999px!important;height:0;width:0;opacity:0}
+.form-msg{font-size:.85rem;min-height:1.2em}
+.form-msg.ok{color:var(--sage-deep)}.form-msg.bad{color:#9a3d3d}
+.markets{margin-top:1.4rem;font-size:.9rem;color:var(--muted)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.cart-foot>*{flex-shrink:0}

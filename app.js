@@ -8,6 +8,20 @@ const CONFIG = {
   // then paste that link here. Keep the same column headers as data/inventory.csv.
   inventoryUrl: "data/inventory.csv",
 
+  // ORDER NOTIFICATIONS — where reservations are sent (he gets an email for each one).
+  // Easiest: create a free form at https://formspree.io (set it to email the Doctor) and paste
+  // the endpoint here, e.g. "https://formspree.io/f/abcdwxyz".
+  // Or use https://web3forms.com: endpoint "https://api.web3forms.com/submit" + paste its access key below.
+  // Leave blank and the form falls back to opening an email draft.
+  orderEndpoint: "",
+  web3formsKey: "",
+
+  // Farmers markets shown in the reservation form and on the contact section. Edit freely.
+  markets: [
+    "Market name / city — day & time (placeholder)",
+    "Second market — day & time (placeholder)",
+  ],
+
   email: "email@placeholder.com",
   instagram: "azcactusdoctor",
   instagramUrl: "https://instagram.com/azcactusdoctor",
@@ -35,6 +49,8 @@ const CONFIG = {
 const $ = (s) => document.querySelector(s);
 const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// Only allow same-site relative paths or https URLs for images coming from the spreadsheet.
+const safeUrl = (u) => { u = String(u || "").trim(); return /^(https:\/\/|assets\/|\.\/assets\/)/i.test(u) && !/[<>"']/.test(u) ? u : ""; };
 const CACTUS_SVG = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M32 58V14a5 5 0 0 1 10 0v0M32 40h-9a4 4 0 0 1-4-4V26M32 34h9a4 4 0 0 0 4-4V22"/><path d="M22 58h20"/></svg>`;
 
 let products = [];
@@ -75,7 +91,7 @@ async function loadInventory() {
       status: p.status || "In Stock",
       size: p.size || "",
       description: p.description || "",
-      image: p.image || "",
+      image: safeUrl(p.image),
     }));
   } catch (e) {
     products = [];
@@ -148,23 +164,67 @@ function toggleCart(on) {
   $("#scrim").classList.toggle("on", on);
   $("#cart").setAttribute("aria-hidden", String(!on));
 }
-function checkout() {
-  const items = cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
-  const lines = items.map((c) => `- ${c.p.name} (${c.p.id}) × ${c.qty} — ${money(c.p.price * c.qty)}`).join("\n");
-  const total = money(items.reduce((s, c) => s + c.p.price * c.qty, 0));
-  const body = `Hello,\n\nI'd like to order:\n\n${lines}\n\nTotal: ${total}\n\nName:\nShipping address:\n`;
-  location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Spina & Spiritus order")}&body=${encodeURIComponent(body)}`;
+function cartLines() {
+  return cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
+}
+async function submitOrder(e) {
+  e.preventDefault();
+  const form = e.target, msg = $("#formMsg"), btn = $("#checkout");
+  const say = (t, bad) => { msg.textContent = t; msg.className = "form-msg" + (bad ? " bad" : " ok"); };
+  const items = cartLines();
+  if (!items.length) return say("Add at least one plant first.", true);
+  const f = new FormData(form);
+  if (f.get("website")) return;                      // honeypot: bots fill this in
+  const name = String(f.get("name") || "").trim().slice(0, 80);
+  const contact = String(f.get("contact") || "").trim().slice(0, 120);
+  const market = String(f.get("market") || "");
+  const notes = String(f.get("notes") || "").trim().slice(0, 500);
+  if (!name || !contact) return say("Please add your name and a phone or email.", true);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) && contact.replace(/\D/g, "").length < 7) return say("That doesn't look like a phone number or email.", true);
+  let last = 0; try { last = +localStorage.getItem("sp-last") || 0; } catch (err) {}
+  if (Date.now() - last < 30000) return say("Please wait a moment before sending again.", true);
+
+  const total = money(items.reduce((t, c) => t + c.p.price * c.qty, 0));
+  const lines = items.map((c) => `${c.qty} x ${c.p.name} (${c.p.id}) - ${money(c.p.price * c.qty)}`).join("\n");
+  const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nMarket: ${market}\n\n${lines}\n\nTotal: ${total} (pay at pickup)\n\nNotes: ${notes || "-"}`;
+
+  if (!CONFIG.orderEndpoint) {                        // fallback until an endpoint is configured
+    location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Plant reservation: " + name)}&body=${encodeURIComponent(summary)}`;
+    return;
+  }
+  btn.disabled = true; say("Sending…");
+  try {
+    const res = await fetch(CONFIG.orderEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: CONFIG.web3formsKey || undefined,
+        subject: `Plant reservation: ${name} (${total})`,
+        from_name: "Spina & Spiritus website",
+        name, contact, email: /@/.test(contact) ? contact : undefined, market, notes, total,
+        order: lines, message: summary,
+      }),
+    });
+    if (!res.ok) throw new Error(res.status);
+    try { localStorage.setItem("sp-last", String(Date.now())); } catch (err) {}
+    cart = []; saveCart(); form.reset();
+    say("Reserved! We'll message you to confirm. See you at the market.");
+  } catch (err) {
+    say("Couldn't send that. Please try again or email us directly.", true);
+  }
+  btn.disabled = !cartLines().length;
 }
 
 /* ---------- COLLECTION / GALLERY ---------- */
 function renderCollection() {
   $("#collectionGrid").innerHTML = CONFIG.collection.map((c) => `<article class="coll-card">
-    ${c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy">` : `<div class="ph" data-slot="Collection photo">${CACTUS_SVG}</div>`}
+    ${safeUrl(c.image) ? `<img src="${esc(safeUrl(c.image))}" alt="${esc(c.name)}" loading="lazy">` : `<div class="ph" data-slot="Collection photo">${CACTUS_SVG}</div>`}
     <div class="meta"><h4>${esc(c.name)}</h4><p>${esc(c.note)}</p></div></article>`).join("");
 }
 function renderGallery() {
   $("#galleryGrid").innerHTML = CONFIG.gallery.map((g) => {
     const cls = "g" + (g.wide ? " wide" : "");
+    g = { ...g, src: safeUrl(g.src) };
     if (!g.src) return `<div class="g ph ${g.wide ? "wide" : ""}" data-slot="${g.type === "video" ? "Video" : "Photo"}"></div>`;
     return g.type === "video"
       ? `<div class="${cls}"><video src="${esc(g.src)}" controls muted playsinline preload="metadata"></video></div>`
@@ -187,11 +247,11 @@ document.addEventListener("click", (e) => {
   else if (t.dataset.rm) { cart = cart.filter((c) => c.id !== t.dataset.rm); saveCart(); }
   else if (t.id === "cartOpen") toggleCart(true);
   else if (t.id === "cartClose") toggleCart(false);
-  else if (t.id === "checkout") checkout();
   else if (t.id === "filtersOpen") $("#filters").classList.add("on");
   else if (t.id === "filtersClose") $("#filters").classList.remove("on");
   else if (t.id === "burger" || t.closest("#navLinks")) $("#navLinks").classList.toggle("on", t.id === "burger" && !$("#navLinks").classList.contains("on"));
 });
+$("#orderForm").addEventListener("submit", submitOrder);
 $("#scrim").addEventListener("click", () => toggleCart(false));
 $("#search").addEventListener("input", (e) => { state.q = e.target.value.toLowerCase().trim(); renderProducts(); });
 $("#onlyAvail").addEventListener("change", (e) => { state.avail = e.target.checked; renderProducts(); });
@@ -203,7 +263,28 @@ $("#contactEmail").textContent = CONFIG.email;
 $("#contactEmail").href = "mailto:" + CONFIG.email;
 $("#contactInsta").textContent = "@" + CONFIG.instagram;
 $("#contactInsta").href = CONFIG.instagramUrl;
+$("#marketSelect").innerHTML = CONFIG.markets.map((m) => `<option>${esc(m)}</option>`).join("");
+$("#marketList").innerHTML = CONFIG.markets.map(esc).join("<br>");
 renderCollection();
 renderGallery();
 renderCart();
-loadInventory().then((ok) => { if (ok) { renderCats(); renderProducts(); renderCart(); } });
+function addProductSchema() {
+  const el = document.createElement("script");
+  el.type = "application/ld+json";
+  el.textContent = JSON.stringify({
+    "@context": "https://schema.org", "@type": "ItemList",
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem", position: i + 1,
+      item: {
+        "@type": "Product", name: p.name, sku: p.id, category: p.category,
+        description: p.description || p.name,
+        ...(p.image ? { image: new URL(p.image, location.href).href } : {}),
+        brand: { "@type": "Brand", name: "Spina & Spiritus" },
+        offers: { "@type": "Offer", price: p.price, priceCurrency: "USD", availableDeliveryMethod: "https://schema.org/OnSitePickup",
+          availability: isOut(p) ? "https://schema.org/OutOfStock" : isPre(p) ? "https://schema.org/PreOrder" : "https://schema.org/InStock" },
+      },
+    })),
+  });
+  document.head.appendChild(el);
+}
+loadInventory().then((ok) => { if (ok) { renderCats(); renderProducts(); renderCart(); addProductSchema(); } });

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /incoming/
+Disallow: /scripts/
+Sitemap: https://azcactusdoctor.com/sitemap.xml
