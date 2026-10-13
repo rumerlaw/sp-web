@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spina &amp; Spiritus · AZ Cactus Doctor</title>
+<meta name="description" content="AZ Cactus Doctor presents Spina &amp; Spiritus — rare and curated cacti, succulents and desert plants from Arizona.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav" id="top">
+  <a href="#top" class="brand">
+    <span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
+    <span class="brand-sub">AZ Cactus Doctor</span>
+  </a>
+  <nav class="nav-links" id="navLinks">
+    <a href="#about">About</a>
+    <a href="#collection">The Collection</a>
+    <a href="#shop">Shop</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="nav-right">
+    <button class="cart-btn" id="cartOpen" aria-label="Open cart">Cart <span id="cartCount">0</span></button>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-media" data-slot="Hero video or photo">
+    <!-- Drop a video: <video autoplay muted loop playsinline src="assets/videos/hero.mp4"></video> -->
+  </div>
+  <div class="hero-copy">
+    <p class="eyebrow">AZ Cactus Doctor presents</p>
+    <h1>Spina <em>&amp;</em> Spiritus</h1>
+    <p class="lede">Thorn and spirit. Rare desert plants, grown and cared for by hand in Arizona.</p>
+    <div class="hero-cta">
+      <a href="#shop" class="btn">Shop the plants</a>
+      <a href="#about" class="btn ghost">Meet the Doctor</a>
+    </div>
+  </div>
+  <a href="#about" class="scroll-hint" aria-label="Scroll">Scroll</a>
+</section>
+
+<!-- ABOUT -->
+<section class="section about" id="about">
+  <div class="wrap two-col">
+    <div class="portrait ph" data-slot="Portrait photo of the Doctor"></div>
+    <div>
+      <p class="eyebrow">About</p>
+      <h2>The Cactus Doctor</h2>
+      <p class="dropcap">Placeholder — write your story here. Who you are, how the obsession with desert plants began, what Spina &amp; Spiritus means to you, and what makes your plants different.</p>
+      <p>Add a second paragraph about your growing philosophy: sourcing, seed-grown versus field-collected, care, and how you rescue and rehabilitate struggling plants.</p>
+      <ul class="facts">
+        <li><strong>00</strong><span>Years growing</span></li>
+        <li><strong>000+</strong><span>Species</span></li>
+        <li><strong>AZ</strong><span>Grown in Arizona</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="section collection" id="collection">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Not for sale</p>
+      <h2>The Private Collection</h2>
+      <p class="sub">A look at the plants that live at home — the old, the rare, the irreplaceable.</p>
+    </div>
+    <div class="collection-grid" id="collectionGrid"></div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section class="section shop" id="shop">
+  <div class="wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">Available now</p>
+      <h2>The Shop</h2>
+      <p class="sub">Live inventory, updated from the nursery spreadsheet.</p>
+    </div>
+
+    <div class="shop-layout">
+      <aside class="filters" id="filters">
+        <button class="filters-close" id="filtersClose" aria-label="Close filters">Close ×</button>
+        <input type="search" id="search" placeholder="Search plants…" aria-label="Search plants">
+
+        <h3>Catalog</h3>
+        <ul class="cat-list" id="catList"></ul>
+
+        <h3>Availability</h3>
+        <label class="check"><input type="checkbox" id="onlyAvail"> In stock only</label>
+
+        <h3>Sort</h3>
+        <select id="sort">
+          <option value="name">Name A–Z</option>
+          <option value="priceAsc">Price: low to high</option>
+          <option value="priceDesc">Price: high to low</option>
+        </select>
+      </aside>
+
+      <div class="shop-main">
+        <div class="shop-bar">
+          <button class="btn ghost small filters-open" id="filtersOpen">Filters</button>
+          <p id="resultCount" class="count"></p>
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="section gallery" id="gallery">
+  <div class="wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">Photos &amp; film</p>
+      <h2>Gallery</h2>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact" id="contact">
+  <div class="wrap narrow center">
+    <p class="eyebrow">Get in touch</p>
+    <h2>Visit, ask, or inquire</h2>
+    <p class="sub">Questions about a plant, shipping, or local pickup in Arizona.</p>
+    <p class="contact-lines">
+      <a id="contactEmail" href="#">email@placeholder.com</a><br>
+      <a id="contactInsta" href="#">@azcactusdoctor</a>
+    </p>
+  </div>
+</section>
+
+<footer class="footer">
+  <span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
+  <span>AZ Cactus Doctor · Arizona</span>
+  <span>© <span id="year"></span></span>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="scrim" id="scrim"></div>
+<aside class="cart" id="cart" aria-hidden="true">
+  <div class="cart-head">
+    <h3>Your Selection</h3>
+    <button id="cartClose" aria-label="Close cart">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot">
+    <div class="cart-total"><span>Total</span><strong id="cartTotal">$0</strong></div>
+    <button class="btn full" id="checkout">Request order by email</button>
+    <p class="fine">Online payments coming soon. For now, send your selection and we'll confirm availability, shipping and payment.</p>
+  </div>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>
