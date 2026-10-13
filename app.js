@@ -26,31 +26,32 @@ const CONFIG = {
   instagram: "azcactusdoctor",
   instagramUrl: "https://instagram.com/azcactusdoctor",
 
-  // Private collection — images only. Add photos to assets/photos and list them here.
+  // Private collection slideshow — add photos to assets/photos and list them here.
   collection: [
     { image: "assets/photos/private-12.jpg", alt: "Cacti in handmade pots in front of a sun-dappled adobe wall" },
-    { image: "assets/photos/private-13.jpg", alt: "Prickly pear and columnar cacti in handmade pots on artificial turf" },
-    { image: "assets/photos/private-14.jpg", alt: "Collection of prickly pear and columnar cacti beside a rust-stained wall" },
+    { image: "assets/photos/private-19.jpg", alt: "Two tall columnar cacti in a large terracotta pot with a mountain view" },
+    { image: "assets/photos/private-18.jpg", alt: "Cacti and prickly pear in sculpted pots along a rust-stained wall under an iron fence" },
+    { image: "assets/photos/private-21.jpg", alt: "Columnar cacti and a large arching plant on a covered patio" },
+    { image: "assets/photos/private-13.jpg", alt: "Prickly pear and columnar cacti in handmade pots on turf" },
+    { image: "assets/photos/private-14.jpg", alt: "Prickly pear and columnar cacti beside a rust-stained wall" },
     { image: "assets/photos/private-15.jpg", alt: "Handmade pots including a gargoyle-sculpted planter with cacti" },
     { image: "assets/photos/private-16.jpg", alt: "Row of cacti in sculpted and glazed pots under a wrought-iron fence" },
-    { image: "assets/photos/private-18.jpg", alt: "Cacti and prickly pear in sculpted pots along a rust-stained adobe wall under an iron fence" },
-    { image: "assets/photos/private-19.jpg", alt: "Two tall columnar cacti in a large terracotta pot with a mountain view" },
     { image: "assets/photos/private-20.jpg", alt: "Tall euphorbia in a yellow glazed pot beside a stone wall" },
-    { image: "assets/photos/private-21.jpg", alt: "Columnar cacti and a large arching ocotillo-like plant on a covered patio" },
+    { image: "assets/photos/collection-columnar-wide.jpg", alt: "Tall columnar cacti in handmade pots with an Arizona mountain behind" },
+    { image: "assets/photos/collection-patio.jpg", alt: "Cacti and euphorbia in sculpted pots on a stone patio beneath a pergola" },
+    { image: "assets/photos/collection-table.jpg", alt: "Table full of potted cacti in handmade ceramic pots, seen from above" },
+    { image: "assets/photos/pottery-owl-wall.jpg", alt: "Cacti and agave in handmade pots including a turquoise owl planter" },
+    { image: "assets/photos/garden-wall-corner.jpg", alt: "Tall euphorbia and columnar cacti in pots against an adobe wall" },
+    { image: "assets/photos/lawn-garden-1.jpg", alt: "Columnar cacti, golden barrel and agave in sculpted pots on a lawn" },
+    { image: "assets/photos/lawn-garden-2.jpg", alt: "Cacti in sculpted pots on a lawn" },
+    { image: "assets/photos/lawn-garden-3.jpg", alt: "Large white pot with agave among cacti in a garden" },
+    { image: "assets/photos/collection-pots-row.jpg", alt: "Row of cacti in handmade pots including a turquoise planter" },
   ],
 
-  // Gallery — type is "image" or "video"; src is e.g. "assets/photos/one.jpg". wide:true makes it 2 columns.
+  // Film gallery — type is "image" or "video"; src is e.g. "assets/photos/one.jpg". wide:true makes it 2 columns.
   gallery: [
-    { type: "image", src: "assets/photos/collection-columnar-wide.jpg", wide: true, alt: "Tall columnar cacti in handmade pots with an Arizona mountain behind" },
-    { type: "image", src: "assets/photos/collection-table.jpg", alt: "Table full of potted cacti seen from above" },
-    { type: "image", src: "assets/photos/collection-patio.jpg", alt: "Cacti on a stone patio beneath a pergola" },
-    { type: "image", src: "assets/photos/collection-pots-row.jpg", alt: "Row of cacti in handmade pots" },
-    { type: "image", src: "assets/photos/pottery-owl-wall.jpg", alt: "Turquoise owl planter and handmade pots on a garden wall" },
-    { type: "image", src: "assets/photos/garden-wall-corner.jpg", alt: "Euphorbia and columnar cacti against an adobe wall" },
-    { type: "image", src: "assets/photos/lawn-garden-2.jpg", alt: "Cacti in sculpted pots on a lawn" },
-    { type: "image", src: "assets/photos/lawn-garden-1.jpg", wide: true, alt: "Columnar cacti, golden barrel and agave in handmade pots on a lawn" },
-    { type: "image", src: "assets/photos/lawn-garden-3.jpg", alt: "Large white pot with agave among cacti in a garden" },
-    { type: "video", src: "" },
+    { type: "video", src: "", wide: true },
+    { type: "video", src: "", wide: true },
   ],
 };
 
@@ -226,8 +227,47 @@ async function submitOrder(e) {
 
 /* ---------- COLLECTION / GALLERY ---------- */
 function renderCollection() {
-  $("#collectionGrid").innerHTML = CONFIG.collection.map((c) => `<figure class="coll-card">
-    ${safeUrl(c.image) ? `<img src="${esc(safeUrl(c.image))}" alt="${esc(c.alt || "Plant from the private collection")}" loading="lazy">` : `<div class="ph" data-slot="Collection photo">${CACTUS_SVG}</div>`}</figure>`).join("");
+  const slides = CONFIG.collection.filter((c) => safeUrl(c.image));
+  const root = $("#collectionGrid");
+  if (!slides.length) { root.innerHTML = `<div class="ph slide-empty" data-slot="Collection photos coming soon">${CACTUS_SVG}</div>`; return; }
+  root.innerHTML = `
+    <div class="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Private collection photos">
+      ${slides.map((c, i) => `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img src="${esc(safeUrl(c.image))}" alt="${esc(c.alt || "Plant from the private collection")}" ${i < 2 ? "" : 'loading="lazy"'}></figure>`).join("")}
+      <button class="nav-btn prev" aria-label="Previous photo">‹</button>
+      <button class="nav-btn next" aria-label="Next photo">›</button>
+      <div class="counter" aria-live="off"><span id="slideNum">1</span> / ${slides.length}</div>
+      <button class="play-btn" aria-label="Pause slideshow">Pause</button>
+    </div>
+    <div class="thumbs" role="tablist">${slides.map((c, i) => `<button class="thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(safeUrl(c.image))}" alt="" loading="lazy"></button>`).join("")}</div>`;
+  initSlider(root, slides.length);
+}
+function initSlider(root, n) {
+  const stage = root.querySelector(".stage"), slidesEl = [...root.querySelectorAll(".slide")], thumbs = [...root.querySelectorAll(".thumb")];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let i = 0, timer = null, playing = !reduce;
+  const playBtn = root.querySelector(".play-btn");
+  const show = (k) => {
+    i = (k + n) % n;
+    slidesEl.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-hidden", String(j !== i)); });
+    thumbs.forEach((el, j) => el.classList.toggle("on", j === i));
+    $("#slideNum").textContent = i + 1;
+    const t = thumbs[i]; if (t && t.parentElement) t.parentElement.scrollTo({ left: t.offsetLeft - t.parentElement.clientWidth / 2 + t.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
+  };
+  const stop = () => { clearInterval(timer); timer = null; };
+  const start = () => { stop(); if (playing) timer = setInterval(() => show(i + 1), 5000); };
+  const setPlaying = (p) => { playing = p; playBtn.textContent = p ? "Pause" : "Play"; playBtn.setAttribute("aria-label", p ? "Pause slideshow" : "Play slideshow"); start(); };
+  root.querySelector(".prev").addEventListener("click", () => { show(i - 1); start(); });
+  root.querySelector(".next").addEventListener("click", () => { show(i + 1); start(); });
+  thumbs.forEach((t) => t.addEventListener("click", () => { show(+t.dataset.slide); start(); }));
+  playBtn.addEventListener("click", () => setPlaying(!playing));
+  stage.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") { show(i - 1); start(); } if (e.key === "ArrowRight") { show(i + 1); start(); } });
+  stage.addEventListener("mouseenter", stop); stage.addEventListener("mouseleave", start);
+  let x0 = null;
+  stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; stop(); }, { passive: true });
+  stage.addEventListener("touchend", (e) => { if (x0 !== null) { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1)); x0 = null; } start(); });
+  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+  playBtn.textContent = playing ? "Pause" : "Play";
+  start();
 }
 function renderGallery() {
   $("#galleryGrid").innerHTML = CONFIG.gallery.map((g) => {
