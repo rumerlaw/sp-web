@@ -221,3 +221,9 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 @media(max-width:960px){.hero{padding-top:90px}}
 .brand-main,.cart-btn{white-space:nowrap}
 @media(max-width:520px){.brand-main{font-size:1.2rem}.brand-sub{font-size:.52rem;letter-spacing:.2em}.brand-logo{width:34px;height:34px}.cart-btn{padding:7px 10px;letter-spacing:.1em}.nav{gap:8px}}
+
+/* COLLECTION: images only */
+.collection-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.coll-card{margin:0;overflow:hidden;background:var(--card)}
+.coll-card .ph,.coll-card img{aspect-ratio:4/3;width:100%;object-fit:cover;transition:transform .8s}
+.coll-card:hover img{transform:scale(1.04)}

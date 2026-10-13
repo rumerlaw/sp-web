@@ -26,14 +26,14 @@ const CONFIG = {
   instagram: "azcactusdoctor",
   instagramUrl: "https://instagram.com/azcactusdoctor",
 
-  // Private collection — add photos to assets/photos and list them here.
+  // Private collection — images only. Add photos to assets/photos and list them here.
   collection: [
-    { name: "The Display Table", note: "Placeholder · species & pottery notes", image: "assets/photos/collection-table.jpg", alt: "Table full of potted cacti in handmade ceramic pots, seen from above" },
-    { name: "Columnar Cacti", note: "Placeholder · species · age", image: "assets/photos/collection-columnar-wide.jpg", alt: "Tall columnar cacti in handmade pots with an Arizona mountain behind" },
-    { name: "The Patio Collection", note: "Placeholder · species · age", image: "assets/photos/collection-patio.jpg", alt: "Cacti and euphorbia in sculpted pots on a stone patio beneath a pergola" },
-    { name: "Handmade Pottery Wall", note: "Placeholder · species · age", image: "assets/photos/pottery-owl-wall.jpg", alt: "Cacti and agave on a garden wall in handmade pots, including a turquoise owl planter" },
-    { name: "The Lawn Garden", note: "Placeholder · species · age", image: "assets/photos/lawn-garden-1.jpg", alt: "Columnar cacti, a golden barrel and agave in sculpted pots on a lawn" },
-    { name: "Garden Wall Corner", note: "Placeholder · species · age", image: "assets/photos/garden-wall-corner.jpg", alt: "Tall euphorbia and columnar cacti in pots against an adobe wall" },
+    { image: "assets/photos/collection-table.jpg", alt: "Table full of potted cacti in handmade ceramic pots, seen from above" },
+    { image: "assets/photos/collection-columnar-wide.jpg", alt: "Tall columnar cacti in handmade pots with an Arizona mountain behind" },
+    { image: "assets/photos/collection-patio.jpg", alt: "Cacti and euphorbia in sculpted pots on a stone patio beneath a pergola" },
+    { image: "assets/photos/pottery-owl-wall.jpg", alt: "Cacti and agave on a garden wall in handmade pots, including a turquoise owl planter" },
+    { image: "assets/photos/lawn-garden-1.jpg", alt: "Columnar cacti, a golden barrel and agave in sculpted pots on a lawn" },
+    { image: "assets/photos/garden-wall-corner.jpg", alt: "Tall euphorbia and columnar cacti in pots against an adobe wall" },
   ],
 
   // Gallery — type is "image" or "video"; src is e.g. "assets/photos/one.jpg". wide:true makes it 2 columns.
@@ -223,9 +223,8 @@ async function submitOrder(e) {
 
 /* ---------- COLLECTION / GALLERY ---------- */
 function renderCollection() {
-  $("#collectionGrid").innerHTML = CONFIG.collection.map((c) => `<article class="coll-card">
-    ${safeUrl(c.image) ? `<img src="${esc(safeUrl(c.image))}" alt="${esc(c.alt || c.name)}" loading="lazy">` : `<div class="ph" data-slot="Collection photo">${CACTUS_SVG}</div>`}
-    <div class="meta"><h4>${esc(c.name)}</h4><p>${esc(c.note)}</p></div></article>`).join("");
+  $("#collectionGrid").innerHTML = CONFIG.collection.map((c) => `<figure class="coll-card">
+    ${safeUrl(c.image) ? `<img src="${esc(safeUrl(c.image))}" alt="${esc(c.alt || "Plant from the private collection")}" loading="lazy">` : `<div class="ph" data-slot="Collection photo">${CACTUS_SVG}</div>`}</figure>`).join("");
 }
 function renderGallery() {
   $("#galleryGrid").innerHTML = CONFIG.gallery.map((g) => {
