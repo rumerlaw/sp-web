@@ -31,7 +31,9 @@ const CONFIG = {
     { name: "The Display Table", note: "Placeholder · species & pottery notes", image: "assets/photos/collection-table.jpg", alt: "Table full of potted cacti in handmade ceramic pots, seen from above" },
     { name: "Columnar Cacti", note: "Placeholder · species · age", image: "assets/photos/collection-columnar-wide.jpg", alt: "Tall columnar cacti in handmade pots with an Arizona mountain behind" },
     { name: "The Patio Collection", note: "Placeholder · species · age", image: "assets/photos/collection-patio.jpg", alt: "Cacti and euphorbia in sculpted pots on a stone patio beneath a pergola" },
-    { name: "Handmade Pottery Row", note: "Placeholder · species · age", image: "assets/photos/collection-pots-row.jpg", alt: "Row of cacti in handmade pots including a turquoise planter" },
+    { name: "Handmade Pottery Wall", note: "Placeholder · species · age", image: "assets/photos/pottery-owl-wall.jpg", alt: "Cacti and agave on a garden wall in handmade pots, including a turquoise owl planter" },
+    { name: "The Lawn Garden", note: "Placeholder · species · age", image: "assets/photos/lawn-garden-1.jpg", alt: "Columnar cacti, a golden barrel and agave in sculpted pots on a lawn" },
+    { name: "Garden Wall Corner", note: "Placeholder · species · age", image: "assets/photos/garden-wall-corner.jpg", alt: "Tall euphorbia and columnar cacti in pots against an adobe wall" },
   ],
 
   // Gallery — type is "image" or "video"; src is e.g. "assets/photos/one.jpg". wide:true makes it 2 columns.
@@ -40,8 +42,12 @@ const CONFIG = {
     { type: "image", src: "assets/photos/collection-table.jpg", alt: "Table full of potted cacti seen from above" },
     { type: "image", src: "assets/photos/collection-patio.jpg", alt: "Cacti on a stone patio beneath a pergola" },
     { type: "image", src: "assets/photos/collection-pots-row.jpg", alt: "Row of cacti in handmade pots" },
-    { type: "image", src: "" },
-    { type: "video", src: "", wide: true },
+    { type: "image", src: "assets/photos/pottery-owl-wall.jpg", alt: "Turquoise owl planter and handmade pots on a garden wall" },
+    { type: "image", src: "assets/photos/garden-wall-corner.jpg", alt: "Euphorbia and columnar cacti against an adobe wall" },
+    { type: "image", src: "assets/photos/lawn-garden-2.jpg", alt: "Cacti in sculpted pots on a lawn" },
+    { type: "image", src: "assets/photos/lawn-garden-1.jpg", wide: true, alt: "Columnar cacti, golden barrel and agave in handmade pots on a lawn" },
+    { type: "image", src: "assets/photos/lawn-garden-3.jpg", alt: "Large white pot with agave among cacti in a garden" },
+    { type: "video", src: "" },
   ],
 };
 
