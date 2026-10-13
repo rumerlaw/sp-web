@@ -33,6 +33,10 @@ const CONFIG = {
     { image: "assets/photos/private-14.jpg", alt: "Collection of prickly pear and columnar cacti beside a rust-stained wall" },
     { image: "assets/photos/private-15.jpg", alt: "Handmade pots including a gargoyle-sculpted planter with cacti" },
     { image: "assets/photos/private-16.jpg", alt: "Row of cacti in sculpted and glazed pots under a wrought-iron fence" },
+    { image: "assets/photos/private-18.jpg", alt: "Cacti and prickly pear in sculpted pots along a rust-stained adobe wall under an iron fence" },
+    { image: "assets/photos/private-19.jpg", alt: "Two tall columnar cacti in a large terracotta pot with a mountain view" },
+    { image: "assets/photos/private-20.jpg", alt: "Tall euphorbia in a yellow glazed pot beside a stone wall" },
+    { image: "assets/photos/private-21.jpg", alt: "Columnar cacti and a large arching ocotillo-like plant on a covered patio" },
   ],
 
   // Gallery — type is "image" or "video"; src is e.g. "assets/photos/one.jpg". wide:true makes it 2 columns.
