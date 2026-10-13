@@ -227,3 +227,6 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 .coll-card{margin:0;overflow:hidden;background:var(--card)}
 .coll-card .ph,.coll-card img{aspect-ratio:4/3;width:100%;object-fit:cover;transition:transform .8s}
 .coll-card:hover img{transform:scale(1.04)}
+.collection-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:18px}
+.coll-card{flex:0 1 calc((100% - 36px)/3)}
+@media(max-width:760px){.coll-card{flex-basis:100%}}

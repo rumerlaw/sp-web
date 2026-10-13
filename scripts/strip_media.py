@@ -9,7 +9,7 @@ Usage:
   python3 scripts/strip_media.py --check   # fail if any file under assets/ still has metadata
 Requires: Pillow (pip install pillow) and ffmpeg.
 """
-import subprocess, sys
+import hashlib, subprocess, sys
 from pathlib import Path
 from PIL import Image, ImageOps
 
@@ -36,8 +36,14 @@ def clean_video(src, dst):
 def run():
     PHOTOS.mkdir(parents=True, exist_ok=True); VIDEOS.mkdir(parents=True, exist_ok=True)
     n = 0
+    seen = {}
     for f in sorted(SRC.iterdir()) if SRC.exists() else []:
         ext = f.suffix.lower()
+        if f.is_file() and not f.name.startswith('.'):
+            digest = hashlib.md5(f.read_bytes()).hexdigest()
+            if digest in seen:
+                print(f'skipped duplicate: {f.name} (same as {seen[digest]})'); continue
+            seen[digest] = f.name
         if ext in IMG:
             clean_photo(f, PHOTOS / (f.stem.lower().replace(" ", "-") + ".jpg")); n += 1
         elif ext in VID:
