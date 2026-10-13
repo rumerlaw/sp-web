@@ -6,8 +6,9 @@
   --muted:#7a766b;
   --line:#e4dfd2;
   --sage:#6f7f68;
-  --sage-deep:#3f4d3b;
+  --sage-deep:#2f4a2c;
   --gold:#b08d4f;
+  --ember:#d36a3d;
   --serif:'Cormorant Garamond',Georgia,serif;
   --sans:'Jost',system-ui,sans-serif;
   --radius:2px;
@@ -35,7 +36,9 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 
 /* NAV */
 .nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:rgba(250,248,243,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.brand{display:flex;flex-direction:column;line-height:1}
+.brand{display:flex;align-items:center;gap:12px;line-height:1}
+.brand-text{display:flex;flex-direction:column}
+.brand-logo{width:40px;height:40px;border-radius:50%;object-fit:cover}
 .brand-main{font-size:1.5rem}
 .brand-sub{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:4px}
 .nav-links{display:flex;gap:2rem;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase}
@@ -63,7 +66,7 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 .scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--muted)}
 
 .btn{display:inline-block;padding:14px 32px;background:var(--sage-deep);color:#fff;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;border:1px solid var(--sage-deep);transition:.3s;font-weight:400}
-.btn:hover{background:var(--gold);border-color:var(--gold)}
+.btn:hover{background:var(--ember);border-color:var(--ember)}
 .btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
 .btn.ghost:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .btn.small{padding:8px 18px}
@@ -208,3 +211,13 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 .markets{margin-top:1.4rem;font-size:.9rem;color:var(--muted)}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .cart-foot>*{flex-shrink:0}
+
+/* LOGO IN HERO */
+.hero::before,.hero::after{display:none}
+.hero{padding-top:100px}
+.hero-logo{width:min(380px,70vw);height:auto;margin:0 auto 6px}
+.hero h1{font-size:clamp(2.8rem,7vw,5.4rem)}
+.hero .eyebrow{margin-bottom:.5rem}
+@media(max-width:960px){.hero{padding-top:90px}}
+.brand-main,.cart-btn{white-space:nowrap}
+@media(max-width:520px){.brand-main{font-size:1.2rem}.brand-sub{font-size:.52rem;letter-spacing:.2em}.brand-logo{width:34px;height:34px}.cart-btn{padding:7px 10px;letter-spacing:.1em}.nav{gap:8px}}
