@@ -81,13 +81,21 @@ if (onHome) {
       sessionStorage.removeItem("sp-restore");
     }
   } catch (e) {}
+  // Refresh / browser back: return to exactly where the visitor was (ignore any #section left in the address).
+  try {
+    const nav = (performance.getEntriesByType("navigation")[0] || {}).type;
+    if (!pendingRestore && (nav === "reload" || nav === "back_forward")) {
+      const y = parseInt(sessionStorage.getItem("sp-y") || "", 10);
+      if (y > 0) pendingRestore = { y, plain: true };
+    }
+  } catch (e) {}
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   // Arriving from another page with #section: stay hidden until we are already at that section (no scroll from the top).
   if (!pendingRestore && location.hash.length > 1) {
     document.documentElement.style.visibility = "hidden";
     setTimeout(() => { document.documentElement.style.visibility = ""; }, 2500);
   }
   if (pendingRestore) {
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     document.documentElement.style.visibility = "hidden";
     setTimeout(() => { document.documentElement.style.visibility = ""; }, 2500);
   }
@@ -533,7 +541,7 @@ loadInventory().then((ok) => {
   renderCart();
   if (document.body.dataset.page === "plant") renderPlantPage();
   else if ($("#productGrid")) {
-    if (pendingRestore) {
+    if (pendingRestore && !pendingRestore.plain) {
       Object.assign(state, { cat: pendingRestore.cat || "All", q: pendingRestore.q || "", avail: !!pendingRestore.avail, sort: pendingRestore.sort || "name" });
       if ($("#search")) $("#search").value = state.q;
       if ($("#onlyAvail")) $("#onlyAvail").checked = state.avail;
@@ -544,6 +552,20 @@ loadInventory().then((ok) => {
   }
   if (onHome && !pendingRestore && location.hash.length > 1) {
     const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    history.replaceState(null, "", location.pathname + location.search);
     requestAnimationFrame(() => { if (el) el.scrollIntoView({ behavior: "instant", block: "start" }); document.documentElement.style.visibility = ""; });
-  }
+  } else if (onHome && location.hash) history.replaceState(null, "", location.pathname + location.search);
 });
+
+// Home page: remember scroll position for refresh, and keep #section out of the address bar.
+if (onHome) {
+  let tick = null;
+  addEventListener("scroll", () => { if (tick) return; tick = setTimeout(() => { tick = null; try { sessionStorage.setItem("sp-y", String(Math.round(scrollY))); } catch (e) {} }, 150); }, { passive: true });
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[href]"); if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    const m = /^(?:index\.html)?#([\w-]+)$/.exec(a.getAttribute("href") || ""); if (!m) return;
+    const el = document.getElementById(m[1]); if (!el) return;
+    e.preventDefault(); el.scrollIntoView({ behavior: "instant", block: "start" });
+    try { sessionStorage.setItem("sp-y", String(Math.round(scrollY))); } catch (err) {}
+  });
+}
