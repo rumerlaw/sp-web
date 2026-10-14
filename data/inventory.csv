@@ -1,7 +1,7 @@
 sku,name,genus,category,price,sale_price,status,stock,size,description,image
 SP-001,Echinocactus grusonii (Golden Barrel),Echinocactus,Cactus,85,,In Stock,8,6 in,Placeholder description. Replace with your own notes on this plant.,
 SP-002,Mammillaria elongata (Lady Finger),Mammillaria,Cactus,28,22,Sale,14,4 in,Placeholder description.,
-SP-003,Opuntia microdasys,Opuntia,Cactus,24,,In Stock,2,,"Known as the bunny ears cactus, Opuntia microdasys is a Mexican prickly pear with soft-looking, velvety pads dotted with tufts of golden bristles. Those tufts are glochids, tiny barbs that irritate skin, so handle by the pot. A sun-lover that thrives in Arizona heat, it is happiest in bright light, a fast-draining mix, and water only when fully dry. With age and sun it can bloom with yellow flowers in summer.",assets/photos/opuntia-microdasys.jpg
+SP-003,Opuntia microdasys,Opuntia,Cactus,24,,In Stock,2,,"Known as the bunny ears cactus, this Mexican prickly pear has soft, velvety pads covered in tiny golden bristle tufts. Handle by the pot.",assets/photos/opuntia-microdasys.jpg
 SP-004,Ferocactus wislizeni (Fishhook Barrel),Ferocactus,Cactus,120,,In Stock,3,8 in,Placeholder description.,
 SP-005,Euphorbia obesa (Baseball Plant),Euphorbia,Euphorbia,65,,In Stock,6,4 in,Placeholder description.,
 SP-006,Euphorbia trigona (African Milk Tree),Euphorbia,Euphorbia,45,,Sold Out,0,8 in,Placeholder description.,
@@ -14,6 +14,6 @@ SP-012,Aloe polyphylla (Spiral Aloe),Aloe,Aloe,150,,Pre-Order,5,6 in,Placeholder
 SP-013,Pachypodium lamerei (Madagascar Palm),Pachypodium,Caudex,95,,In Stock,4,8 in,Placeholder description.,
 SP-014,Adenium obesum (Desert Rose),Adenium,Caudex,75,,In Stock,7,6 in,Placeholder description.,
 SP-015,Spina & Spiritus Signature Pot,,Collection,180,,In Stock,1,10 in,Placeholder for a piece from the personal collection.,
-SP-016,Althea,Trichocereus,Cactus,,,In Stock,,,"A striking blue-green columnar cactus with deep, bold ribs and dark-tipped spines. It grows upright and gains height and character with time. Give it plenty of bright sun, a gritty fast-draining mix, and deep but infrequent watering. An easy, architectural plant for a pot on the patio or a sunny window.",assets/photos/althea.jpg
-SP-017,Opuntia streptacantha,Opuntia,Cactus,24,,In Stock,,,"Opuntia streptacantha is a large Mexican prickly pear with broad blue-green pads armed with long white spines. It is tough and drought tolerant, tolerates heat and some frost, and grows into a bold, sculptural plant. In summer it can bring bright yellow-orange flowers, followed by edible red-purple fruit known as tunas. Plant it in full sun, and handle with thick gloves or tongs.",assets/photos/opuntia-streptacantha.jpg
-SP-018,Opuntia,Opuntia,Cactus,24,,In Stock,,,"A classic prickly pear with flat, paddle-shaped blue-green pads and scattered spines. Opuntia are tough, heat-loving desert plants that thrive in full Arizona sun and need very little water once established. In summer they can bloom in yellow to orange, sometimes followed by colorful fruit. Plant in a gritty, fast-draining mix and handle the pads with gloves or tongs.",assets/photos/opuntia.jpg
+SP-016,Althea,Trichocereus,Cactus,,,In Stock,,,A striking blue-green columnar cactus with bold ribs and dark-tipped spines that grows tall and upright.,assets/photos/althea.jpg
+SP-017,Opuntia streptacantha,Opuntia,Cactus,24,,In Stock,,,"A large Mexican prickly pear with broad blue-green pads and long white spines. Bright flowers in summer, followed by edible red-purple fruit.",assets/photos/opuntia-streptacantha.jpg
+SP-018,Opuntia,Opuntia,Cactus,24,,In Stock,,,"A classic prickly pear with flat, paddle-shaped blue-green pads and scattered spines. Blooms yellow to orange in summer.",assets/photos/opuntia.jpg
