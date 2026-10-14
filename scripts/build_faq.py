@@ -14,7 +14,7 @@ FAQS = [
  ("Do you ship?",
   "No. Plants are pickup only, at our farmers market and events. Check the <a href=\"index.html#contact\">Upcoming events</a> section for where we'll be."),
  ("Where can I find you?",
-  "Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, 3502 E Cactus Rd, Phoenix, AZ 85032. For other locations we update the site and post on social media a couple of days before."),
+  "Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, <a href=\"https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032\" rel=\"noopener\" target=\"_blank\">3502 E Cactus Rd, Phoenix, AZ 85032</a> (opens a map). For other locations we update the site and post on social media a couple of days before."),
  ("How do I pay?",
   "You pay when you pick up your plants at the event. There are no online payments."),
  ("What if a plant is sold out?",

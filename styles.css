@@ -604,3 +604,7 @@ body.lock{overflow:hidden}
 
 .specs dd b{font-weight:600}
 .specs dd{line-height:1.5}
+
+.maplink{color:var(--sage-deep);border-bottom:1px solid var(--gold);font-weight:500}
+.maplink:hover{color:var(--gold)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}

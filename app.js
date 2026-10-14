@@ -57,6 +57,7 @@ const CONFIG = {
 
 /* ============================================================ */
 const upcomingEvents = () => { const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
+const mapLink = (e) => (e.where ? `<a class="maplink" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.where)}" target="_blank" rel="noopener">${esc(e.where)} <span aria-hidden="true">↗</span><span class="sr">(opens map)</span></a>` : "");
 const eventLabel = (ev) => `${ev.name} — ${ev.when}`;
 const $ = (s) => document.querySelector(s);
 const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -462,7 +463,7 @@ function renderPlantPage() {
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
-          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? esc(e.where) + "<br>" : ""}${esc(e.when)}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
+          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}${esc(e.when)}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
@@ -499,7 +500,7 @@ if ($("#contactEmail")) {
   $("#contactEmail").href = "mailto:" + CONFIG.email;
   $("#contactInsta").href = CONFIG.instagramUrl;
   const ev = upcomingEvents();
-  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${esc(e.where)}</span>` : ""}<span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
 }
 $("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
 if ($("#collectionGrid")) renderCollection();
