@@ -501,6 +501,8 @@ if ($("#contactEmail")) {
   $("#contactInsta").href = CONFIG.instagramUrl;
   const ev = upcomingEvents();
   $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+  const mapEv = ev.find((e) => e.where);
+  if (mapEv && $("#eventMap")) $("#eventMap").innerHTML = `<iframe title="Map to ${esc(mapEv.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(mapEv.where)}&output=embed"></iframe>`;
 }
 $("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
 if ($("#collectionGrid")) renderCollection();
