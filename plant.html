@@ -42,9 +42,9 @@
     <a class="nl" href="index.html#contact">Contact</a>
   </nav>
   <div class="nav-right">
-    <button class="bag-btn" id="cartOpen" aria-label="Open your reservation">
+    <button class="bag-btn" id="cartOpen" aria-label="Open checkout">
       <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
-      <span class="bag-label">Reservation</span><span class="bag-count" id="cartCount">0</span>
+      <span class="bag-label">Checkout</span><span class="bag-count" id="cartCount">0</span>
     </button>
   </div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
@@ -78,7 +78,7 @@
 <div class="scrim" id="scrim"></div>
 <aside class="cart" id="cart" aria-hidden="true">
   <div class="cart-head">
-    <h3>Your Reservation</h3>
+    <h3>Checkout</h3>
     <button id="cartClose" aria-label="Close cart">×</button>
   </div>
   <div class="cart-items" id="cartItems"></div>
@@ -90,7 +90,7 @@
     <label>Notes <small>(optional)</small><textarea name="notes" rows="2" maxlength="500"></textarea></label>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-    <button type="submit" class="btn full" id="checkout">Send my reservation</button>
+    <button type="submit" class="btn full" id="checkout">Check out</button>
     <p class="fine">Pickup only, no shipping. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm, then you pay in person. We only use your details to arrange your pickup.</p>
   </form>
 </aside>
