@@ -462,7 +462,7 @@ function renderPlantPage() {
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
-          <div><dt>Pickup</dt><dd>At our events only — no shipping</dd></div>
+          <div><dt>Pickup</dt><dd>At the event we'll be at that week. No shipping.</dd></div>
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
