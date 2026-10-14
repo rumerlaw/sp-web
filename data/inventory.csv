@@ -1,7 +1,7 @@
 sku,name,genus,category,price,sale_price,status,stock,size,description,image
 SP-001,Echinocactus grusonii (Golden Barrel),Echinocactus,Cactus,85,,In Stock,8,6 in,Placeholder description. Replace with your own notes on this plant.,
 SP-002,Mammillaria elongata (Lady Finger),Mammillaria,Cactus,28,22,Sale,14,4 in,Placeholder description.,
-SP-003,Opuntia microdasys (Bunny Ears),Opuntia,Cactus,32,,Low Stock,2,6 in,Placeholder description.,
+SP-003,Opuntia microdasys,Opuntia,Cactus,24,,In Stock,2,,Placeholder description. Replace with your own notes on this plant.,assets/photos/opuntia-microdasys.jpg
 SP-004,Ferocactus wislizeni (Fishhook Barrel),Ferocactus,Cactus,120,,In Stock,3,8 in,Placeholder description.,
 SP-005,Euphorbia obesa (Baseball Plant),Euphorbia,Euphorbia,65,,In Stock,6,4 in,Placeholder description.,
 SP-006,Euphorbia trigona (African Milk Tree),Euphorbia,Euphorbia,45,,Sold Out,0,8 in,Placeholder description.,
