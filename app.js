@@ -375,16 +375,16 @@ async function submitSignup(e) {
   let last = 0; try { last = +localStorage.getItem("sp-signup") || 0; } catch (err) {}
   if (Date.now() - last < 30000) return say("Please wait a moment before trying again.", true);
   const endpoint = CONFIG.signupEndpoint || CONFIG.orderEndpoint;
-  if (!endpoint) { location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Add me to the new plants list")}&body=${encodeURIComponent("Please email me when new plants are added.\n\n" + email)}`; return; }
+  if (!endpoint) { location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Add me to the weekly inventory update list")}&body=${encodeURIComponent("Please email me each week when the inventory is updated.\n\n" + email)}`; return; }
   btn.disabled = true; say("Sending…");
   try {
     const res = await fetch(endpoint, {
       method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ access_key: CONFIG.web3formsKey || undefined, subject: "New arrivals signup: " + email, from_name: "Spina & Spiritus website", email, type: "new-arrivals-signup", message: "Please add " + email + " to the new arrivals list." }),
+      body: JSON.stringify({ access_key: CONFIG.web3formsKey || undefined, subject: "Weekly inventory email signup: " + email, from_name: "Spina & Spiritus website", email, type: "new-arrivals-signup", message: "Please add " + email + " to the weekly inventory update list." }),
     });
     if (!res.ok) throw new Error(res.status);
     try { localStorage.setItem("sp-signup", String(Date.now())); } catch (err) {}
-    form.reset(); say("You're on the list. We'll email you when new plants arrive.");
+    form.reset(); say("You're on the list. We'll email you each week when we update the inventory.");
   } catch (err) { say("Couldn't sign you up just now. Please try again.", true); }
   btn.disabled = false;
 }

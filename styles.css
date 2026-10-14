@@ -514,3 +514,7 @@ body.lock{overflow:hidden}
 .events li{align-items:center;text-align:center}
 .events-note{margin-top:1.6rem;margin-left:auto;margin-right:auto;max-width:48ch;color:var(--muted)}
 .events-note{margin-top:2rem!important}
+
+.footer-bar{flex-direction:column;justify-content:center;gap:4px;text-align:center;padding:28px 24px}
+.footer-bar .brand-main{font-size:1.5rem}
+.footer-bar .copy{font-size:.85rem}
