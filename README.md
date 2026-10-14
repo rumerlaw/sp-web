@@ -44,3 +44,10 @@ You don't bring every plant to every event, so the whole site is framed as "rese
 
 ## FAQ
 Edit the questions in `scripts/build_faq.py`, then run `python3 scripts/build_faq.py`. It rebuilds the home-page FAQ section (first 5 questions) and `faq.html` (all of them, with search-engine FAQ data).
+
+## Dropbox inventory sync (automatic)
+`scripts/sync_inventory.py` + `.github/workflows/sync-inventory.yml` rebuild `data/inventory.csv` every 30 minutes from your Dropbox Excel file. It reads ONLY the columns **Name**, **Genus/Type**, **Sell Price** and **In Stock**; every other column in the spreadsheet is ignored and never published.
+- Plants are matched to `data/extras.csv` by name for things the sheet doesn't have (photos, description, category, size, sale price, a fixed sku). New plants get a link id made from their name.
+- Stock: a number, or "No"/0 for sold out. Blank price shows "Ask for price".
+- Setup (once): GitHub repo → Settings → Secrets and variables → Actions → add secret `DROPBOX_INVENTORY_URL` (the Dropbox share link), and optional variables `SITE_URL` (e.g. https://yourdomain.com) and `SHEET_NAME`. Connect the repo to Cloudflare Pages so every commit redeploys the site. Scheduled workflows only run on the repo's default branch.
+- Test locally: `python3 scripts/sync_inventory.py --file copy-of-sheet.xlsx --dry`
