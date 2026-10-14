@@ -32,26 +32,30 @@
 <a class="skip" href="#shop">Skip to the shop</a>
 
 <header class="nav" id="top" role="banner">
-  <div class="nav-left">
-    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
-    <nav class="nav-links" id="navLinks" aria-label="Main">
-      <a href="#about">About</a>
-      <a href="#collection">Collection</a>
-      <a href="#shop">Shop</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </div>
-  <a href="#top" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
-    <img class="brand-logo" src="assets/brand/favicon-32.png" srcset="assets/brand/favicon-256.png 2x" width="44" height="44" alt="">
-    <span class="brand-text"><span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
-    <span class="brand-sub">AZ Cactus Doctor</span></span>
-  </a>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span></button>
+  <nav class="nav-center" aria-label="Main">
+    <a class="nl" href="index.html#about">About</a>
+    <a class="nl" href="index.html#collection">Collection</a>
+    <a href="index.html#top" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
+      <img class="brand-logo" src="assets/brand/favicon-32.png" srcset="assets/brand/favicon-256.png 2x" width="48" height="48" alt="">
+      <span class="brand-text"><span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
+      <span class="brand-sub">AZ Cactus Doctor</span></span>
+    </a>
+    <a class="nl" href="index.html#shop">Shop</a>
+    <a class="nl" href="index.html#contact">Contact</a>
+  </nav>
   <div class="nav-right">
     <button class="bag-btn" id="cartOpen" aria-label="Open your bag">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
       <span class="bag-count" id="cartCount">0</span>
     </button>
   </div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+    <a href="index.html#about">About</a>
+    <a href="index.html#collection">Collection</a>
+    <a href="index.html#shop">Shop</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
 </header>
 
 <!-- HERO -->
@@ -93,7 +97,7 @@
 <!-- COLLECTION -->
 <section class="section collection" id="collection">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head center">
       <p class="eyebrow">Not for sale</p>
       <h2>The Private Collection</h2>
       
@@ -177,6 +181,7 @@
       <p class="qv-desc" id="qvDesc"></p>
       <p class="qv-meta" id="qvMeta"></p>
       <button class="btn full" id="qvAdd">Add to bag</button>
+      <a class="qv-link" id="qvPage" href="#">View full details →</a>
       <p class="fine">Reserve now, pay and collect in person at the farmers market. No shipping.</p>
     </div>
   </div>

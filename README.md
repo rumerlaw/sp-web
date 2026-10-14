@@ -29,3 +29,6 @@ Phone photos carry GPS location, device and timestamps. Never put originals in `
 
 ## SEO
 Title/description, canonical, Open Graph/Twitter cards, Store + Product/Offer JSON-LD (pickup-only), robots.txt, sitemap.xml, favicon. **Before launch:** replace `https://azcactusdoctor.com` with the real domain in `index.html`, `robots.txt`, `sitemap.xml`, and add `assets/og-image.jpg` (1200×630, metadata stripped).
+
+## Plant pages
+Every row in `data/inventory.csv` automatically gets its own page at `plant.html?id=<sku>` (title, price, description, all photos, quantity + Add to bag, related plants, and Product structured data). Tapping a card on the shop opens a quick view with a "View full details" link; the same links are crawlable by search engines. After adding plants run `python3 scripts/build_sitemap.py https://yourdomain.com` and redeploy so Google finds the new pages.

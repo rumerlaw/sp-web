@@ -103,7 +103,8 @@ async function loadInventory() {
     }));
   } catch (e) {
     products = [];
-    $("#productGrid").innerHTML = `<p class="empty">Couldn't load the inventory. If you opened this file directly, run a local server (e.g. <code>python3 -m http.server</code>).</p>`;
+    const g = $("#productGrid") || $("#plantPage");
+    if (g) g.innerHTML = `<p class="empty">Couldn't load the inventory. If you opened this file directly, run a local server (e.g. <code>python3 -m http.server</code>).</p>`;
     return false;
   }
   return true;
@@ -116,6 +117,7 @@ const now = (p) => (isSale(p) ? p.salePrice : p.price);
 const priceHtml = (p) => (isSale(p) ? `<s>${money(p.price)}</s> ${money(p.salePrice)}` : money(p.price));
 const banner = (p) => (isOut(p) ? ["out", "Sold out"] : isSale(p) ? ["sale", "Sale"] : isPre(p) ? ["pre", "Pre-order"] : isLow(p) ? ["low", "Low stock"] : null);
 const isPre = (p) => /pre/i.test(p.status);
+const statusText = (p) => (isOut(p) ? "Currently sold out" : isSale(p) ? "On sale" : isPre(p) ? "Available for pre-order" : isLow(p) ? "Low stock — only a few left" : "In stock");
 const isLow = (p) => /low/i.test(p.status);
 
 function renderCats() {
@@ -140,17 +142,17 @@ function renderProducts() {
   };
   list.sort(sorts[state.sort]);
   $("#resultCount").textContent = `${list.length} ${list.length === 1 ? "plant" : "plants"}`;
-  $("#productGrid").innerHTML = list.length
-    ? list.map((p) => {
-        const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
-        const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
-        return `<article class="card">
-          <button class="card-hit" data-view="${esc(p.id)}" aria-label="Quick view: ${esc(p.name)}">
-            <span class="thumb">${badge}${img}<span class="peek">Quick view</span></span>
-            <span class="body"><span class="name">${esc(p.name)}</span><span class="price">${money(p.price)}</span></span>
-          </button></article>`;
-      }).join("")
-    : `<p class="empty">No plants match your selection.</p>`;
+  $("#productGrid").innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="empty">No plants match your selection.</p>`;
+}
+const pageUrl = (p) => `plant.html?id=${encodeURIComponent(p.id)}`;
+function cardHtml(p) {
+  const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
+  const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
+  return `<article class="card">
+    <a class="card-hit" href="${esc(pageUrl(p))}" data-view="${esc(p.id)}" aria-label="${esc(p.name)}, ${esc(money(now(p)))}">
+      <span class="thumb">${badge}${img}<span class="peek">Quick view</span></span>
+      <span class="body"><span class="name">${esc(p.name)}</span><span class="price">${priceHtml(p)}</span></span>
+    </a></article>`;
 }
 
 /* ---------- QUICK VIEW ---------- */
@@ -161,6 +163,7 @@ function openQuickView(id, opener) {
   $("#qvCat").textContent = p.category + (p.size ? " · " + p.size : "");
   $("#qvTitle").textContent = p.name;
   $("#qvPrice").innerHTML = priceHtml(p);
+  $("#qvPage").href = pageUrl(p);
   $("#qvDesc").textContent = p.description || "More details coming soon.";
   $("#qvMeta").textContent = isOut(p) ? "Currently sold out" : isSale(p) ? "On sale" : isPre(p) ? "Available for pre-order" : isLow(p) ? "Low stock — only a few left" : "In stock";
   const add = $("#qvAdd"); add.disabled = isOut(p); add.textContent = isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag";
@@ -257,44 +260,54 @@ function renderCollection() {
   const slides = CONFIG.collection.filter((c) => safeUrl(c.image));
   const root = $("#collectionGrid");
   if (!slides.length) { root.innerHTML = `<div class="ph slide-empty" data-slot="Collection photos coming soon">${CACTUS_SVG}</div>`; return; }
+  const pad = (k) => String(k).padStart(2, "0");
   root.innerHTML = `
     <div class="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Private collection photos">
-      ${slides.map((c, i) => `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img ${i < 2 ? `src="${esc(variant(safeUrl(c.image), "web"))}"` : `data-src="${esc(variant(safeUrl(c.image), "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`).join("")}
+      ${slides.map((c, i) => {
+        const u = safeUrl(c.image), eager = i < 2;
+        return `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img class="amb" src="${esc(variant(u, "thumb"))}" alt=""><img class="main" ${eager ? `src="${esc(variant(u, "web"))}"` : `data-src="${esc(variant(u, "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`;
+      }).join("")}
+      <div class="frame" aria-hidden="true"></div>
       <button class="nav-btn prev" aria-label="Previous photo">‹</button>
       <button class="nav-btn next" aria-label="Next photo">›</button>
-      <div class="counter" aria-live="off"><span id="slideNum">1</span> / ${slides.length}</div>
+      <div class="counter" aria-live="off"><b id="slideNum">01</b><span>/ ${pad(slides.length)}</span></div>
       <button class="play-btn" aria-label="Pause slideshow">Pause</button>
+      <div class="progress" aria-hidden="true"><i></i></div>
     </div>
-    <div class="s-thumbs" role="tablist">${slides.map((c, i) => `<button class="s-thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(variant(safeUrl(c.image), "thumb"))}" alt="" loading="lazy"></button>`).join("")}</div>`;
-  initSlider(root, slides.length);
+    <div class="s-thumbs">${slides.map((c, i) => `<button class="s-thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(variant(safeUrl(c.image), "thumb"))}" alt="" loading="lazy"></button>`).join("")}</div>`;
+  initSlider(root, slides.length, pad);
 }
-function initSlider(root, n) {
+function initSlider(root, n, pad) {
   const stage = root.querySelector(".stage"), slidesEl = [...root.querySelectorAll(".slide")], thumbs = [...root.querySelectorAll(".s-thumb")];
+  const bar = root.querySelector(".progress i");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const DELAY = 3500;
   let i = 0, timer = null, playing = !reduce;
   const playBtn = root.querySelector(".play-btn");
-  const load = (k) => { const im = slidesEl[(k + n) % n].querySelector("img"); if (im && im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } };
+  const load = (k) => { const im = slidesEl[(k + n) % n].querySelector(".main"); if (im && im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } };
+  const restartBar = () => { bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = ""; };
   const show = (k) => {
     i = (k + n) % n;
     load(i); load(i + 1); load(i - 1);
     slidesEl.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-hidden", String(j !== i)); });
     thumbs.forEach((el, j) => el.classList.toggle("on", j === i));
-    $("#slideNum").textContent = i + 1;
+    $("#slideNum").textContent = pad(i + 1);
     const t = thumbs[i]; if (t && t.parentElement) t.parentElement.scrollTo({ left: t.offsetLeft - t.parentElement.clientWidth / 2 + t.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
   };
-  const stop = () => { clearInterval(timer); timer = null; };
-  const start = () => { stop(); if (playing) timer = setInterval(() => show(i + 1), 3000); };
+  const stop = () => { clearInterval(timer); timer = null; stage.classList.add("paused"); };
+  const start = () => { clearInterval(timer); stage.classList.toggle("off", !playing); stage.classList.remove("paused"); restartBar(); if (playing) timer = setInterval(() => { show(i + 1); restartBar(); }, DELAY); };
   const setPlaying = (p) => { playing = p; playBtn.textContent = p ? "Pause" : "Play"; playBtn.setAttribute("aria-label", p ? "Pause slideshow" : "Play slideshow"); start(); };
+  stage.style.setProperty("--delay", DELAY + "ms");
   root.querySelector(".prev").addEventListener("click", () => { show(i - 1); start(); });
   root.querySelector(".next").addEventListener("click", () => { show(i + 1); start(); });
   thumbs.forEach((t) => t.addEventListener("click", () => { show(+t.dataset.slide); start(); }));
   playBtn.addEventListener("click", () => setPlaying(!playing));
   stage.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") { show(i - 1); start(); } if (e.key === "ArrowRight") { show(i + 1); start(); } });
-  stage.addEventListener("mouseenter", stop); stage.addEventListener("mouseleave", start);
+  stage.addEventListener("mouseenter", () => { if (playing) stop(); }); stage.addEventListener("mouseleave", () => { if (playing) start(); });
   let x0 = null;
-  stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; stop(); }, { passive: true });
-  stage.addEventListener("touchend", (e) => { if (x0 !== null) { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1)); x0 = null; } start(); });
-  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+  stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; if (playing) stop(); }, { passive: true });
+  stage.addEventListener("touchend", (e) => { if (x0 !== null) { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1)); x0 = null; } if (playing) start(); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) { if (playing) stop(); } else if (playing) start(); });
   playBtn.textContent = playing ? "Pause" : "Play";
   start();
 }
@@ -304,8 +317,16 @@ document.addEventListener("click", (e) => {
   const t = e.target.closest("button, a");
   if (!t) return;
   if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); $("#filters").classList.remove("on"); }
-  else if (t.dataset.view) openQuickView(t.dataset.view, t);
+  else if (t.dataset.view && $("#qv")) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
+  else if (t.id === "plantAdd" && plantCurrent) {
+    const qty = Math.max(1, Math.min(20, parseInt($("#plantQty").value, 10) || 1));
+    const row = cart.find((c) => c.id === plantCurrent.id);
+    row ? (row.qty += qty) : cart.push({ id: plantCurrent.id, qty });
+    saveCart(); toggleCart(true);
+  }
+  else if (t.dataset.step && $("#plantQty")) { const q = $("#plantQty"); q.value = Math.max(1, Math.min(20, (parseInt(q.value, 10) || 1) + +t.dataset.step)); }
   else if (t.dataset.qvpic !== undefined && qvProduct) qvProduct.show(+t.dataset.qvpic);
+  else if (t.dataset.plantpic !== undefined && plantCurrent) plantCurrent.show(+t.dataset.plantpic);
   else if (t.id === "qvAdd" && qvProduct) {
     const row = cart.find((c) => c.id === qvProduct.id);
     row ? row.qty++ : cart.push({ id: qvProduct.id, qty: 1 });
@@ -325,24 +346,98 @@ document.addEventListener("click", (e) => {
   else if (t.id === "cartClose") toggleCart(false);
   else if (t.id === "filtersOpen") $("#filters").classList.add("on");
   else if (t.id === "filtersClose") $("#filters").classList.remove("on");
-  else if (t.id === "burger" || t.closest("#navLinks")) $("#navLinks").classList.toggle("on", t.id === "burger" && !$("#navLinks").classList.contains("on"));
+  else if (t.id === "burger") { const m = $("#mobileMenu"), on = !m.classList.contains("on"); m.classList.toggle("on", on); t.setAttribute("aria-expanded", String(on)); }
+  else if (t.closest("#mobileMenu")) { $("#mobileMenu").classList.remove("on"); $("#burger").setAttribute("aria-expanded", "false"); }
 });
-$("#orderForm").addEventListener("submit", submitOrder);
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") { if ($("#qv").classList.contains("on")) closeQuickView(); else toggleCart(false); } });
-$("#scrim").addEventListener("click", () => toggleCart(false));
-$("#search").addEventListener("input", (e) => { state.q = e.target.value.toLowerCase().trim(); renderProducts(); });
-$("#onlyAvail").addEventListener("change", (e) => { state.avail = e.target.checked; renderProducts(); });
-$("#sort").addEventListener("change", (e) => { state.sort = e.target.value; renderProducts(); });
+const on = (sel, ev, fn) => { const el = $(sel); if (el) el.addEventListener(ev, fn); };
+on("#orderForm", "submit", submitOrder);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { if ($("#qv") && $("#qv").classList.contains("on")) closeQuickView(); else toggleCart(false); } });
+on("#scrim", "click", () => toggleCart(false));
+on("#search", "input", (e) => { state.q = e.target.value.toLowerCase().trim(); renderProducts(); });
+on("#onlyAvail", "change", (e) => { state.avail = e.target.checked; renderProducts(); });
+on("#sort", "change", (e) => { state.sort = e.target.value; renderProducts(); });
+
+/* ---------- PLANT PAGE ---------- */
+let plantCurrent = null;
+const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
+function renderPlantPage() {
+  const root = $("#plantPage");
+  const id = new URLSearchParams(location.search).get("id");
+  const p = products.find((x) => x.id === id);
+  if (!p) {
+    setMeta('meta[name="robots"]', "content", "noindex");
+    root.innerHTML = `<div class="wrap narrow center"><p class="eyebrow">Not found</p><h1 class="plant-title">That plant isn't available</h1><p class="sub">It may have sold or moved. Browse everything currently available.</p><p><a class="btn" href="index.html#shop">Back to the shop</a></p></div>`;
+    return;
+  }
+  plantCurrent = p;
+  const url = `https://azcactusdoctor.com/plant.html?id=${encodeURIComponent(p.id)}`;
+  const desc = (p.description && !/^placeholder/i.test(p.description) ? p.description : `${p.name} — ${p.category}. Reserve online and pick up at the farmers market in Arizona.`).slice(0, 300);
+  document.title = `${p.name} · Spina & Spiritus`;
+  setMeta('meta[name="description"]', "content", desc);
+  setMeta('link[rel="canonical"]', "href", url);
+  setMeta('meta[property="og:url"]', "content", url);
+  setMeta('meta[property="og:title"]', "content", `${p.name} · Spina & Spiritus`);
+  setMeta('meta[property="og:description"]', "content", desc);
+  const pics = p.images, bn = banner(p);
+  const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
+  root.innerHTML = `<div class="wrap-wide">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="index.html#shop">Shop</a><span>/</span><span>${esc(p.category)}</span></nav>
+    <div class="plant-grid">
+      <div class="plant-media">
+        <div class="plant-main" id="plantMain"></div>
+        <div class="plant-thumbs" id="plantThumbs"></div>
+      </div>
+      <div class="plant-info">
+        <p class="eyebrow">${esc(p.category)}${p.size ? " · " + esc(p.size) : ""}</p>
+        <h1 class="plant-title">${esc(p.name)}</h1>
+        ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
+        <p class="plant-price">${priceHtml(p)}</p>
+        <p class="plant-desc">${esc(p.description || "More details coming soon.")}</p>
+        <dl class="specs">
+          <div><dt>Availability</dt><dd>${esc(statusText(p))}</dd></div>
+          ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
+          <div><dt>Category</dt><dd>${esc(p.category)}</dd></div>
+          <div><dt>Item no.</dt><dd>${esc(p.id)}</dd></div>
+          <div><dt>Pickup</dt><dd>Farmers market only — no shipping</dd></div>
+        </dl>
+        <div class="buy">
+          <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity"><button type="button" data-step="1" aria-label="More">+</button></div>
+          <button class="btn" id="plantAdd" ${isOut(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag"}</button>
+        </div>
+        <p class="fine">Reserve now, then pay and collect in person at the farmers market.</p>
+      </div>
+    </div>
+    ${related.length ? `<section class="related"><h2>You may also like</h2><div class="product-grid">${related.map(cardHtml).join("")}</div></section>` : ""}
+  </div>`;
+  const show = (k) => {
+    $("#plantMain").innerHTML = (bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "") + (pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`);
+    document.querySelectorAll("#plantThumbs button").forEach((b, j) => b.classList.toggle("on", j === k));
+  };
+  $("#plantThumbs").innerHTML = pics.length > 1 ? pics.map((u, k) => `<button data-plantpic="${k}" aria-label="Photo ${k + 1}"><img src="${esc(variant(u, "thumb"))}" alt=""></button>`).join("") : "";
+  plantCurrent.show = show; show(0);
+  const ld = document.createElement("script");
+  ld.type = "application/ld+json";
+  ld.textContent = JSON.stringify({
+    "@context": "https://schema.org", "@type": "Product", name: p.name, sku: p.id, category: p.category, description: desc,
+    ...(pics[0] ? { image: pics.map((u) => new URL(u, location.href).href) } : {}),
+    brand: { "@type": "Brand", name: "Spina & Spiritus" },
+    offers: { "@type": "Offer", url, price: now(p), priceCurrency: "USD", itemCondition: "https://schema.org/NewCondition", availableDeliveryMethod: "https://schema.org/OnSitePickup",
+      availability: isOut(p) ? "https://schema.org/OutOfStock" : isPre(p) ? "https://schema.org/PreOrder" : "https://schema.org/InStock" },
+  });
+  document.head.appendChild(ld);
+}
 
 /* ---------- INIT ---------- */
 $("#year").textContent = new Date().getFullYear();
-$("#contactEmail").textContent = CONFIG.email;
-$("#contactEmail").href = "mailto:" + CONFIG.email;
-$("#contactInsta").textContent = "@" + CONFIG.instagram;
-$("#contactInsta").href = CONFIG.instagramUrl;
+if ($("#contactEmail")) {
+  $("#contactEmail").textContent = CONFIG.email;
+  $("#contactEmail").href = "mailto:" + CONFIG.email;
+  $("#contactInsta").textContent = "@" + CONFIG.instagram;
+  $("#contactInsta").href = CONFIG.instagramUrl;
+  $("#marketList").innerHTML = CONFIG.markets.map(esc).join("<br>");
+}
 $("#marketSelect").innerHTML = CONFIG.markets.map((m) => `<option>${esc(m)}</option>`).join("");
-$("#marketList").innerHTML = CONFIG.markets.map(esc).join("<br>");
-renderCollection();
+if ($("#collectionGrid")) renderCollection();
 renderCart();
 function addProductSchema() {
   const el = document.createElement("script");
@@ -350,17 +445,22 @@ function addProductSchema() {
   el.textContent = JSON.stringify({
     "@context": "https://schema.org", "@type": "ItemList",
     itemListElement: products.map((p, i) => ({
-      "@type": "ListItem", position: i + 1,
+      "@type": "ListItem", position: i + 1, url: new URL(pageUrl(p), location.href).href,
       item: {
         "@type": "Product", name: p.name, sku: p.id, category: p.category,
         description: p.description || p.name,
-        ...(p.image ? { image: new URL(p.image, location.href).href } : {}),
+        ...(p.images[0] ? { image: new URL(p.images[0], location.href).href } : {}),
         brand: { "@type": "Brand", name: "Spina & Spiritus" },
-        offers: { "@type": "Offer", price: p.price, priceCurrency: "USD", availableDeliveryMethod: "https://schema.org/OnSitePickup",
+        offers: { "@type": "Offer", price: now(p), priceCurrency: "USD", availableDeliveryMethod: "https://schema.org/OnSitePickup",
           availability: isOut(p) ? "https://schema.org/OutOfStock" : isPre(p) ? "https://schema.org/PreOrder" : "https://schema.org/InStock" },
       },
     })),
   });
   document.head.appendChild(el);
 }
-loadInventory().then((ok) => { if (ok) { renderCats(); renderProducts(); renderCart(); addProductSchema(); } });
+loadInventory().then((ok) => {
+  if (!ok) return;
+  renderCart();
+  if (document.body.dataset.page === "plant") renderPlantPage();
+  else { renderCats(); renderProducts(); addProductSchema(); }
+});
