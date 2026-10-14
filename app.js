@@ -314,8 +314,7 @@ function renderCollection() {
       }).join("")}
       <button class="nav-btn prev" aria-label="Previous photo">‹</button>
       <button class="nav-btn next" aria-label="Next photo">›</button>
-    </div></div>
-    <div class="s-thumbs">${slides.map((c, i) => `<button class="s-thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(variant(safeUrl(c.image), "thumb"))}" alt="" loading="lazy"></button>`).join("")}</div>`;
+    </div></div>`;
   initSlider(root, slides.length, pad);
 }
 function initSlider(root, n, pad) {
@@ -335,7 +334,7 @@ function initSlider(root, n, pad) {
     load(i); load(i + 1); load(i - 1); fit(i);
     slidesEl.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-hidden", String(j !== i)); });
     thumbs.forEach((el, j) => el.classList.toggle("on", j === i));
-    const t = thumbs[i]; if (t && t.parentElement) t.parentElement.scrollTo({ left: t.offsetLeft - t.parentElement.clientWidth / 2 + t.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
+    
   };
   const stop = () => { clearInterval(timer); timer = null; };
   const start = () => { clearInterval(timer); if (playing) timer = setInterval(() => show(i + 1), DELAY); };
