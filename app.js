@@ -210,7 +210,7 @@ function openQuickView(id, opener) {
   $("#qvGenus").innerHTML = p.genus ? `Genus <i>${esc(p.genus)}</i>` : "";
   $("#qvDesc").textContent = p.description || "More details coming soon.";
   $("#qvMeta").textContent = stockLine(p);
-  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Reserve this plant";
+  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : "Add to cart";
   const pics = p.images;
   const show = (k) => {
     $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
@@ -370,7 +370,7 @@ document.addEventListener("click", (e) => {
   else if (t.dataset.plantpic !== undefined && plantCurrent) plantCurrent.show(+t.dataset.plantpic);
   else if (t.id === "qvAdd" && qvProduct) {
     addToCart(qvProduct.id, 1);
-    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = isPre(qvProduct) ? "Pre-order" : "Reserve this plant"; }, 1400);
+    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = "Add to cart"; }, 1400);
     const bag = $("#cartOpen"); bag.classList.remove("pulse"); void bag.offsetWidth; bag.classList.add("pulse");
   }
   else if (t.classList.contains("add")) {
@@ -467,7 +467,7 @@ function renderPlantPage() {
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
-          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Reserve this plant"}</button>
+          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : "Add to cart"}</button>
         </div>
         <p class="fine">Not every plant comes to every event. Reserve it, pick the event you'll attend, and we'll bring it. Pay in person at pickup.</p>
       </div>
