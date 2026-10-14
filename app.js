@@ -57,7 +57,9 @@ const CONFIG = {
 
 /* ============================================================ */
 const upcomingEvents = () => { const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
-const mapLink = (e) => (e.where ? `<a class="maplink" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.where)}" target="_blank" rel="noopener">${esc(e.where)} <span aria-hidden="true">↗</span><span class="sr">(opens map)</span></a>` : "");
+const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const mapHref = (where) => (isApple ? `https://maps.apple.com/?q=${encodeURIComponent(where)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`);
+const mapLink = (e) => (e.where ? `<a class="maplink" href="${mapHref(e.where)}" target="_blank" rel="noopener">${esc(e.where)} <span aria-hidden="true">↗</span><span class="sr">(opens ${isApple ? "Apple Maps" : "map"})</span></a>` : "");
 const eventLabel = (ev) => `${ev.name} — ${ev.when}`;
 const $ = (s) => document.querySelector(s);
 const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
