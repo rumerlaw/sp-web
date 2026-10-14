@@ -67,6 +67,25 @@ const safeUrl = (u) => { u = String(u || "").trim(); return /^(https:\/\/|assets
 const variant = (src, kind) => { const m = /^(?:\.\/)?assets\/photos\/([^/]+)\.(?:jpe?g|png|webp)$/i.exec(src); return m ? `assets/photos/${kind}/${m[1]}.webp` : src; };
 const CACTUS_SVG = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M32 58V14a5 5 0 0 1 10 0v0M32 40h-9a4 4 0 0 1-4-4V26M32 34h9a4 4 0 0 0 4-4V22"/><path d="M22 58h20"/></svg>`;
 
+// ---- "Back to shop" memory: remember scroll + filters when leaving the shop for a plant page ----
+const RET_KEY = "sp-return";
+const onHome = !document.body.dataset.page;
+let pendingRestore = null;
+if (onHome) {
+  try {
+    if (sessionStorage.getItem("sp-restore") === "1") {
+      pendingRestore = JSON.parse(sessionStorage.getItem(RET_KEY) || "null");
+      sessionStorage.removeItem("sp-restore");
+    }
+  } catch (e) {}
+  if (pendingRestore) {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    document.documentElement.style.visibility = "hidden";
+    setTimeout(() => { document.documentElement.style.visibility = ""; }, 2500);
+  }
+}
+const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ y: Math.round(window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
+
 let products = [];
 const state = { cat: "All", q: "", avail: false, sort: "name" };
 let cart = [];
@@ -323,9 +342,12 @@ function initSlider(root, n, pad) {
 /* ---------- EVENTS ---------- */
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-qv-close]")) return closeQuickView();
+  const planta = e.target.closest('a[href^="plant.html"]');
+  if (planta && onHome) saveReturn();
   const t = e.target.closest("button, a");
   if (!t) return;
   if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); $("#filters").classList.remove("on"); }
+  else if (t.id === "backShop") { try { if (sessionStorage.getItem(RET_KEY)) sessionStorage.setItem("sp-restore", "1"); } catch (err) {} }
   else if (t.dataset.view && $("#qv")) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
   else if (t.id === "plantAdd" && plantCurrent) {
     addToCart(plantCurrent.id, Math.max(1, Math.min(maxQty(plantCurrent), parseInt($("#plantQty").value, 10) || 1)));
@@ -398,7 +420,7 @@ function renderPlantPage() {
   const p = products.find((x) => x.id === id);
   if (!p) {
     setMeta('meta[name="robots"]', "content", "noindex");
-    root.innerHTML = `<div class="wrap narrow center"><p class="eyebrow">Not found</p><h1 class="plant-title">That plant isn't available</h1><p class="sub">It may have sold or moved. Browse everything currently available.</p><p><a class="btn" href="index.html#shop">Back to the shop</a></p></div>`;
+    root.innerHTML = `<div class="wrap narrow center"><p class="eyebrow">Not found</p><h1 class="plant-title">That plant isn't available</h1><p class="sub">It may have sold or moved. Browse everything currently available.</p><p><a class="btn" id="backShop" href="index.html#shop">Back to the shop</a></p></div>`;
     return;
   }
   plantCurrent = p;
@@ -413,7 +435,7 @@ function renderPlantPage() {
   const pics = p.images, bn = banner(p);
   const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
   root.innerHTML = `<div class="wrap-wide">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="index.html#shop">Shop</a><span>/</span><span>${esc(p.name)}</span></nav>
+    <a class="back" id="backShop" href="index.html#shop">← Back to shop</a>
     <div class="plant-grid">
       <div class="plant-media">
         <div class="plant-main" id="plantMain"></div>
@@ -495,5 +517,14 @@ loadInventory().then((ok) => {
   if (!ok) return;
   renderCart();
   if (document.body.dataset.page === "plant") renderPlantPage();
-  else { renderCats(); renderProducts(); addProductSchema(); }
+  else {
+    if (pendingRestore) {
+      Object.assign(state, { cat: pendingRestore.cat || "All", q: pendingRestore.q || "", avail: !!pendingRestore.avail, sort: pendingRestore.sort || "name" });
+      if ($("#search")) $("#search").value = state.q;
+      if ($("#onlyAvail")) $("#onlyAvail").checked = state.avail;
+      if ($("#sort")) $("#sort").value = state.sort;
+    }
+    renderCats(); renderProducts(); addProductSchema();
+    if (pendingRestore) requestAnimationFrame(() => { window.scrollTo({ top: pendingRestore.y, behavior: "instant" }); document.documentElement.style.visibility = ""; });
+  }
 });

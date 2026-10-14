@@ -532,3 +532,6 @@ body.lock{overflow:hidden}
 .qv-thumbs button:hover{opacity:1}
 .qv-media{background:transparent}
 @media(min-width:761px){.qv-info{margin-left:-1px;background:var(--bg);position:relative;z-index:1}}
+
+.back{display:inline-flex;align-items:center;gap:8px;margin-bottom:26px;padding:10px 0;font-size:.85rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;border-bottom:1px solid var(--gold)}
+.back:hover{color:var(--sage-deep)}
