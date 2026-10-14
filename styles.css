@@ -518,3 +518,17 @@ body.lock{overflow:hidden}
 .footer-bar{flex-direction:column;justify-content:center;gap:4px;text-align:center;padding:28px 24px}
 .footer-bar .brand-main{font-size:1.5rem}
 .footer-bar .copy{font-size:.85rem}
+
+/* quick view: no outline around the photo; stock line sits under the price */
+.qv{border:0;outline:0}
+.qv-media{overflow:hidden}
+.qv-main{inset:-1px}
+.qv-main img,.qv-main .ph{outline:0;border:0}
+.qv-price{margin-bottom:4px}
+.qv-meta{margin:0 0 18px;font-size:.85rem;letter-spacing:.14em;color:var(--price)}
+.qv-main{inset:-1px -3px -1px -1px}
+.qv-thumbs button{border:0;opacity:.75;box-shadow:none}
+.qv-thumbs button.on{opacity:1;outline:2px solid var(--gold);outline-offset:0}
+.qv-thumbs button:hover{opacity:1}
+.qv-media{background:transparent}
+@media(min-width:761px){.qv-info{margin-left:-1px;background:var(--bg);position:relative;z-index:1}}
