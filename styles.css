@@ -616,3 +616,4 @@ body.lock{overflow:hidden}
 
 .events .when,.specs dd .when{display:block;font-size:1.45rem;font-weight:600;color:var(--ink);margin-top:4px;font-family:var(--serif)}
 .specs dd .when{display:inline-block;font-size:1.3rem}
+@media(min-width:961px){.shop .section-head{padding-left:328px}}
