@@ -601,3 +601,6 @@ body.lock{overflow:hidden}
 @media(max-width:430px){.brand-main{font-size:1.1rem}.brand-logo{width:34px;height:34px}.brand{gap:8px}.nav{padding:8px 66px 8px 52px}.nav-right{right:8px}}
 
 .s-thumbs{display:none}
+
+.specs dd b{font-weight:600}
+.specs dd{line-height:1.5}
