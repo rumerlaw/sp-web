@@ -119,7 +119,8 @@ async function loadInventory() {
 const isOut = (p) => /sold/i.test(p.status) || p.stock === 0;
 const isSale = (p) => /sale/i.test(p.status) && p.salePrice > 0 && p.salePrice < p.price;
 const now = (p) => (isSale(p) ? p.salePrice : p.price);
-const priceHtml = (p) => (isSale(p) ? `<s>${money(p.price)}</s> ${money(p.salePrice)}` : money(p.price));
+const noPrice = (p) => now(p) <= 0;
+const priceHtml = (p) => (noPrice(p) ? "Ask for price" : isSale(p) ? `<s>${money(p.price)}</s> ${money(p.salePrice)}` : money(p.price));
 const banner = (p) => (isOut(p) ? ["out", "Sold out"] : isSale(p) ? ["sale", "Sale"] : isPre(p) ? ["pre", "Pre-order"] : isLow(p) ? ["low", "Low stock"] : null);
 const isPre = (p) => /pre/i.test(p.status);
 const isLow = (p) => /low/i.test(p.status) || (p.stock !== null && p.stock > 0 && p.stock <= 3);
@@ -127,6 +128,7 @@ const maxQty = (p) => (p.stock === null ? 20 : Math.max(1, Math.min(20, p.stock)
 const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : isLow(p) ? ` — only ${p.stock} left` : ` — ${p.stock} available`));
 function addToCart(id, qty) {
   const p = products.find((x) => x.id === id); if (!p) return;
+  if (noPrice(p) || isOut(p)) return;
   const row = cart.find((c) => c.id === id);
   if (row) row.qty = Math.min(row.qty + qty, maxQty(p)); else cart.push({ id, qty: Math.min(qty, maxQty(p)) });
   saveCart();
@@ -179,7 +181,7 @@ function openQuickView(id, opener) {
   $("#qvGenus").textContent = p.genus ? `Genus ${p.genus}` : "";
   $("#qvDesc").textContent = p.description || "More details coming soon.";
   $("#qvMeta").textContent = stockLine(p);
-  const add = $("#qvAdd"); add.disabled = isOut(p); add.textContent = isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag";
+  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Add to bag";
   const pics = p.images;
   const show = (k) => {
     $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
@@ -428,7 +430,7 @@ function renderPlantPage() {
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
-          <button class="btn" id="plantAdd" ${isOut(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag"}</button>
+          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Add to bag"}</button>
         </div>
         <p class="fine">Reserve now, then pay and collect in person at the farmers market.</p>
       </div>
@@ -448,8 +450,8 @@ function renderPlantPage() {
     ...(p.genus ? { additionalProperty: [{ "@type": "PropertyValue", name: "Genus", value: p.genus }] } : {}),
     ...(pics[0] ? { image: pics.map((u) => new URL(u, location.href).href) } : {}),
     brand: { "@type": "Brand", name: "Spina & Spiritus" },
-    offers: { "@type": "Offer", url, price: now(p), priceCurrency: "USD", itemCondition: "https://schema.org/NewCondition", availableDeliveryMethod: "https://schema.org/OnSitePickup",
-      availability: isOut(p) ? "https://schema.org/OutOfStock" : isPre(p) ? "https://schema.org/PreOrder" : "https://schema.org/InStock" },
+    ...(noPrice(p) ? {} : { offers: { "@type": "Offer", url, price: now(p), priceCurrency: "USD", itemCondition: "https://schema.org/NewCondition", availableDeliveryMethod: "https://schema.org/OnSitePickup",
+      availability: isOut(p) ? "https://schema.org/OutOfStock" : isPre(p) ? "https://schema.org/PreOrder" : "https://schema.org/InStock" } }),
   });
   document.head.appendChild(ld);
 }
