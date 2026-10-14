@@ -89,6 +89,9 @@ function parseCSV(text) {
   return rows.filter((r) => r.some((x) => x.trim())).map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
 }
 
+// Fills in the genus automatically from a Latin name like "Opuntia microdasys" or "Echeveria 'Perle'" when the sheet's genus column is blank.
+const deriveGenus = (name) => { const m = /^([A-Z][a-z]{3,})\s+(?:[a-z×]|\')/.exec(String(name || "").trim()); return m ? m[1] : ""; };
+
 async function loadInventory() {
   try {
     const res = await fetch(CONFIG.inventoryUrl, { cache: "no-store" });
@@ -96,7 +99,7 @@ async function loadInventory() {
     products = parseCSV(await res.text()).map((p, i) => ({
       id: p.sku || "item-" + i,
       name: p.name || "Unnamed plant",
-      genus: p.genus || "",
+      genus: p.genus || deriveGenus(p.name),
       category: p.category || "Uncategorized",
       price: parseFloat(String(p.price).replace(/[^0-9.]/g, "")) || 0,
       salePrice: parseFloat(String(p.sale_price || "").replace(/[^0-9.]/g, "")) || 0,
