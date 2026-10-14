@@ -3,7 +3,7 @@
 
 Reads: name, genus/type, sell price, in stock  (header text is matched loosely, see ALIASES).
 Merges data/extras.csv (matched by plant name) for things the sheet doesn't have:
-sku, category, size, description, image (photos separated by |), status, sale_price.
+sku, genus (only used when the sheet's Genus/Type is blank), category, size, description, image (photos separated by |), status, sale_price.
 Anything else in the spreadsheet (costs, notes, customers...) is never read or published.
 
 Usage:
@@ -88,8 +88,9 @@ def main():
         name = clean(row[idx["name"]])
         if not name or re.fullmatch(r"(grand )?totals?:?", key(name)): continue   # skip blanks and the sheet's Total row
         g = lambda f: row[idx[f]] if f in idx and idx[f] < len(row) else None
-        price = num(g("price")); genus = clean(g("genus"))
+        price = num(g("price"))
         ex = extras.get(key(name), {})
+        genus = clean(g("genus")) or ex.get("genus", "")   # sheet wins; extras.csv fills blanks
         sku = ex.get("sku") if (ex.get("sku") and ex.get("sku") not in used) else slug(name)
         n = 2
         while sku in used: sku = f"{slug(name)}-{n}"; n += 1
