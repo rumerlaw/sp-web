@@ -44,7 +44,7 @@ sec = f'''<!-- FAQ:START -->
 </section>
 <!-- FAQ:END -->'''
 if "<!-- FAQ:START -->" in h: h = re.sub(r"<!-- FAQ:START -->.*?<!-- FAQ:END -->", sec, h, flags=re.S)
-else: h = h.replace("<!-- CONTACT -->", sec + "\n\n<!-- CONTACT -->", 1)
+else: h = h.replace("<footer", sec + "\n\n<footer", 1)
 p.write_text(h)
 # faq page, built from the about page shell
 a = (ROOT / "about.html").read_text()
@@ -62,8 +62,8 @@ a = re.sub(r'<main class="aboutpage" id="aboutPage">.*?</main>', f'<main class="
 for fn in ("index.html", "about.html", "plant.html", "faq.html"):
     t = (ROOT / fn).read_text()
     if 'href="faq.html">FAQ' not in t:
-        t = t.replace('    <a class="nl" href="index.html#contact">Contact</a>', '    <a class="nl" href="faq.html">FAQ</a>\n    <a class="nl" href="index.html#contact">Contact</a>', 1)
-        t = t.replace('    <a href="index.html#contact">Contact</a>\n  </nav>', '    <a href="faq.html">FAQ</a>\n    <a href="index.html#contact">Contact</a>\n  </nav>', 1)
+        t = t.replace('    <a class="nl" href="index.html#contact">Contact</a>', '    <a class="nl" href="index.html#contact">Contact</a>\n    <a class="nl" href="faq.html">FAQ</a>', 1)
+        t = t.replace('    <a href="index.html#contact">Contact</a>\n  </nav>', '    <a href="index.html#contact">Contact</a>\n    <a href="faq.html">FAQ</a>\n  </nav>', 1)
         t = t.replace('    <a class="nl" href="#contact">Contact</a>', '    <a class="nl" href="faq.html">FAQ</a>\n    <a class="nl" href="#contact">Contact</a>', 1)
     (ROOT / fn).write_text(t)
 print("built faq.html and home FAQ with", len(FAQS), "questions")

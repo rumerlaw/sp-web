@@ -78,6 +78,11 @@ if (onHome) {
       sessionStorage.removeItem("sp-restore");
     }
   } catch (e) {}
+  // Arriving from another page with #section: stay hidden until we are already at that section (no scroll from the top).
+  if (!pendingRestore && location.hash.length > 1) {
+    document.documentElement.style.visibility = "hidden";
+    setTimeout(() => { document.documentElement.style.visibility = ""; }, 2500);
+  }
   if (pendingRestore) {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     document.documentElement.style.visibility = "hidden";
@@ -532,5 +537,9 @@ loadInventory().then((ok) => {
     }
     renderCats(); renderProducts(); addProductSchema();
     if (pendingRestore) requestAnimationFrame(() => { window.scrollTo({ top: pendingRestore.y, behavior: "instant" }); document.documentElement.style.visibility = ""; });
+  }
+  if (onHome && !pendingRestore && location.hash.length > 1) {
+    const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    requestAnimationFrame(() => { if (el) el.scrollIntoView({ behavior: "instant", block: "start" }); document.documentElement.style.visibility = ""; });
   }
 });
