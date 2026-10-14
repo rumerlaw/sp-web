@@ -548,3 +548,9 @@ body.lock{overflow:hidden}
 /* slideshow: no blurred backdrop, solid sides */
 .slide .amb{display:none}
 .stage{background:#0e1710}
+
+/* slideshow: just the photo — frame matches each photo's own shape */
+.collection .stage{--H:min(72vh,680px);height:auto;max-height:none;aspect-ratio:var(--ar,1.3333);width:min(100%,calc(var(--H) * var(--ar,1.3333)));margin:0 auto;background:transparent;border:0;box-shadow:none;transition:width .5s ease}
+.collection .slide .main{object-fit:cover}
+.collection .slide .amb{display:none}
+@media(max-width:640px){.collection .stage{aspect-ratio:var(--ar,1.3333)}}

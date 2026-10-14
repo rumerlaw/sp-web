@@ -319,9 +319,15 @@ function initSlider(root, n, pad) {
   const DELAY = 3500;
   let i = 0, timer = null, playing = !reduce;
   const load = (k) => { const im = slidesEl[(k + n) % n].querySelector(".main"); if (im && im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } };
+  // The frame takes the exact shape of the current photo, so there is nothing but the photo.
+  const fit = (k) => {
+    const im = slidesEl[k].querySelector(".main");
+    const apply = () => { if (i === k && im.naturalWidth) stage.style.setProperty("--ar", (im.naturalWidth / im.naturalHeight).toFixed(4)); };
+    if (im.complete && im.naturalWidth) apply(); else im.addEventListener("load", apply, { once: true });
+  };
   const show = (k) => {
     i = (k + n) % n;
-    load(i); load(i + 1); load(i - 1);
+    load(i); load(i + 1); load(i - 1); fit(i);
     slidesEl.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-hidden", String(j !== i)); });
     thumbs.forEach((el, j) => el.classList.toggle("on", j === i));
     const t = thumbs[i]; if (t && t.parentElement) t.parentElement.scrollTo({ left: t.offsetLeft - t.parentElement.clientWidth / 2 + t.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
@@ -337,6 +343,7 @@ function initSlider(root, n, pad) {
   stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; if (playing) stop(); }, { passive: true });
   stage.addEventListener("touchend", (e) => { if (x0 !== null) { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1)); x0 = null; } if (playing) start(); });
   document.addEventListener("visibilitychange", () => { if (document.hidden) { if (playing) stop(); } else if (playing) start(); });
+  fit(0);
   start();
 }
 /* ---------- EVENTS ---------- */
