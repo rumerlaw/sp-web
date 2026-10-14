@@ -478,3 +478,7 @@ body.lock{overflow:hidden}
 .genus,.qv-genus{font-family:var(--serif);font-size:1.25rem;color:var(--muted);margin:2px 0 8px}
 .genus i,.specs dd i{font-style:italic}
 .qv-genus:empty{display:none}
+
+/* slideshow: photos only — no frame, counter, or controls bar */
+.stage{border:0;box-shadow:0 40px 80px -40px rgba(0,0,0,.7)}
+.frame,.counter,.play-btn,.progress{display:none}

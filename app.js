@@ -280,48 +280,36 @@ function renderCollection() {
         const u = safeUrl(c.image), eager = i < 2;
         return `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img class="amb" src="${esc(variant(u, "thumb"))}" alt=""><img class="main" ${eager ? `src="${esc(variant(u, "web"))}"` : `data-src="${esc(variant(u, "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`;
       }).join("")}
-      <div class="frame" aria-hidden="true"></div>
       <button class="nav-btn prev" aria-label="Previous photo">‹</button>
       <button class="nav-btn next" aria-label="Next photo">›</button>
-      <div class="counter" aria-live="off"><b id="slideNum">01</b><span>/ ${pad(slides.length)}</span></div>
-      <button class="play-btn" aria-label="Pause slideshow">Pause</button>
-      <div class="progress" aria-hidden="true"><i></i></div>
     </div>
     <div class="s-thumbs">${slides.map((c, i) => `<button class="s-thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(variant(safeUrl(c.image), "thumb"))}" alt="" loading="lazy"></button>`).join("")}</div>`;
   initSlider(root, slides.length, pad);
 }
 function initSlider(root, n, pad) {
   const stage = root.querySelector(".stage"), slidesEl = [...root.querySelectorAll(".slide")], thumbs = [...root.querySelectorAll(".s-thumb")];
-  const bar = root.querySelector(".progress i");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const DELAY = 3500;
   let i = 0, timer = null, playing = !reduce;
-  const playBtn = root.querySelector(".play-btn");
   const load = (k) => { const im = slidesEl[(k + n) % n].querySelector(".main"); if (im && im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } };
-  const restartBar = () => { bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = ""; };
   const show = (k) => {
     i = (k + n) % n;
     load(i); load(i + 1); load(i - 1);
     slidesEl.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-hidden", String(j !== i)); });
     thumbs.forEach((el, j) => el.classList.toggle("on", j === i));
-    $("#slideNum").textContent = pad(i + 1);
     const t = thumbs[i]; if (t && t.parentElement) t.parentElement.scrollTo({ left: t.offsetLeft - t.parentElement.clientWidth / 2 + t.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
   };
-  const stop = () => { clearInterval(timer); timer = null; stage.classList.add("paused"); };
-  const start = () => { clearInterval(timer); stage.classList.toggle("off", !playing); stage.classList.remove("paused"); restartBar(); if (playing) timer = setInterval(() => { show(i + 1); restartBar(); }, DELAY); };
-  const setPlaying = (p) => { playing = p; playBtn.textContent = p ? "Pause" : "Play"; playBtn.setAttribute("aria-label", p ? "Pause slideshow" : "Play slideshow"); start(); };
-  stage.style.setProperty("--delay", DELAY + "ms");
+  const stop = () => { clearInterval(timer); timer = null; };
+  const start = () => { clearInterval(timer); if (playing) timer = setInterval(() => show(i + 1), DELAY); };
   root.querySelector(".prev").addEventListener("click", () => { show(i - 1); start(); });
   root.querySelector(".next").addEventListener("click", () => { show(i + 1); start(); });
   thumbs.forEach((t) => t.addEventListener("click", () => { show(+t.dataset.slide); start(); }));
-  playBtn.addEventListener("click", () => setPlaying(!playing));
   stage.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") { show(i - 1); start(); } if (e.key === "ArrowRight") { show(i + 1); start(); } });
   stage.addEventListener("mouseenter", () => { if (playing) stop(); }); stage.addEventListener("mouseleave", () => { if (playing) start(); });
   let x0 = null;
   stage.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; if (playing) stop(); }, { passive: true });
   stage.addEventListener("touchend", (e) => { if (x0 !== null) { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1)); x0 = null; } if (playing) start(); });
   document.addEventListener("visibilitychange", () => { if (document.hidden) { if (playing) stop(); } else if (playing) start(); });
-  playBtn.textContent = playing ? "Pause" : "Play";
   start();
 }
 /* ---------- EVENTS ---------- */
