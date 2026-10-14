@@ -517,7 +517,7 @@ loadInventory().then((ok) => {
   if (!ok) return;
   renderCart();
   if (document.body.dataset.page === "plant") renderPlantPage();
-  else {
+  else if ($("#productGrid")) {
     if (pendingRestore) {
       Object.assign(state, { cat: pendingRestore.cat || "All", q: pendingRestore.q || "", avail: !!pendingRestore.avail, sort: pendingRestore.sort || "name" });
       if ($("#search")) $("#search").value = state.q;

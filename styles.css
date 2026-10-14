@@ -535,3 +535,12 @@ body.lock{overflow:hidden}
 
 .back{display:inline-flex;align-items:center;gap:8px;margin-bottom:26px;padding:10px 0;font-size:.85rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;border-bottom:1px solid var(--gold)}
 .back:hover{color:var(--sage-deep)}
+
+/* about page */
+.aboutpage{padding:140px 0 100px}
+.aboutpage h1{font-size:clamp(2.6rem,6vw,4.4rem);margin-bottom:6px}
+.handle{font-size:1.2rem;font-weight:500;margin-bottom:1.6rem}
+.handle a{color:var(--sage-deep);border-bottom:1px solid var(--gold)}
+.handle a:hover{color:var(--gold)}
+.about-cta{margin-top:2.4rem;display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:900px){.aboutpage{padding-top:104px}}
