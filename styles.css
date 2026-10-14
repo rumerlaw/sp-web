@@ -492,3 +492,25 @@ body.lock{overflow:hidden}
 .contact-lines{margin-top:1rem}
 .cart-foot select{padding-right:8px}
 .contact-q{margin-top:2.6rem!important}.events{margin-bottom:0}
+
+/* v6 tweaks */
+.shop .section-head::after{display:none}
+.shop .section-head{margin-bottom:2.8rem}
+.shop-sub{max-width:62ch!important;font-size:1.1rem;color:var(--ink)}
+.shop-bar{display:none}
+@media(max-width:900px){.shop-bar{display:flex;margin-bottom:18px}}
+.genus,.qv-genus{font-size:1.7rem;font-style:normal;color:var(--ink);margin:4px 0 10px}
+.genus i,.qv-genus i{font-style:italic}
+.qv-genus{font-family:var(--serif)}
+/* quick view: photo fills its whole panel, thumbnails overlay it */
+.qv-media{position:relative;background:#16211a;min-height:100%}
+.qv-main{position:absolute;inset:0;aspect-ratio:auto}
+.qv-main img,.qv-main .ph{object-fit:cover}
+.qv-thumbs{position:absolute;left:0;right:0;bottom:0;padding:14px;background:linear-gradient(transparent,rgba(0,0,0,.45));z-index:2}
+.qv-thumbs button{border-color:rgba(255,255,255,.7);opacity:.8}
+@media(min-width:761px){.qv{min-height:560px}}
+@media(max-width:760px){.qv-media{min-height:0;aspect-ratio:1/1}}
+.events b{display:block}
+.events li{align-items:center;text-align:center}
+.events-note{margin-top:1.6rem;margin-left:auto;margin-right:auto;max-width:48ch;color:var(--muted)}
+.events-note{margin-top:2rem!important}

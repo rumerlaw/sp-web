@@ -22,9 +22,9 @@ const CONFIG = {
   // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
   // `date` (YYYY-MM-DD) is optional: once that day has passed the event disappears automatically.
   events: [
-    { name: "Market name, city (placeholder)", when: "Saturdays, 8am–12pm (placeholder)", date: "" },
-    { name: "Second event (placeholder)", when: "Sunday, 9am–2pm (placeholder)", date: "" },
+    { name: "Roadrunner Park Farmers Market", where: "3502 E Cactus Rd, Phoenix, AZ 85032", when: "Every Saturday, 8am–12pm", date: "" },
   ],
+
 
 
   email: "email@placeholder.com",
@@ -128,11 +128,11 @@ const isSale = (p) => /sale/i.test(p.status) && p.salePrice > 0 && p.salePrice <
 const now = (p) => (isSale(p) ? p.salePrice : p.price);
 const noPrice = (p) => now(p) <= 0;
 const priceHtml = (p) => (noPrice(p) ? "Ask for price" : isSale(p) ? `<s>${money(p.price)}</s> ${money(p.salePrice)}` : money(p.price));
-const banner = (p) => (isOut(p) ? ["out", "Sold out"] : isSale(p) ? ["sale", "Sale"] : isPre(p) ? ["pre", "Pre-order"] : isLow(p) ? ["low", "Low stock"] : null);
+const banner = (p) => (isOut(p) ? ["out", "Sold out"] : isSale(p) ? ["sale", "Sale"] : isPre(p) ? ["pre", "Pre-order"] : null);
 const isPre = (p) => /pre/i.test(p.status);
 const isLow = (p) => /low/i.test(p.status) || (p.stock !== null && p.stock > 0 && p.stock <= 3);
 const maxQty = (p) => (p.stock === null ? 20 : Math.max(1, Math.min(20, p.stock)));
-const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : isLow(p) ? ` — only ${p.stock} left` : ` — ${p.stock} available`));
+const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : ` — ${p.stock} available`));
 function addToCart(id, qty) {
   const p = products.find((x) => x.id === id); if (!p) return;
   if (noPrice(p) || isOut(p)) return;
@@ -162,7 +162,6 @@ function renderProducts() {
     priceDesc: (a, b) => b.price - a.price,
   };
   list.sort(sorts[state.sort]);
-  $("#resultCount").textContent = `${list.length} ${list.length === 1 ? "plant" : "plants"}`;
   $("#productGrid").innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="empty">No plants match your selection.</p>`;
 }
 const pageUrl = (p) => `plant.html?id=${encodeURIComponent(p.id)}`;
@@ -181,11 +180,10 @@ let qvProduct = null, qvOpener = null;
 function openQuickView(id, opener) {
   const p = products.find((x) => x.id === id); if (!p) return;
   qvProduct = p; qvOpener = opener || null;
-  $("#qvCat").textContent = p.category + (p.size ? " · " + p.size : "");
   $("#qvTitle").textContent = p.name;
   $("#qvPrice").innerHTML = priceHtml(p);
   $("#qvPage").href = pageUrl(p);
-  $("#qvGenus").textContent = p.genus ? `Genus ${p.genus}` : "";
+  $("#qvGenus").innerHTML = p.genus ? `Genus <i>${esc(p.genus)}</i>` : "";
   $("#qvDesc").textContent = p.description || "More details coming soon.";
   $("#qvMeta").textContent = stockLine(p);
   const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Reserve this plant";
@@ -415,14 +413,13 @@ function renderPlantPage() {
   const pics = p.images, bn = banner(p);
   const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
   root.innerHTML = `<div class="wrap-wide">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="index.html#shop">Shop</a><span>/</span><span>${esc(p.category)}</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="index.html#shop">Shop</a><span>/</span><span>${esc(p.name)}</span></nav>
     <div class="plant-grid">
       <div class="plant-media">
         <div class="plant-main" id="plantMain"></div>
         <div class="plant-thumbs" id="plantThumbs"></div>
       </div>
       <div class="plant-info">
-        <p class="eyebrow">${esc(p.category)}${p.size ? " · " + esc(p.size) : ""}</p>
         <h1 class="plant-title">${esc(p.name)}</h1>
         ${p.genus ? `<p class="genus">Genus <i>${esc(p.genus)}</i></p>` : ""}
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
@@ -432,8 +429,6 @@ function renderPlantPage() {
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
-          <div><dt>Category</dt><dd>${esc(p.category)}</dd></div>
-          <div><dt>Item no.</dt><dd>${esc(p.id)}</dd></div>
           <div><dt>Pickup</dt><dd>At our events only — no shipping</dd></div>
         </dl>
         <div class="buy">
@@ -472,7 +467,7 @@ if ($("#contactEmail")) {
   $("#contactInsta").textContent = "@" + CONFIG.instagram;
   $("#contactInsta").href = CONFIG.instagramUrl;
   const ev = upcomingEvents();
-  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b><span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates coming soon.</span></li>`;
+  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${esc(e.where)}</span>` : ""}<span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
 }
 $("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
 if ($("#collectionGrid")) renderCollection();
