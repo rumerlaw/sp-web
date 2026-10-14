@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://azcactusdoctor.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://azcactusdoctor.com/about.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://azcactusdoctor.com/faq.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://azcactusdoctor.com/plant.html?id=SP-001</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://azcactusdoctor.com/plant.html?id=SP-002</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
