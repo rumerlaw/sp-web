@@ -3,9 +3,9 @@
 Static site, no build step. Open via any web server (`python3 -m http.server`) or deploy the folder to Netlify / Vercel / Cloudflare Pages.
 
 ## Updating content
-- **Inventory:** edit `data/inventory.csv` (columns: sku, name, category, price, status, size, description, image). Status: `In Stock`, `Low Stock`, `Pre-Order`, `Sold Out`. Categories build the left-hand catalog automatically.
+- **Inventory:** edit `data/inventory.csv` (columns: sku, name, category, price, status, size, description, image, sale_price). Status: `In Stock`, `Low Stock`, `Pre-Order`, `Sold Out`, `Sale` (put the discounted price in `sale_price`; the old price shows struck through). The status shows as a banner across the top of the photo. `image` can hold several photos separated by `|` (e.g. `assets/photos/a.jpg|assets/photos/b.jpg`); the first is the catalog photo and all appear in the tap-to-open quick view. Categories build the left-hand catalog automatically.
 - **Live spreadsheet:** in Google Sheets → File → Share → Publish to web → CSV, then paste the link into `inventoryUrl` at the top of `app.js`.
-- **Photos/videos:** put files in `assets/photos` / `assets/videos`, then reference them in `CONFIG` (`app.js`) and the `image` column of the sheet.
+- **Photos:** drop originals in `incoming/`, run `python3 scripts/strip_media.py` (strips metadata and builds fast `web/` and `thumb/` versions), then list them in `CONFIG.collection` (slideshow) or the sheet's `image` column.
 - **About text / hero video:** edit `index.html` (look for "Placeholder").
 - **Contact:** `email` and `instagram` in `CONFIG`.
 

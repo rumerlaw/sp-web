@@ -32,21 +32,25 @@
 <a class="skip" href="#shop">Skip to the shop</a>
 
 <header class="nav" id="top" role="banner">
-  <a href="#top" class="brand">
-    <img class="brand-logo" src="assets/brand/favicon-32.png" srcset="assets/brand/favicon-256.png 2x" width="40" height="40" alt="">
+  <div class="nav-left">
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#collection">Collection</a>
+      <a href="#shop">Shop</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+  <a href="#top" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
+    <img class="brand-logo" src="assets/brand/favicon-32.png" srcset="assets/brand/favicon-256.png 2x" width="44" height="44" alt="">
     <span class="brand-text"><span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
     <span class="brand-sub">AZ Cactus Doctor</span></span>
   </a>
-  <nav class="nav-links" id="navLinks" aria-label="Main">
-    <a href="#about">About</a>
-    <a href="#collection">The Collection</a>
-    <a href="#shop">Shop</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#contact">Contact</a>
-  </nav>
   <div class="nav-right">
-    <button class="cart-btn" id="cartOpen" aria-label="Open reservation list">Reserve <span id="cartCount">0</span></button>
-    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+    <button class="bag-btn" id="cartOpen" aria-label="Open your bag">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+      <span class="bag-count" id="cartCount">0</span>
+    </button>
   </div>
 </header>
 
@@ -101,7 +105,7 @@
 <!-- SHOP -->
 <section class="section shop" id="shop">
   <div class="wrap-wide">
-    <div class="section-head">
+    <div class="section-head center">
       <p class="eyebrow">Available now</p>
       <h2>The Shop</h2>
       <p class="sub">Pick your plants, reserve them online, and collect in person at the farmers market. No shipping.</p>
@@ -137,17 +141,6 @@
   </div>
 </section>
 
-<!-- GALLERY -->
-<section class="section gallery" id="gallery">
-  <div class="wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">On film</p>
-      <h2>Gallery</h2>
-    </div>
-    <div class="gallery-grid" id="galleryGrid"></div>
-  </div>
-</section>
-
 <!-- CONTACT -->
 <section class="section contact" id="contact">
   <div class="wrap narrow center">
@@ -168,11 +161,32 @@
   <span>© <span id="year"></span></span>
 </footer>
 
+<!-- QUICK VIEW -->
+<div class="qv-wrap" id="qv" aria-hidden="true">
+  <div class="qv-scrim" data-qv-close></div>
+  <div class="qv" role="dialog" aria-modal="true" aria-labelledby="qvTitle" tabindex="-1">
+    <button class="qv-close" data-qv-close aria-label="Close">×</button>
+    <div class="qv-media">
+      <div class="qv-main" id="qvMain"></div>
+      <div class="qv-thumbs" id="qvThumbs"></div>
+    </div>
+    <div class="qv-info">
+      <p class="eyebrow" id="qvCat"></p>
+      <h3 id="qvTitle"></h3>
+      <p class="qv-price" id="qvPrice"></p>
+      <p class="qv-desc" id="qvDesc"></p>
+      <p class="qv-meta" id="qvMeta"></p>
+      <button class="btn full" id="qvAdd">Add to bag</button>
+      <p class="fine">Reserve now, pay and collect in person at the farmers market. No shipping.</p>
+    </div>
+  </div>
+</div>
+
 <!-- CART DRAWER -->
 <div class="scrim" id="scrim"></div>
 <aside class="cart" id="cart" aria-hidden="true">
   <div class="cart-head">
-    <h3>Your Reservation</h3>
+    <h3>Your Bag</h3>
     <button id="cartClose" aria-label="Close cart">×</button>
   </div>
   <div class="cart-items" id="cartItems"></div>

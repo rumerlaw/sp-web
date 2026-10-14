@@ -26,6 +26,10 @@ def clean_photo(src, dst):
         im = im.convert("RGB")
         clean = Image.frombytes("RGB", im.size, im.tobytes())   # fresh image: carries no metadata
         clean.save(dst, "JPEG", quality=88, optimize=True, progressive=True)
+        # fast-loading web variants used by the site (slideshow/quick view = 1200px, thumbnails = 480px)
+        for sub, px, q in (("web", 1200, 62), ("thumb", 480, 70)):
+            out = dst.parent / sub; out.mkdir(exist_ok=True)
+            v = clean.copy(); v.thumbnail((px, px)); v.save(out / (dst.stem + ".webp"), "WEBP", quality=q, method=6)
 
 def clean_video(src, dst):
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src),
@@ -54,8 +58,8 @@ def run():
 
 def check():
     bad = []
-    for f in list(PHOTOS.glob("*")) + list(VIDEOS.glob("*")):
-        if f.name.startswith("."): continue
+    for f in list(PHOTOS.rglob("*")) + list(VIDEOS.rglob("*")):
+        if f.name.startswith(".") or f.is_dir(): continue
         if f.suffix.lower() in IMG:
             with Image.open(f) as im:
                 if im.getexif() or im.info.get("exif") or im.info.get("xmp"):

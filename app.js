@@ -48,11 +48,6 @@ const CONFIG = {
     { image: "assets/photos/collection-pots-row.jpg", alt: "Row of cacti in handmade pots including a turquoise planter" },
   ],
 
-  // Film gallery — type is "image" or "video"; src is e.g. "assets/photos/one.jpg". wide:true makes it 2 columns.
-  gallery: [
-    { type: "video", src: "", wide: true },
-    { type: "video", src: "", wide: true },
-  ],
 };
 
 /* ============================================================ */
@@ -61,6 +56,8 @@ const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFra
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 // Only allow same-site relative paths or https URLs for images coming from the spreadsheet.
 const safeUrl = (u) => { u = String(u || "").trim(); return /^(https:\/\/|assets\/|\.\/assets\/)/i.test(u) && !/[<>"']/.test(u) ? u : ""; };
+// Fast-loading variants made by scripts/strip_media.py (assets/photos/web, assets/photos/thumb).
+const variant = (src, kind) => { const m = /^(?:\.\/)?assets\/photos\/([^/]+)\.(?:jpe?g|png|webp)$/i.exec(src); return m ? `assets/photos/${kind}/${m[1]}.webp` : src; };
 const CACTUS_SVG = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M32 58V14a5 5 0 0 1 10 0v0M32 40h-9a4 4 0 0 1-4-4V26M32 34h9a4 4 0 0 0 4-4V22"/><path d="M22 58h20"/></svg>`;
 
 let products = [];
@@ -98,10 +95,11 @@ async function loadInventory() {
       name: p.name || "Unnamed plant",
       category: p.category || "Uncategorized",
       price: parseFloat(String(p.price).replace(/[^0-9.]/g, "")) || 0,
+      salePrice: parseFloat(String(p.sale_price || "").replace(/[^0-9.]/g, "")) || 0,
       status: p.status || "In Stock",
       size: p.size || "",
       description: p.description || "",
-      image: safeUrl(p.image),
+      images: String(p.image || "").split("|").map(safeUrl).filter(Boolean),
     }));
   } catch (e) {
     products = [];
@@ -113,6 +111,10 @@ async function loadInventory() {
 
 /* ---------- SHOP ---------- */
 const isOut = (p) => /sold/i.test(p.status);
+const isSale = (p) => /sale/i.test(p.status) && p.salePrice > 0 && p.salePrice < p.price;
+const now = (p) => (isSale(p) ? p.salePrice : p.price);
+const priceHtml = (p) => (isSale(p) ? `<s>${money(p.price)}</s> ${money(p.salePrice)}` : money(p.price));
+const banner = (p) => (isOut(p) ? ["out", "Sold out"] : isSale(p) ? ["sale", "Sale"] : isPre(p) ? ["pre", "Pre-order"] : isLow(p) ? ["low", "Low stock"] : null);
 const isPre = (p) => /pre/i.test(p.status);
 const isLow = (p) => /low/i.test(p.status);
 
@@ -140,33 +142,58 @@ function renderProducts() {
   $("#resultCount").textContent = `${list.length} ${list.length === 1 ? "plant" : "plants"}`;
   $("#productGrid").innerHTML = list.length
     ? list.map((p) => {
-        const badge = isOut(p) ? `<span class="badge out">Sold out</span>` : isPre(p) ? `<span class="badge pre">Pre-order</span>` : isLow(p) ? `<span class="badge low">Low stock</span>` : "";
-        const img = p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
+        const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
+        const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
         return `<article class="card">
-          <div class="thumb">${badge}${img}</div>
-          <div class="body">
-            <span class="cat">${esc(p.category)}${p.size ? " · " + esc(p.size) : ""}</span>
-            <h4>${esc(p.name)}</h4>
-            <p class="desc">${esc(p.description)}</p>
-            <div class="row"><span class="price">${money(p.price)}</span>
-            <button class="add" data-id="${esc(p.id)}" ${isOut(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add"}</button></div>
-          </div></article>`;
+          <button class="card-hit" data-view="${esc(p.id)}" aria-label="Quick view: ${esc(p.name)}">
+            <span class="thumb">${badge}${img}<span class="peek">Quick view</span></span>
+            <span class="body"><span class="name">${esc(p.name)}</span><span class="price">${money(p.price)}</span></span>
+          </button></article>`;
       }).join("")
     : `<p class="empty">No plants match your selection.</p>`;
+}
+
+/* ---------- QUICK VIEW ---------- */
+let qvProduct = null, qvOpener = null;
+function openQuickView(id, opener) {
+  const p = products.find((x) => x.id === id); if (!p) return;
+  qvProduct = p; qvOpener = opener || null;
+  $("#qvCat").textContent = p.category + (p.size ? " · " + p.size : "");
+  $("#qvTitle").textContent = p.name;
+  $("#qvPrice").innerHTML = priceHtml(p);
+  $("#qvDesc").textContent = p.description || "More details coming soon.";
+  $("#qvMeta").textContent = isOut(p) ? "Currently sold out" : isSale(p) ? "On sale" : isPre(p) ? "Available for pre-order" : isLow(p) ? "Low stock — only a few left" : "In stock";
+  const add = $("#qvAdd"); add.disabled = isOut(p); add.textContent = isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag";
+  const pics = p.images;
+  const show = (k) => {
+    $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
+    document.querySelectorAll(".qv-thumbs button").forEach((b, j) => b.classList.toggle("on", j === k));
+  };
+  $("#qvThumbs").innerHTML = pics.length > 1 ? pics.map((u, k) => `<button data-qvpic="${k}" aria-label="Photo ${k + 1}"><img src="${esc(variant(u, "thumb"))}" alt=""></button>`).join("") : "";
+  qvProduct.show = show; show(0);
+  $("#qv").classList.add("on"); $("#qv").setAttribute("aria-hidden", "false");
+  document.body.classList.add("lock");
+  $(".qv").focus();
+}
+function closeQuickView() {
+  $("#qv").classList.remove("on"); $("#qv").setAttribute("aria-hidden", "true");
+  document.body.classList.remove("lock");
+  if (qvOpener) qvOpener.focus(); qvProduct = null;
 }
 
 /* ---------- CART ---------- */
 function saveCart() { try { localStorage.setItem("sp-cart", JSON.stringify(cart)); } catch (e) {} renderCart(); }
 function renderCart() {
   const items = cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
-  $("#cartCount").textContent = items.reduce((s, c) => s + c.qty, 0);
+  const count = items.reduce((s, c) => s + c.qty, 0);
+  $("#cartCount").textContent = count; $("#cartCount").classList.toggle("on", count > 0);
   $("#cartItems").innerHTML = items.length
     ? items.map((c) => `<div class="cart-item">
-        <h5>${esc(c.p.name)}</h5><span>${money(c.p.price * c.qty)}</span>
+        <h5>${esc(c.p.name)}</h5><span>${money(now(c.p) * c.qty)}</span>
         <div class="qty"><button data-dec="${esc(c.id)}">−</button>${c.qty}<button data-inc="${esc(c.id)}">+</button></div>
         <button class="rm" data-rm="${esc(c.id)}">Remove</button></div>`).join("")
     : `<p class="cart-empty">Your selection is empty.</p>`;
-  $("#cartTotal").textContent = money(items.reduce((s, c) => s + c.p.price * c.qty, 0));
+  $("#cartTotal").textContent = money(items.reduce((s, c) => s + now(c.p) * c.qty, 0));
   $("#checkout").disabled = !items.length;
 }
 function toggleCart(on) {
@@ -194,8 +221,8 @@ async function submitOrder(e) {
   let last = 0; try { last = +localStorage.getItem("sp-last") || 0; } catch (err) {}
   if (Date.now() - last < 30000) return say("Please wait a moment before sending again.", true);
 
-  const total = money(items.reduce((t, c) => t + c.p.price * c.qty, 0));
-  const lines = items.map((c) => `${c.qty} x ${c.p.name} (${c.p.id}) - ${money(c.p.price * c.qty)}`).join("\n");
+  const total = money(items.reduce((t, c) => t + now(c.p) * c.qty, 0));
+  const lines = items.map((c) => `${c.qty} x ${c.p.name} (${c.p.id}) - ${money(now(c.p) * c.qty)}`).join("\n");
   const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nMarket: ${market}\n\n${lines}\n\nTotal: ${total} (pay at pickup)\n\nNotes: ${notes || "-"}`;
 
   if (!CONFIG.orderEndpoint) {                        // fallback until an endpoint is configured
@@ -225,36 +252,38 @@ async function submitOrder(e) {
   btn.disabled = !cartLines().length;
 }
 
-/* ---------- COLLECTION / GALLERY ---------- */
+/* ---------- COLLECTION SLIDESHOW ---------- */
 function renderCollection() {
   const slides = CONFIG.collection.filter((c) => safeUrl(c.image));
   const root = $("#collectionGrid");
   if (!slides.length) { root.innerHTML = `<div class="ph slide-empty" data-slot="Collection photos coming soon">${CACTUS_SVG}</div>`; return; }
   root.innerHTML = `
     <div class="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Private collection photos">
-      ${slides.map((c, i) => `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img src="${esc(safeUrl(c.image))}" alt="${esc(c.alt || "Plant from the private collection")}" ${i < 2 ? "" : 'loading="lazy"'}></figure>`).join("")}
+      ${slides.map((c, i) => `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img ${i < 2 ? `src="${esc(variant(safeUrl(c.image), "web"))}"` : `data-src="${esc(variant(safeUrl(c.image), "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`).join("")}
       <button class="nav-btn prev" aria-label="Previous photo">‹</button>
       <button class="nav-btn next" aria-label="Next photo">›</button>
       <div class="counter" aria-live="off"><span id="slideNum">1</span> / ${slides.length}</div>
       <button class="play-btn" aria-label="Pause slideshow">Pause</button>
     </div>
-    <div class="thumbs" role="tablist">${slides.map((c, i) => `<button class="thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(safeUrl(c.image))}" alt="" loading="lazy"></button>`).join("")}</div>`;
+    <div class="s-thumbs" role="tablist">${slides.map((c, i) => `<button class="s-thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(variant(safeUrl(c.image), "thumb"))}" alt="" loading="lazy"></button>`).join("")}</div>`;
   initSlider(root, slides.length);
 }
 function initSlider(root, n) {
-  const stage = root.querySelector(".stage"), slidesEl = [...root.querySelectorAll(".slide")], thumbs = [...root.querySelectorAll(".thumb")];
+  const stage = root.querySelector(".stage"), slidesEl = [...root.querySelectorAll(".slide")], thumbs = [...root.querySelectorAll(".s-thumb")];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let i = 0, timer = null, playing = !reduce;
   const playBtn = root.querySelector(".play-btn");
+  const load = (k) => { const im = slidesEl[(k + n) % n].querySelector("img"); if (im && im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } };
   const show = (k) => {
     i = (k + n) % n;
+    load(i); load(i + 1); load(i - 1);
     slidesEl.forEach((el, j) => { el.classList.toggle("on", j === i); el.setAttribute("aria-hidden", String(j !== i)); });
     thumbs.forEach((el, j) => el.classList.toggle("on", j === i));
     $("#slideNum").textContent = i + 1;
     const t = thumbs[i]; if (t && t.parentElement) t.parentElement.scrollTo({ left: t.offsetLeft - t.parentElement.clientWidth / 2 + t.clientWidth / 2, behavior: reduce ? "auto" : "smooth" });
   };
   const stop = () => { clearInterval(timer); timer = null; };
-  const start = () => { stop(); if (playing) timer = setInterval(() => show(i + 1), 5000); };
+  const start = () => { stop(); if (playing) timer = setInterval(() => show(i + 1), 3000); };
   const setPlaying = (p) => { playing = p; playBtn.textContent = p ? "Pause" : "Play"; playBtn.setAttribute("aria-label", p ? "Pause slideshow" : "Play slideshow"); start(); };
   root.querySelector(".prev").addEventListener("click", () => { show(i - 1); start(); });
   root.querySelector(".next").addEventListener("click", () => { show(i + 1); start(); });
@@ -269,22 +298,21 @@ function initSlider(root, n) {
   playBtn.textContent = playing ? "Pause" : "Play";
   start();
 }
-function renderGallery() {
-  $("#galleryGrid").innerHTML = CONFIG.gallery.map((g) => {
-    const cls = "g" + (g.wide ? " wide" : "");
-    g = { ...g, src: safeUrl(g.src) };
-    if (!g.src) return `<div class="g ph ${g.wide ? "wide" : ""}" data-slot="${g.type === "video" ? "Video" : "Photo"}"></div>`;
-    return g.type === "video"
-      ? `<div class="${cls}"><video src="${esc(g.src)}" controls muted playsinline preload="metadata"></video></div>`
-      : `<div class="${cls}"><img src="${esc(g.src)}" alt="${esc(g.alt || "")}" loading="lazy"></div>`;
-  }).join("");
-}
-
 /* ---------- EVENTS ---------- */
 document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-qv-close]")) return closeQuickView();
   const t = e.target.closest("button, a");
   if (!t) return;
   if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); $("#filters").classList.remove("on"); }
+  else if (t.dataset.view) openQuickView(t.dataset.view, t);
+  else if (t.dataset.qvpic !== undefined && qvProduct) qvProduct.show(+t.dataset.qvpic);
+  else if (t.id === "qvAdd" && qvProduct) {
+    const row = cart.find((c) => c.id === qvProduct.id);
+    row ? row.qty++ : cart.push({ id: qvProduct.id, qty: 1 });
+    saveCart();
+    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = isPre(qvProduct) ? "Pre-order" : "Add to bag"; }, 1400);
+    const bag = $("#cartOpen"); bag.classList.remove("pulse"); void bag.offsetWidth; bag.classList.add("pulse");
+  }
   else if (t.classList.contains("add")) {
     const row = cart.find((c) => c.id === t.dataset.id);
     row ? row.qty++ : cart.push({ id: t.dataset.id, qty: 1 });
@@ -300,6 +328,7 @@ document.addEventListener("click", (e) => {
   else if (t.id === "burger" || t.closest("#navLinks")) $("#navLinks").classList.toggle("on", t.id === "burger" && !$("#navLinks").classList.contains("on"));
 });
 $("#orderForm").addEventListener("submit", submitOrder);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { if ($("#qv").classList.contains("on")) closeQuickView(); else toggleCart(false); } });
 $("#scrim").addEventListener("click", () => toggleCart(false));
 $("#search").addEventListener("input", (e) => { state.q = e.target.value.toLowerCase().trim(); renderProducts(); });
 $("#onlyAvail").addEventListener("change", (e) => { state.avail = e.target.checked; renderProducts(); });
@@ -314,7 +343,6 @@ $("#contactInsta").href = CONFIG.instagramUrl;
 $("#marketSelect").innerHTML = CONFIG.markets.map((m) => `<option>${esc(m)}</option>`).join("");
 $("#marketList").innerHTML = CONFIG.markets.map(esc).join("<br>");
 renderCollection();
-renderGallery();
 renderCart();
 function addProductSchema() {
   const el = document.createElement("script");
