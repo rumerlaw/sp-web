@@ -554,3 +554,22 @@ body.lock{overflow:hidden}
 .collection .slide .main{object-fit:cover}
 .collection .slide .amb{display:none}
 @media(max-width:640px){.collection .stage{aspect-ratio:var(--ar,1.3333)}}
+
+/* more noticeable reservation bag */
+.bag-btn{width:auto;height:46px;padding:0 18px 0 14px;gap:9px;display:inline-flex;align-items:center;border-radius:999px;background:var(--sage-deep);color:#fff;border:1px solid var(--sage-deep);box-shadow:0 6px 18px -8px rgba(47,74,44,.7)}
+.bag-btn:hover{background:var(--ember);border-color:var(--ember);color:#fff}
+.bag-btn svg{width:24px;height:24px;stroke-width:1.6}
+.bag-label{font-size:.78rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase}
+.bag-count{position:static;transform:none;min-width:24px;height:24px;line-height:24px;padding:0 7px;border-radius:12px;background:#fff;color:var(--sage-deep);font-size:.8rem;font-weight:600;transition:none}
+.bag-count.on{background:var(--gold);color:#fff}
+@media(max-width:640px){.bag-label{display:none}.bag-btn{padding:0 12px 0 11px;gap:7px}}
+/* instagram logo beside the handle */
+.ig{flex:0 0 auto}
+.handle a,.insta{display:inline-flex;align-items:center;gap:10px}
+.handle{font-size:1.3rem}
+.insta:hover{color:var(--gold)}
+/* slideshow never changes the page height: space is reserved, the photo is centered in it */
+.collection #collectionGrid .stage{position:relative}
+.stage-box{height:min(72vh,680px,calc(100vw - 48px));display:flex;align-items:center;justify-content:center}
+@media(max-width:640px){.stage-box{height:calc(100vw * 1.0)}}
+.stage-box .stage{flex:0 0 auto;max-height:100%}

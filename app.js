@@ -302,14 +302,14 @@ function renderCollection() {
   if (!slides.length) { root.innerHTML = `<div class="ph slide-empty" data-slot="Collection photos coming soon">${CACTUS_SVG}</div>`; return; }
   const pad = (k) => String(k).padStart(2, "0");
   root.innerHTML = `
-    <div class="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Private collection photos">
+    <div class="stage-box"><div class="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Private collection photos">
       ${slides.map((c, i) => {
         const u = safeUrl(c.image), eager = i < 2;
         return `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img class="main" ${eager ? `src="${esc(variant(u, "web"))}"` : `data-src="${esc(variant(u, "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`;
       }).join("")}
       <button class="nav-btn prev" aria-label="Previous photo">‹</button>
       <button class="nav-btn next" aria-label="Next photo">›</button>
-    </div>
+    </div></div>
     <div class="s-thumbs">${slides.map((c, i) => `<button class="s-thumb${i === 0 ? " on" : ""}" data-slide="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(variant(safeUrl(c.image), "thumb"))}" alt="" loading="lazy"></button>`).join("")}</div>`;
   initSlider(root, slides.length, pad);
 }
@@ -493,7 +493,6 @@ $("#year").textContent = new Date().getFullYear();
 if ($("#contactEmail")) {
   $("#contactEmail").textContent = CONFIG.email;
   $("#contactEmail").href = "mailto:" + CONFIG.email;
-  $("#contactInsta").textContent = "@" + CONFIG.instagram;
   $("#contactInsta").href = CONFIG.instagramUrl;
   const ev = upcomingEvents();
   $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${esc(e.where)}</span>` : ""}<span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
