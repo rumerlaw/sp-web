@@ -32,3 +32,7 @@ Title/description, canonical, Open Graph/Twitter cards, Store + Product/Offer JS
 
 ## Plant pages
 Every row in `data/inventory.csv` automatically gets its own page at `plant.html?id=<sku>` (title, price, description, all photos, quantity + Add to bag, related plants, and Product structured data). Tapping a card on the shop opens a quick view with a "View full details" link; the same links are crawlable by search engines. After adding plants run `python3 scripts/build_sitemap.py https://yourdomain.com` and redeploy so Google finds the new pages.
+
+## Genus, stock and the new-arrivals list
+- Spreadsheet columns `genus` and `stock` (a number). Genus shows on the plant page and quick view. Stock shows as "12 available" or "only 2 left", customers can't add more than what's in stock, and stock `0` automatically becomes **Sold out** (3 or fewer shows **Low stock**).
+- The footer email box sends each signup to the Doctor as an email using the same form service as orders (or a separate one: set `signupEndpoint` in `app.js`). To email the whole list when new plants arrive, copy the signups into a mailing tool (Mailchimp, Buttondown, MailerLite, etc.), or point `signupEndpoint` at one of those services' form endpoints. Add the service's domain to `connect-src` in `index.html`, `plant.html`, `_headers` and `vercel.json`. Collecting emails means you should have a short privacy note and honor unsubscribe requests.

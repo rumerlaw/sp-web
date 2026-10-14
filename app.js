@@ -14,6 +14,9 @@ const CONFIG = {
   // Or use https://web3forms.com: endpoint "https://api.web3forms.com/submit" + paste its access key below.
   // Leave blank and the form falls back to opening an email draft.
   orderEndpoint: "",
+  // Optional: a separate Formspree/Web3Forms form just for the "new arrivals" email signups.
+  // If blank, signups go to the orderEndpoint above (or open an email draft).
+  signupEndpoint: "",
   web3formsKey: "",
 
   // Farmers markets shown in the reservation form and on the contact section. Edit freely.
@@ -93,9 +96,11 @@ async function loadInventory() {
     products = parseCSV(await res.text()).map((p, i) => ({
       id: p.sku || "item-" + i,
       name: p.name || "Unnamed plant",
+      genus: p.genus || "",
       category: p.category || "Uncategorized",
       price: parseFloat(String(p.price).replace(/[^0-9.]/g, "")) || 0,
       salePrice: parseFloat(String(p.sale_price || "").replace(/[^0-9.]/g, "")) || 0,
+      stock: p.stock === undefined || p.stock === "" ? null : Math.max(0, parseInt(p.stock, 10) || 0),
       status: p.status || "In Stock",
       size: p.size || "",
       description: p.description || "",
@@ -111,14 +116,21 @@ async function loadInventory() {
 }
 
 /* ---------- SHOP ---------- */
-const isOut = (p) => /sold/i.test(p.status);
+const isOut = (p) => /sold/i.test(p.status) || p.stock === 0;
 const isSale = (p) => /sale/i.test(p.status) && p.salePrice > 0 && p.salePrice < p.price;
 const now = (p) => (isSale(p) ? p.salePrice : p.price);
 const priceHtml = (p) => (isSale(p) ? `<s>${money(p.price)}</s> ${money(p.salePrice)}` : money(p.price));
 const banner = (p) => (isOut(p) ? ["out", "Sold out"] : isSale(p) ? ["sale", "Sale"] : isPre(p) ? ["pre", "Pre-order"] : isLow(p) ? ["low", "Low stock"] : null);
 const isPre = (p) => /pre/i.test(p.status);
-const statusText = (p) => (isOut(p) ? "Currently sold out" : isSale(p) ? "On sale" : isPre(p) ? "Available for pre-order" : isLow(p) ? "Low stock — only a few left" : "In stock");
-const isLow = (p) => /low/i.test(p.status);
+const isLow = (p) => /low/i.test(p.status) || (p.stock !== null && p.stock > 0 && p.stock <= 3);
+const maxQty = (p) => (p.stock === null ? 20 : Math.max(1, Math.min(20, p.stock)));
+const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : isLow(p) ? ` — only ${p.stock} left` : ` — ${p.stock} available`));
+function addToCart(id, qty) {
+  const p = products.find((x) => x.id === id); if (!p) return;
+  const row = cart.find((c) => c.id === id);
+  if (row) row.qty = Math.min(row.qty + qty, maxQty(p)); else cart.push({ id, qty: Math.min(qty, maxQty(p)) });
+  saveCart();
+}
 
 function renderCats() {
   const counts = {};
@@ -133,7 +145,7 @@ function renderProducts() {
   let list = products.filter((p) =>
     (state.cat === "All" || p.category === state.cat) &&
     (!state.avail || !isOut(p)) &&
-    (!state.q || (p.name + " " + p.category + " " + p.description).toLowerCase().includes(state.q))
+    (!state.q || (p.name + " " + p.genus + " " + p.category + " " + p.description).toLowerCase().includes(state.q))
   );
   const sorts = {
     name: (a, b) => a.name.localeCompare(b.name),
@@ -164,8 +176,9 @@ function openQuickView(id, opener) {
   $("#qvTitle").textContent = p.name;
   $("#qvPrice").innerHTML = priceHtml(p);
   $("#qvPage").href = pageUrl(p);
+  $("#qvGenus").textContent = p.genus ? `Genus ${p.genus}` : "";
   $("#qvDesc").textContent = p.description || "More details coming soon.";
-  $("#qvMeta").textContent = isOut(p) ? "Currently sold out" : isSale(p) ? "On sale" : isPre(p) ? "Available for pre-order" : isLow(p) ? "Low stock — only a few left" : "In stock";
+  $("#qvMeta").textContent = stockLine(p);
   const add = $("#qvAdd"); add.disabled = isOut(p); add.textContent = isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag";
   const pics = p.images;
   const show = (k) => {
@@ -319,18 +332,14 @@ document.addEventListener("click", (e) => {
   if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); $("#filters").classList.remove("on"); }
   else if (t.dataset.view && $("#qv")) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
   else if (t.id === "plantAdd" && plantCurrent) {
-    const qty = Math.max(1, Math.min(20, parseInt($("#plantQty").value, 10) || 1));
-    const row = cart.find((c) => c.id === plantCurrent.id);
-    row ? (row.qty += qty) : cart.push({ id: plantCurrent.id, qty });
-    saveCart(); toggleCart(true);
+    addToCart(plantCurrent.id, Math.max(1, Math.min(maxQty(plantCurrent), parseInt($("#plantQty").value, 10) || 1)));
+    toggleCart(true);
   }
-  else if (t.dataset.step && $("#plantQty")) { const q = $("#plantQty"); q.value = Math.max(1, Math.min(20, (parseInt(q.value, 10) || 1) + +t.dataset.step)); }
+  else if (t.dataset.step && $("#plantQty")) { const q = $("#plantQty"); q.value = Math.max(1, Math.min(plantCurrent ? maxQty(plantCurrent) : 20, (parseInt(q.value, 10) || 1) + +t.dataset.step)); }
   else if (t.dataset.qvpic !== undefined && qvProduct) qvProduct.show(+t.dataset.qvpic);
   else if (t.dataset.plantpic !== undefined && plantCurrent) plantCurrent.show(+t.dataset.plantpic);
   else if (t.id === "qvAdd" && qvProduct) {
-    const row = cart.find((c) => c.id === qvProduct.id);
-    row ? row.qty++ : cart.push({ id: qvProduct.id, qty: 1 });
-    saveCart();
+    addToCart(qvProduct.id, 1);
     const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = isPre(qvProduct) ? "Pre-order" : "Add to bag"; }, 1400);
     const bag = $("#cartOpen"); bag.classList.remove("pulse"); void bag.offsetWidth; bag.classList.add("pulse");
   }
@@ -339,7 +348,7 @@ document.addEventListener("click", (e) => {
     row ? row.qty++ : cart.push({ id: t.dataset.id, qty: 1 });
     saveCart(); toggleCart(true);
   }
-  else if (t.dataset.inc) { cart.find((c) => c.id === t.dataset.inc).qty++; saveCart(); }
+  else if (t.dataset.inc) addToCart(t.dataset.inc, 1);
   else if (t.dataset.dec) { const r = cart.find((c) => c.id === t.dataset.dec); if (--r.qty <= 0) cart = cart.filter((c) => c !== r); saveCart(); }
   else if (t.dataset.rm) { cart = cart.filter((c) => c.id !== t.dataset.rm); saveCart(); }
   else if (t.id === "cartOpen") toggleCart(true);
@@ -351,11 +360,38 @@ document.addEventListener("click", (e) => {
 });
 const on = (sel, ev, fn) => { const el = $(sel); if (el) el.addEventListener(ev, fn); };
 on("#orderForm", "submit", submitOrder);
+on("#signupForm", "submit", submitSignup);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") { if ($("#qv") && $("#qv").classList.contains("on")) closeQuickView(); else toggleCart(false); } });
 on("#scrim", "click", () => toggleCart(false));
 on("#search", "input", (e) => { state.q = e.target.value.toLowerCase().trim(); renderProducts(); });
 on("#onlyAvail", "change", (e) => { state.avail = e.target.checked; renderProducts(); });
 on("#sort", "change", (e) => { state.sort = e.target.value; renderProducts(); });
+
+/* ---------- NEW-ARRIVALS SIGNUP ---------- */
+async function submitSignup(e) {
+  e.preventDefault();
+  const form = e.target, msg = $("#signupMsg"), btn = form.querySelector("button");
+  const say = (t, bad) => { msg.textContent = t; msg.className = "form-msg" + (bad ? " bad" : " ok"); };
+  const f = new FormData(form);
+  if (f.get("website")) return;
+  const email = String(f.get("email") || "").trim().slice(0, 120);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return say("Please enter a valid email address.", true);
+  let last = 0; try { last = +localStorage.getItem("sp-signup") || 0; } catch (err) {}
+  if (Date.now() - last < 30000) return say("Please wait a moment before trying again.", true);
+  const endpoint = CONFIG.signupEndpoint || CONFIG.orderEndpoint;
+  if (!endpoint) { location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Add me to the new plants list")}&body=${encodeURIComponent("Please email me when new plants are added.\n\n" + email)}`; return; }
+  btn.disabled = true; say("Sending…");
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ access_key: CONFIG.web3formsKey || undefined, subject: "New arrivals signup: " + email, from_name: "Spina & Spiritus website", email, type: "new-arrivals-signup", message: "Please add " + email + " to the new arrivals list." }),
+    });
+    if (!res.ok) throw new Error(res.status);
+    try { localStorage.setItem("sp-signup", String(Date.now())); } catch (err) {}
+    form.reset(); say("You're on the list. We'll email you when new plants arrive.");
+  } catch (err) { say("Couldn't sign you up just now. Please try again.", true); }
+  btn.disabled = false;
+}
 
 /* ---------- PLANT PAGE ---------- */
 let plantCurrent = null;
@@ -390,18 +426,20 @@ function renderPlantPage() {
       <div class="plant-info">
         <p class="eyebrow">${esc(p.category)}${p.size ? " · " + esc(p.size) : ""}</p>
         <h1 class="plant-title">${esc(p.name)}</h1>
+        ${p.genus ? `<p class="genus">Genus <i>${esc(p.genus)}</i></p>` : ""}
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
         <p class="plant-price">${priceHtml(p)}</p>
         <p class="plant-desc">${esc(p.description || "More details coming soon.")}</p>
         <dl class="specs">
-          <div><dt>Availability</dt><dd>${esc(statusText(p))}</dd></div>
+          <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
+          ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
           <div><dt>Category</dt><dd>${esc(p.category)}</dd></div>
           <div><dt>Item no.</dt><dd>${esc(p.id)}</dd></div>
           <div><dt>Pickup</dt><dd>Farmers market only — no shipping</dd></div>
         </dl>
         <div class="buy">
-          <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity"><button type="button" data-step="1" aria-label="More">+</button></div>
+          <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
           <button class="btn" id="plantAdd" ${isOut(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : isPre(p) ? "Pre-order" : "Add to bag"}</button>
         </div>
         <p class="fine">Reserve now, then pay and collect in person at the farmers market.</p>
@@ -419,6 +457,7 @@ function renderPlantPage() {
   ld.type = "application/ld+json";
   ld.textContent = JSON.stringify({
     "@context": "https://schema.org", "@type": "Product", name: p.name, sku: p.id, category: p.category, description: desc,
+    ...(p.genus ? { additionalProperty: [{ "@type": "PropertyValue", name: "Genus", value: p.genus }] } : {}),
     ...(pics[0] ? { image: pics.map((u) => new URL(u, location.href).href) } : {}),
     brand: { "@type": "Brand", name: "Spina & Spiritus" },
     offers: { "@type": "Offer", url, price: now(p), priceCurrency: "USD", itemCondition: "https://schema.org/NewCondition", availableDeliveryMethod: "https://schema.org/OnSitePickup",
