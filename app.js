@@ -465,7 +465,7 @@ function renderPlantPage() {
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
-          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}${esc(e.when)}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
+          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
@@ -502,7 +502,7 @@ if ($("#contactEmail")) {
   $("#contactEmail").href = "mailto:" + CONFIG.email;
   $("#contactInsta").href = CONFIG.instagramUrl;
   const ev = upcomingEvents();
-  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
   const mapEv = ev.find((e) => e.where);
   if (mapEv && $("#eventMap")) $("#eventMap").innerHTML = `<iframe title="Map to ${esc(mapEv.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(mapEv.where)}&output=embed"></iframe>`;
 }

@@ -613,3 +613,6 @@ body.lock{overflow:hidden}
 .event-map iframe{display:block;width:100%;height:340px;border:0}
 .event-map:empty{display:none}
 @media(max-width:640px){.event-map iframe{height:260px}}
+
+.events .when,.specs dd .when{display:block;font-size:1.45rem;font-weight:600;color:var(--ink);margin-top:4px;font-family:var(--serif)}
+.specs dd .when{display:inline-block;font-size:1.3rem}
