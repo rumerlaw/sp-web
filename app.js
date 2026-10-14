@@ -305,7 +305,7 @@ function renderCollection() {
     <div class="stage" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Private collection photos">
       ${slides.map((c, i) => {
         const u = safeUrl(c.image), eager = i < 2;
-        return `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img class="amb" src="${esc(variant(u, "thumb"))}" alt=""><img class="main" ${eager ? `src="${esc(variant(u, "web"))}"` : `data-src="${esc(variant(u, "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`;
+        return `<figure class="slide${i === 0 ? " on" : ""}" aria-hidden="${i !== 0}"><img class="main" ${eager ? `src="${esc(variant(u, "web"))}"` : `data-src="${esc(variant(u, "web"))}"`} alt="${esc(c.alt || "Plant from the private collection")}" decoding="async"></figure>`;
       }).join("")}
       <button class="nav-btn prev" aria-label="Previous photo">‹</button>
       <button class="nav-btn next" aria-label="Next photo">›</button>

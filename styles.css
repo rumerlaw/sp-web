@@ -544,3 +544,7 @@ body.lock{overflow:hidden}
 .handle a:hover{color:var(--gold)}
 .about-cta{margin-top:2.4rem;display:flex;gap:12px;flex-wrap:wrap}
 @media(max-width:900px){.aboutpage{padding-top:104px}}
+
+/* slideshow: no blurred backdrop, solid sides */
+.slide .amb{display:none}
+.stage{background:#0e1710}
