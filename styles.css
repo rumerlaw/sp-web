@@ -482,3 +482,13 @@ body.lock{overflow:hidden}
 /* slideshow: photos only — no frame, counter, or controls bar */
 .stage{border:0;box-shadow:0 40px 80px -40px rgba(0,0,0,.7)}
 .frame,.counter,.play-btn,.progress{display:none}
+
+/* events list */
+.events{list-style:none;margin:2.2rem auto 0;max-width:560px;border-top:1px solid var(--line)}
+.events li{display:flex;flex-direction:column;gap:2px;padding:16px 8px;border-bottom:1px solid var(--line)}
+.events b{font-family:var(--serif);font-size:1.4rem;font-weight:600}
+.events span{color:var(--muted);font-weight:500}
+.contact-q{margin-top:2.4rem}
+.contact-lines{margin-top:1rem}
+.cart-foot select{padding-right:8px}
+.contact-q{margin-top:2.6rem!important}.events{margin-bottom:0}

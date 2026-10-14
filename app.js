@@ -19,11 +19,13 @@ const CONFIG = {
   signupEndpoint: "",
   web3formsKey: "",
 
-  // Farmers markets shown in the reservation form and on the contact section. Edit freely.
-  markets: [
-    "Market name / city — day & time (placeholder)",
-    "Second market — day & time (placeholder)",
+  // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
+  // `date` (YYYY-MM-DD) is optional: once that day has passed the event disappears automatically.
+  events: [
+    { name: "Market name, city (placeholder)", when: "Saturdays, 8am–12pm (placeholder)", date: "" },
+    { name: "Second event (placeholder)", when: "Sunday, 9am–2pm (placeholder)", date: "" },
   ],
+
 
   email: "email@placeholder.com",
   instagram: "azcactusdoctor",
@@ -54,6 +56,8 @@ const CONFIG = {
 };
 
 /* ============================================================ */
+const upcomingEvents = () => { const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
+const eventLabel = (ev) => `${ev.name} — ${ev.when}`;
 const $ = (s) => document.querySelector(s);
 const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -184,7 +188,7 @@ function openQuickView(id, opener) {
   $("#qvGenus").textContent = p.genus ? `Genus ${p.genus}` : "";
   $("#qvDesc").textContent = p.description || "More details coming soon.";
   $("#qvMeta").textContent = stockLine(p);
-  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Add to bag";
+  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Reserve this plant";
   const pics = p.images;
   const show = (k) => {
     $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
@@ -236,6 +240,7 @@ async function submitOrder(e) {
   const name = String(f.get("name") || "").trim().slice(0, 80);
   const contact = String(f.get("contact") || "").trim().slice(0, 120);
   const market = String(f.get("market") || "");
+  if (!market) return say("Please choose which event you'll pick up at.", true);
   const notes = String(f.get("notes") || "").trim().slice(0, 500);
   if (!name || !contact) return say("Please add your name and a phone or email.", true);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) && contact.replace(/\D/g, "").length < 7) return say("That doesn't look like a phone number or email.", true);
@@ -244,7 +249,7 @@ async function submitOrder(e) {
 
   const total = money(items.reduce((t, c) => t + now(c.p) * c.qty, 0));
   const lines = items.map((c) => `${c.qty} x ${c.p.name} (${c.p.id}) - ${money(now(c.p) * c.qty)}`).join("\n");
-  const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nMarket: ${market}\n\n${lines}\n\nTotal: ${total} (pay at pickup)\n\nNotes: ${notes || "-"}`;
+  const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nPICKUP EVENT: ${market}\n\nPlease bring these to the event:\n${lines}\n\nTotal: ${total} (pay in person at pickup)\n\nNotes: ${notes || "-"}`;
 
   if (!CONFIG.orderEndpoint) {                        // fallback until an endpoint is configured
     location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Plant reservation: " + name)}&body=${encodeURIComponent(summary)}`;
@@ -266,7 +271,7 @@ async function submitOrder(e) {
     if (!res.ok) throw new Error(res.status);
     try { localStorage.setItem("sp-last", String(Date.now())); } catch (err) {}
     cart = []; saveCart(); form.reset();
-    say("Reserved! We'll message you to confirm. See you at the market.");
+    say(`Reserved! We'll bring your plants to ${market.split(" — ")[0]} and message you to confirm.`);
   } catch (err) {
     say("Couldn't send that. Please try again or email us directly.", true);
   }
@@ -333,7 +338,7 @@ document.addEventListener("click", (e) => {
   else if (t.dataset.plantpic !== undefined && plantCurrent) plantCurrent.show(+t.dataset.plantpic);
   else if (t.id === "qvAdd" && qvProduct) {
     addToCart(qvProduct.id, 1);
-    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = isPre(qvProduct) ? "Pre-order" : "Add to bag"; }, 1400);
+    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = isPre(qvProduct) ? "Pre-order" : "Reserve this plant"; }, 1400);
     const bag = $("#cartOpen"); bag.classList.remove("pulse"); void bag.offsetWidth; bag.classList.add("pulse");
   }
   else if (t.classList.contains("add")) {
@@ -400,7 +405,7 @@ function renderPlantPage() {
   }
   plantCurrent = p;
   const url = `https://azcactusdoctor.com/plant.html?id=${encodeURIComponent(p.id)}`;
-  const desc = (p.description && !/^placeholder/i.test(p.description) ? p.description : `${p.name} — ${p.category}. Reserve online and pick up at the farmers market in Arizona.`).slice(0, 300);
+  const desc = (p.description && !/^placeholder/i.test(p.description) ? p.description : `${p.name} — ${p.category}. Reserve online and we'll bring it to your next Arizona farmers market.`).slice(0, 300);
   document.title = `${p.name} · Spina & Spiritus`;
   setMeta('meta[name="description"]', "content", desc);
   setMeta('link[rel="canonical"]', "href", url);
@@ -429,13 +434,13 @@ function renderPlantPage() {
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
           <div><dt>Category</dt><dd>${esc(p.category)}</dd></div>
           <div><dt>Item no.</dt><dd>${esc(p.id)}</dd></div>
-          <div><dt>Pickup</dt><dd>Farmers market only — no shipping</dd></div>
+          <div><dt>Pickup</dt><dd>At our events only — no shipping</dd></div>
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
-          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Add to bag"}</button>
+          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : isPre(p) ? "Pre-order" : "Reserve this plant"}</button>
         </div>
-        <p class="fine">Reserve now, then pay and collect in person at the farmers market.</p>
+        <p class="fine">Not every plant comes to every event. Reserve it, pick the event you'll attend, and we'll bring it. Pay in person at pickup.</p>
       </div>
     </div>
     ${related.length ? `<section class="related"><h2>You may also like</h2><div class="product-grid">${related.map(cardHtml).join("")}</div></section>` : ""}
@@ -466,9 +471,10 @@ if ($("#contactEmail")) {
   $("#contactEmail").href = "mailto:" + CONFIG.email;
   $("#contactInsta").textContent = "@" + CONFIG.instagram;
   $("#contactInsta").href = CONFIG.instagramUrl;
-  $("#marketList").innerHTML = CONFIG.markets.map(esc).join("<br>");
+  const ev = upcomingEvents();
+  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b><span>${esc(e.when)}</span></li>`).join("") : `<li><span>New dates coming soon.</span></li>`;
 }
-$("#marketSelect").innerHTML = CONFIG.markets.map((m) => `<option>${esc(m)}</option>`).join("");
+$("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
 if ($("#collectionGrid")) renderCollection();
 renderCart();
 function addProductSchema() {

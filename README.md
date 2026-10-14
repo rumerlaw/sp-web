@@ -13,7 +13,7 @@ Static site, no build step. Open via any web server (`python3 -m http.server`) o
 Customers pick plants, enter name/contact/market, and submit. To get each reservation emailed to the Doctor:
 1. Create a free form at formspree.io (notifications go to his email) **or** web3forms.com.
 2. Paste the endpoint into `orderEndpoint` in `app.js` (and the access key into `web3formsKey` for Web3Forms).
-3. Edit `markets` in `app.js` with the real market names/times.
+3. Edit `events` in `app.js` with your real events (name, time, and optionally a `date` like `2026-11-08` so it disappears after that day).
 Until an endpoint is set, the form opens a pre-filled email draft instead. Reservations are held, and payment happens in person.
 
 ## Stripping metadata from photos/videos
@@ -38,3 +38,6 @@ Every row in `data/inventory.csv` automatically gets its own page at `plant.html
 - The footer email box sends each signup to the Doctor as an email using the same form service as orders (or a separate one: set `signupEndpoint` in `app.js`). To email the whole list when new plants arrive, copy the signups into a mailing tool (Mailchimp, Buttondown, MailerLite, etc.), or point `signupEndpoint` at one of those services' form endpoints. Add the service's domain to `connect-src` in `index.html`, `plant.html`, `_headers` and `vercel.json`. Collecting emails means you should have a short privacy note and honor unsubscribe requests.
 
 **Genus is automatic:** if the `genus` column is blank, the site takes it from the first word of a Latin name (e.g. "Echeveria 'Perle'" → Echeveria, "Opuntia microdasys" → Opuntia). For one-word or common names (like "Althea") fill the `genus` column yourself.
+
+## Reserve-and-bring flow
+You don't bring every plant to every event, so the whole site is framed as "reserve it and we'll bring it": customers browse your full inventory, reserve, and pick the event they'll attend. Each email you get says "PICKUP EVENT: ..." and "Please bring these to the event" with the plant list, so you can pack from it. Reserving does not change your stock count, so update the `stock` column in the spreadsheet as you confirm reservations.

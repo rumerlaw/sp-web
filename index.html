@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Spina &amp; Spiritus">
 <meta property="og:title" content="Spina &amp; Spiritus · AZ Cactus Doctor">
-<meta property="og:description" content="Rare and curated desert plants grown in Arizona. Reserve online, pick up at the farmers market.">
+<meta property="og:description" content="Rare and curated desert plants grown in Arizona. Reserve online, we bring it to the next Arizona market.">
 <meta property="og:url" content="https://azcactusdoctor.com/">
 <meta property="og:image" content="https://azcactusdoctor.com/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -45,7 +45,7 @@
     <a class="nl" href="index.html#contact">Contact</a>
   </nav>
   <div class="nav-right">
-    <button class="bag-btn" id="cartOpen" aria-label="Open your bag">
+    <button class="bag-btn" id="cartOpen" aria-label="Open your reservation">
       <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
       <span class="bag-count" id="cartCount">0</span>
     </button>
@@ -112,7 +112,7 @@
     <div class="section-head center">
       <p class="eyebrow">Available now</p>
       <h2>The Shop</h2>
-      <p class="sub">Pick your plants, reserve them online, and collect in person at the farmers market. No shipping.</p>
+      <p class="sub">We can't bring every plant to every event. Browse everything we have, reserve what you want, choose your event, and we'll bring it. Pay in person, no shipping.</p>
     </div>
 
     <div class="shop-layout">
@@ -148,10 +148,11 @@
 <!-- CONTACT -->
 <section class="section contact" id="contact">
   <div class="wrap narrow center">
-    <p class="eyebrow">Get in touch</p>
-    <h2>Visit, ask, or inquire</h2>
-    <p class="sub">Questions about a plant or where to find us next? Reach out. Pickup at Arizona farmers markets only.</p>
-    <p class="markets" id="marketList"></p>
+    <p class="eyebrow">Find us</p>
+    <h2>Upcoming events</h2>
+    <p class="sub">Reserve your plants online and we'll have them waiting at the event you choose.</p>
+    <ul class="events" id="marketList"></ul>
+    <p class="sub contact-q">Questions about a plant or an event? Reach out.</p>
     <p class="contact-lines">
       <a id="contactEmail" href="#">email@placeholder.com</a><br>
       <a id="contactInsta" href="#">@azcactusdoctor</a>
@@ -195,9 +196,9 @@
       <p class="qv-price" id="qvPrice"></p>
       <p class="qv-desc" id="qvDesc"></p>
       <p class="qv-meta" id="qvMeta"></p>
-      <button class="btn full" id="qvAdd">Add to bag</button>
+      <button class="btn full" id="qvAdd">Reserve this plant</button>
       <a class="qv-link" id="qvPage" href="#">View full details →</a>
-      <p class="fine">Reserve now, pay and collect in person at the farmers market. No shipping.</p>
+      <p class="fine">Reserve it, pick your event, and we'll bring it. Pay in person, no shipping.</p>
     </div>
   </div>
 </div>
@@ -206,7 +207,7 @@
 <div class="scrim" id="scrim"></div>
 <aside class="cart" id="cart" aria-hidden="true">
   <div class="cart-head">
-    <h3>Your Bag</h3>
+    <h3>Your Reservation</h3>
     <button id="cartClose" aria-label="Close cart">×</button>
   </div>
   <div class="cart-items" id="cartItems"></div>
@@ -214,12 +215,12 @@
     <div class="cart-total"><span>Total (pay at pickup)</span><strong id="cartTotal">$0</strong></div>
     <label>Name<input name="name" required maxlength="80" autocomplete="name"></label>
     <label>Phone or email<input name="contact" required maxlength="120" autocomplete="email"></label>
-    <label>Which market?<select name="market" id="marketSelect" required></select></label>
+    <label>Which event will you pick up at?<select name="market" id="marketSelect" required></select></label>
     <label>Notes <small>(optional)</small><textarea name="notes" rows="2" maxlength="500"></textarea></label>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-    <button type="submit" class="btn full" id="checkout">Reserve for pickup</button>
-    <p class="fine">Pickup only at the farmers market, no shipping. We'll hold your plants and confirm by message. Payment is made in person. We only use your details to arrange your pickup.</p>
+    <button type="submit" class="btn full" id="checkout">Send my reservation</button>
+    <p class="fine">Pickup only, no shipping. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm, then you pay in person. We only use your details to arrange your pickup.</p>
   </form>
 </aside>
 
