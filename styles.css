@@ -573,3 +573,23 @@ body.lock{overflow:hidden}
 .stage-box{height:min(72vh,680px,calc(100vw - 48px));display:flex;align-items:center;justify-content:center}
 @media(max-width:640px){.stage-box{height:calc(100vw * 1.0)}}
 .stage-box .stage{flex:0 0 auto;max-height:100%}
+
+/* FAQ accordion */
+.faq{background:var(--bg-alt)}
+.faqpage{padding:140px 0 100px}
+.faqpage h1{font-size:clamp(2.4rem,5vw,3.6rem);text-align:center;margin-bottom:2.4rem}
+.faq-list{border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-item summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 4px;font-family:var(--serif);font-size:1.5rem;font-weight:600;line-height:1.25}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:hover{color:var(--sage-deep)}
+.plus{position:relative;flex:0 0 22px;height:22px}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:2px;background:var(--gold);transform:translate(-50%,-50%);transition:transform .3s}
+.plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.faq-item[open] .plus::after{transform:translate(-50%,-50%) rotate(0)}
+.faq-a{padding:0 4px 24px;animation:faqin .35s ease}
+.faq-a p{font-size:1.1rem;line-height:1.75;color:#34322c;max-width:62ch}
+.faq-a a{color:var(--sage-deep);border-bottom:1px solid var(--gold)}
+@keyframes faqin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.faq-more{margin-top:2.4rem}
+@media(max-width:900px){.faqpage{padding-top:104px}.faq-item summary{font-size:1.3rem}}

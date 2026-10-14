@@ -41,3 +41,6 @@ Every row in `data/inventory.csv` automatically gets its own page at `plant.html
 
 ## Reserve-and-bring flow
 You don't bring every plant to every event, so the whole site is framed as "reserve it and we'll bring it": customers browse your full inventory, reserve, and pick the event they'll attend. Each email you get says "PICKUP EVENT: ..." and "Please bring these to the event" with the plant list, so you can pack from it. Reserving does not change your stock count, so update the `stock` column in the spreadsheet as you confirm reservations.
+
+## FAQ
+Edit the questions in `scripts/build_faq.py`, then run `python3 scripts/build_faq.py`. It rebuilds the home-page FAQ section (first 5 questions) and `faq.html` (all of them, with search-engine FAQ data).
