@@ -2,6 +2,7 @@
 """Build data/inventory.csv from the Dropbox Excel sheet (only the public columns).
 
 Reads: name, genus/type, sell price, in stock  (header text is matched loosely, see ALIASES).
+Descriptions: extras.csv text first, else the genus text in data/genus_descriptions.csv, else (if ANTHROPIC_API_KEY is set) a one-sentence AI description cached in data/descriptions_cache.json.
 Merges data/extras.csv (matched by plant name) for things the sheet doesn't have:
 sku, genus (only used when the sheet's Genus/Type is blank), category, size, description, image (photos separated by |), status, sale_price.
 Anything else in the spreadsheet (costs, notes, customers...) is never read or published.
@@ -18,7 +19,8 @@ from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 from openpyxl import load_workbook
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT, EXTRAS = ROOT / "data/inventory.csv", ROOT / "data/extras.csv"
+OUT, EXTRAS, PHOTOS = ROOT / "data/inventory.csv", ROOT / "data/extras.csv", ROOT / "data/photos.csv"
+GENUS_DESC, DESC_CACHE = ROOT / "data/genus_descriptions.csv", ROOT / "data/descriptions_cache.json"
 ALIASES = {
     "name": ["name", "plant", "plant name", "item"],
     "genus": ["genus/type", "genus / type", "genus", "type"],
@@ -68,6 +70,50 @@ def stock_val(v):
     n = num(s)
     return "" if n is None else str(max(0, int(n)))
 
+def load_photos():
+    """{normalized filename: image path} from data/photos.csv (written by sync_photos.py)."""
+    out = {}
+    if PHOTOS.exists():
+        with open(PHOTOS, newline="", encoding="utf-8") as f:
+            for r in csv.DictReader(f): out[r["key"]] = r["image"]
+    return out
+
+def photos_for(name, photos, claimed):
+    """Photos named '<plant>.jpg', '<plant> 2.jpg', ... in order."""
+    k = re.sub(r"[^a-z0-9]", "", name.lower()); found = []
+    for fk, path in photos.items():
+        if fk == k: found.append((1, path, fk))
+        else:
+            m = re.fullmatch(re.escape(k) + r"(\d{1,2})", fk)
+            if m: found.append((int(m.group(1)), path, fk))
+    found.sort()
+    for _, _, fk in found: claimed.add(fk)
+    return "|".join(p for _, p, _ in found)
+
+def load_genus_desc():
+    out = {}
+    if GENUS_DESC.exists():
+        with open(GENUS_DESC, newline="", encoding="utf-8") as f:
+            for r in csv.DictReader(f): out[key(r["genus"])] = r["description"].strip()
+    return out
+
+def ai_description(name, genus, cache):
+    """Optional: one-sentence description from the Claude API (needs ANTHROPIC_API_KEY). Cached so each plant is only written once."""
+    ck = key(name) + "|" + key(genus)
+    if ck in cache: return cache[ck]
+    api = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not api: return ""
+    import json
+    body = json.dumps({"model": os.environ.get("DESC_MODEL", "claude-haiku-5-5"), "max_tokens": 120, "messages": [{"role": "user", "content":
+        f"Write ONE short factual sentence (max 25 words) describing this cactus/succulent for a plant shop: '{name}'" + (f" (genus {genus})" if genus else "") +
+        ". Describe only the plant itself, no care advice, no price, no marketing. If you are unsure of the specific plant, describe its genus or general type. Output only the sentence."}]}).encode()
+    req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body, headers={"x-api-key": api, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r: text = json.loads(r.read())["content"][0]["text"].strip()
+    except Exception as e:
+        print("description API skipped for", name, type(e).__name__); return ""
+    text = clean(text)[:240]; cache[ck] = text; return text
+
 def main():
     args = sys.argv[1:]
     dry = "--dry" in args
@@ -82,6 +128,11 @@ def main():
     if EXTRAS.exists():
         with open(EXTRAS, newline="", encoding="utf-8") as f:
             for r in csv.DictReader(f): extras[key(r.get("name"))] = r
+    photos, claimed = load_photos(), set()
+    gdesc = load_genus_desc()
+    import json
+    cache = json.loads(DESC_CACHE.read_text()) if DESC_CACHE.exists() else {}
+    ai_n = 0
     out, used = [], set()
     for row in rows:
         if not row or idx["name"] >= len(row): continue
@@ -98,10 +149,13 @@ def main():
         out.append({"sku": sku, "name": name, "genus": genus, "category": ex.get("category") or genus or "Plants",
                     "price": ("%g" % price) if price else "", "sale_price": ex.get("sale_price", ""),
                     "status": ex.get("status") or "In Stock", "stock": stock_val(g("stock")),
-                    "size": ex.get("size", ""), "description": ex.get("description", ""), "image": ex.get("image", "")})
+                    "size": ex.get("size", ""), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": photos_for(name, photos, claimed) or ex.get("image", "")})
         if len(out) >= MAX_ROWS: break
     if not out: sys.exit("No plants found; leaving inventory.csv unchanged")
     print(f"sheet '{title}': {len(out)} plants, total stock {sum(int(r['stock'] or 0) for r in out)} ({sum(1 for r in out if r['image'])} with photos, {sum(1 for r in out if not r['price'])} without a price)")
+    loose = sorted(set(photos) - claimed)
+    if loose: print("photos that match no plant name:", ", ".join(loose[:15]))
+    if cache and not dry: DESC_CACHE.write_text(json.dumps(cache, indent=0, sort_keys=True, ensure_ascii=False))
     if dry: return
     buf = io.StringIO(); w = csv.DictWriter(buf, fieldnames=COLS, lineterminator="\n"); w.writeheader(); w.writerows(out)
     new = buf.getvalue()

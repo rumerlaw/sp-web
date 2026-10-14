@@ -465,7 +465,6 @@ function renderPlantPage() {
       </div>
       <div class="plant-info">
         <h1 class="plant-title">${esc(p.name)}</h1>
-        ${p.genus ? `<p class="genus">Genus <i>${esc(p.genus)}</i></p>` : ""}
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
         <p class="plant-price">${priceHtml(p)}</p>
         <p class="plant-desc">${esc(p.description || "More details coming soon.")}</p>

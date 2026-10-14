@@ -51,3 +51,7 @@ Edit the questions in `scripts/build_faq.py`, then run `python3 scripts/build_fa
 - Stock: a number, or "No"/0 for sold out. Blank price shows "Ask for price".
 - Setup (once): GitHub repo → Settings → Secrets and variables → Actions → add secret `DROPBOX_INVENTORY_URL` (the Dropbox share link), and optional variables `SITE_URL` (e.g. https://yourdomain.com) and `SHEET_NAME`. Connect the repo to Cloudflare Pages so every commit redeploys the site. Scheduled workflows only run on the repo's default branch.
 - Test locally: `python3 scripts/sync_inventory.py --file copy-of-sheet.xlsx --dry`
+
+## Photos and descriptions from Dropbox (automatic)
+- **Photos:** put them in a Dropbox folder (share link stored as GitHub secret `DROPBOX_PHOTOS_URL`). Name each file after the plant as it's written in the spreadsheet: `Opuntia microdasys.jpg`, extra photos `Opuntia microdasys 2.jpg`, `... 3.jpg`. `scripts/sync_photos.py` strips all hidden data (GPS, camera), fixes rotation, makes fast web versions and attaches them to the matching plant. Photos that match no plant are listed in the job log. Plants listed twice in the sheet share the same photos.
+- **Descriptions:** a plant gets (1) the text in `data/extras.csv` if you wrote one, else (2) the genus text in `data/genus_descriptions.csv` (add genera there any time), else (3) optionally a one-sentence AI description if you add a secret `ANTHROPIC_API_KEY` (cached in `data/descriptions_cache.json`, so each plant is only written once; only the plant name and genus are sent).
