@@ -82,16 +82,15 @@ def main():
     if EXTRAS.exists():
         with open(EXTRAS, newline="", encoding="utf-8") as f:
             for r in csv.DictReader(f): extras[key(r.get("name"))] = r
-    out, used, seen = [], set(), set()
+    out, used = [], set()
     for row in rows:
         if not row or idx["name"] >= len(row): continue
         name = clean(row[idx["name"]])
-        if not name or key(name) in seen: continue
-        seen.add(key(name))
+        if not name or re.fullmatch(r"(grand )?totals?:?", key(name)): continue   # skip blanks and the sheet's Total row
         g = lambda f: row[idx[f]] if f in idx and idx[f] < len(row) else None
         price = num(g("price")); genus = clean(g("genus"))
         ex = extras.get(key(name), {})
-        sku = ex.get("sku") or slug(name)
+        sku = ex.get("sku") if (ex.get("sku") and ex.get("sku") not in used) else slug(name)
         n = 2
         while sku in used: sku = f"{slug(name)}-{n}"; n += 1
         used.add(sku)
@@ -101,7 +100,7 @@ def main():
                     "size": ex.get("size", ""), "description": ex.get("description", ""), "image": ex.get("image", "")})
         if len(out) >= MAX_ROWS: break
     if not out: sys.exit("No plants found; leaving inventory.csv unchanged")
-    print(f"sheet '{title}': {len(out)} plants ({sum(1 for r in out if r['image'])} with photos, {sum(1 for r in out if not r['price'])} without a price)")
+    print(f"sheet '{title}': {len(out)} plants, total stock {sum(int(r['stock'] or 0) for r in out)} ({sum(1 for r in out if r['image'])} with photos, {sum(1 for r in out if not r['price'])} without a price)")
     if dry: return
     buf = io.StringIO(); w = csv.DictWriter(buf, fieldnames=COLS, lineterminator="\n"); w.writeheader(); w.writerows(out)
     new = buf.getvalue()
