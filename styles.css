@@ -701,3 +701,7 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .pf-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 
 .about-more{margin-top:1.2rem}.about-more a{font-weight:700;border-bottom:1px solid var(--gold);padding-bottom:2px;font-size:1.05rem}.about-more a:hover{color:var(--gold)}
+
+/* header wordmark image */
+.nav .brand-mark{height:46px;width:auto;display:block}
+@media(max-width:520px){.nav .brand-mark{height:38px}}
