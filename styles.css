@@ -651,3 +651,11 @@ html{transition:opacity .5s ease}
 .signup-promise{display:flex;flex-direction:column;gap:4px;font-size:1.1rem;font-weight:600;color:#3b392f;line-height:1.5;margin:0 auto 26px}
 .signup-promise span:nth-child(2){color:var(--sage-deep)}
 @media(min-width:760px){.signup-sub{max-width:36ch}}
+
+/* About text: larger, darker, easier to read (no drop cap) */
+.about p,.aboutpage p{font-size:1.25rem;font-weight:500;line-height:1.75;color:var(--ink);margin-bottom:1.3rem;max-width:56ch}
+.dropcap::first-letter{float:none;font-size:inherit;line-height:inherit;padding:0;color:inherit;font-family:inherit}
+.facts{gap:44px}
+.facts strong{font-size:3rem;font-weight:700;color:var(--sage-deep)}
+.facts span{font-size:.9rem;font-weight:700;letter-spacing:.14em;color:var(--ink)}
+@media(max-width:520px){.about p,.aboutpage p{font-size:1.15rem}.facts{gap:22px}.facts strong{font-size:2.4rem}.facts span{font-size:.78rem}}
