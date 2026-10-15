@@ -12,7 +12,26 @@
   "signupHeading": "Be the first to know",
   "signupText": "Join the list and we'll email you once a week, every time we update the inventory.",
   "signupP1": "Never spam.",
-  "signupP2": "Unsubscribe anytime."
+  "signupP2": "Unsubscribe anytime.",
+  "navAbout": "About",
+  "navCollection": "Collection",
+  "navShop": "Shop",
+  "navContact": "Contact",
+  "navFaq": "FAQ",
+  "checkoutLabel": "Checkout",
+  "notifyBtn": "Notify me",
+  "heroBtn1": "Shop the plants",
+  "heroBtn2": "Meet the Doctor",
+  "faqMore": "See all questions",
+  "filtCatalog": "Catalog",
+  "filtAvail": "Availability",
+  "filtSort": "Sort",
+  "addToCart": "Add to cart",
+  "backToShop": "← Back to shop",
+  "relatedHeading": "You may also like",
+  "aboutMore": "More about me →",
+  "aboutBtn1": "Shop the plants",
+  "aboutBtn2": "Find us at the market"
  },
  "images": {
   "aboutPortrait": ""
@@ -166,5 +185,18 @@
    "alt": "Row of cacti in handmade pots including a turquoise planter"
   }
  ],
- "plants": {}
+ "plants": {},
+ "links": {},
+ "align": {},
+ "size": {},
+ "hidden": {},
+ "blocks": [],
+ "layout": [
+  "hero",
+  "about",
+  "collection",
+  "shop",
+  "events",
+  "faq"
+ ]
 }

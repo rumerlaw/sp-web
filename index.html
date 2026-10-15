@@ -35,28 +35,28 @@
 <header class="nav" id="top" role="banner">
   <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span></button>
   <nav class="nav-center" aria-label="Main">
-    <a class="nl" href="#about">About</a>
-    <a class="nl" href="index.html#collection">Collection</a>
+    <a class="nl" href="about.html" data-path="text.navAbout" data-href-path="links.navAbout">About</a>
+    <a class="nl" href="index.html#collection" data-path="text.navCollection" data-href-path="links.navCollection">Collection</a>
     <a href="index.html#top" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
       <span class="brand-text"><span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
 </span>
     </a>
-    <a class="nl" href="index.html#shop">Shop</a>
-    <a class="nl" href="index.html#contact">Contact</a>
-    <a class="nl" href="faq.html">FAQ</a>
+    <a class="nl" href="index.html#shop" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
+    <a class="nl" href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
+    <a class="nl" href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
   <div class="nav-right">
     <button class="bag-btn" id="cartOpen" aria-label="Open checkout">
       <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
-      <span class="bag-label">Checkout</span><span class="bag-count" id="cartCount">0</span>
+      <span class="bag-label" data-path="text.checkoutLabel">Checkout</span><span class="bag-count" id="cartCount">0</span>
     </button>
   </div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    <a href="#about">About</a>
-    <a href="index.html#collection">Collection</a>
-    <a href="index.html#shop">Shop</a>
-    <a href="index.html#contact">Contact</a>
-    <a href="faq.html">FAQ</a>
+    <a href="about.html" data-path="text.navAbout" data-href-path="links.navAbout">About</a>
+    <a href="index.html#collection" data-path="text.navCollection" data-href-path="links.navCollection">Collection</a>
+    <a href="index.html#shop" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
+    <a href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
+    <a href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
 </header>
 
@@ -66,12 +66,12 @@
     <!-- Drop a video: <video autoplay muted loop playsinline src="assets/videos/hero.mp4"></video> -->
   </div>
   <div class="hero-copy">
-    <img class="hero-logo" src="assets/brand/logo-600.png" width="600" height="600" alt="AZ Cactus Doctor logo: a saguaro cactus between the letters A and Z under a desert sun">
+    <img class="hero-logo" data-img="images.heroLogo" data-img-key="images.heroLogo" src="assets/brand/logo-600.png" width="600" height="600" alt="AZ Cactus Doctor logo: a saguaro cactus between the letters A and Z under a desert sun">
     <p class="eyebrow" data-path="text.heroPresents">presents</p>
     <h1>Spina <em>&amp;</em> Spiritus</h1>
     <div class="hero-cta">
-      <a href="#shop" class="btn">Shop the plants</a>
-      <a href="#about" class="btn ghost">Meet the Doctor</a>
+      <a href="#shop" class="btn" data-path="text.heroBtn1" data-href-path="links.heroBtn1">Shop the plants</a>
+      <a href="#about" class="btn ghost" data-path="text.heroBtn2" data-href-path="links.heroBtn2">Meet the Doctor</a>
     </div>
   </div>
 </section>
@@ -92,6 +92,7 @@
         <li><strong>000+</strong><span>Species</span></li>
         <li><strong>AZ</strong><span>Grown in Arizona</span></li>
       </ul>
+      <p class="about-more"><a href="about.html" data-path="text.aboutMore" data-href-path="links.aboutMore">More about me →</a></p>
     </div>
   </div>
 </section>
@@ -121,13 +122,13 @@
         <button class="filters-close" id="filtersClose" aria-label="Close filters">Close ×</button>
         <input type="search" id="search" placeholder="Search plants…" aria-label="Search plants">
 
-        <h3>Catalog</h3>
+        <h3 data-path="text.filtCatalog">Catalog</h3>
         <ul class="cat-list" id="catList"></ul>
 
-        <h3>Availability</h3>
+        <h3 data-path="text.filtAvail">Availability</h3>
         <label class="check"><input type="checkbox" id="onlyAvail"> In stock only</label>
 
-        <h3>Sort</h3>
+        <h3 data-path="text.filtSort">Sort</h3>
         <select id="sort">
           <option value="name">Name A–Z</option>
           <option value="priceAsc">Price: low to high</option>
@@ -171,7 +172,7 @@
 <details class="faq-item"><summary><span>Where can I find you?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, <a href="https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032" rel="noopener" target="_blank">3502 E Cactus Rd, Phoenix, AZ 85032</a> (opens a map). For other locations we update the site and post on social media a couple of days before.</p></div></details>
 <details class="faq-item"><summary><span>How do I pay?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>You pay when you pick up your plants at the event. There are no online payments.</p></div></details>
 </div>
-    <p class="center faq-more"><a class="btn ghost" href="faq.html">See all questions</a></p>
+    <p class="center faq-more"><a class="btn ghost" href="faq.html" data-path="text.faqMore" data-href-path="links.faqMore">See all questions</a></p>
   </div>
 </section>
 <!-- FAQ:END -->
@@ -184,7 +185,7 @@
     <form class="signup-form" id="signupForm" novalidate>
       <input type="email" name="email" required maxlength="120" placeholder="Your email address" autocomplete="email" aria-label="Email address">
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" class="btn">Notify me</button>
+      <button type="submit" class="btn"><span data-path="text.notifyBtn">Notify me</span></button>
     </form>
     <p class="form-msg" id="signupMsg" role="status" aria-live="polite"></p>
   </div>

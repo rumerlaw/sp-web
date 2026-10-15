@@ -56,6 +56,7 @@ const CONFIG = {
 };
 
 /* ============================================================ */
+const addLabel = () => (SITE.text && SITE.text.addToCart) || "Add to cart";
 const upcomingEvents = () => { if (typeof SP !== "undefined" && SP.editing) return CONFIG.events; const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
 const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const mapHref = (where) => (isApple ? `https://maps.apple.com/?q=${encodeURIComponent(where)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`);
@@ -144,11 +145,24 @@ function syncConfig() {
   }
   if (Array.isArray(SITE.collection)) CONFIG.collection = SITE.collection;
 }
+const safeHref = (u) => { u = String(u || "").trim(); return /^(https?:\/\/|mailto:|tel:|#|index\.html|faq\.html|plant\.html|\/)/i.test(u) && !/^javascript:/i.test(u) ? u : ""; };
 function applyPaths(root = document) {
   root.querySelectorAll("[data-path]").forEach((el) => {
-    if (el.hasAttribute("data-rich") && !SP.editing) return;
-    const v = getPath(SITE, el.dataset.path);
-    if (typeof v === "string" && el.textContent !== v) el.textContent = v;
+    const p = el.dataset.path;
+    if (el !== document.activeElement && !(el.hasAttribute("data-rich") && !SP.editing)) {
+      const v = getPath(SITE, p);
+      if (typeof v === "string" && el.textContent !== v) el.textContent = v;
+    }
+    const al = SITE.align && SITE.align[p]; el.style.textAlign = al || "";
+    const sz = SITE.size && SITE.size[p]; el.style.zoom = sz && sz !== 1 ? sz : "";
+  });
+  root.querySelectorAll("[data-href-path]").forEach((el) => {
+    const u = safeHref(getPath(SITE, el.dataset.hrefPath));
+    if (u) el.setAttribute("href", u);
+  });
+  root.querySelectorAll("[data-img-key]").forEach((el) => {
+    const u = safeUrl(getPath(SITE, el.dataset.imgKey));
+    if (u && el.tagName === "IMG") el.src = variant(u, "web");
   });
 }
 const editAttrs = (path, extra = "") => ` data-path="${path}"${extra}`;
@@ -205,20 +219,70 @@ function renderFaq() {
   }
   document.querySelectorAll('script[type="application/ld+json"]').forEach((sc) => { try { if (JSON.parse(sc.textContent)["@type"] === "FAQPage") sc.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: items.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: String(f.a).replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\*([^*]+)\*/g, "$1").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") } })) }); } catch (e) {} });
 }
+
+/* ---------- SECTIONS, LAYOUT & CUSTOM BLOCKS ---------- */
+const SECTION_IDS = ["hero", "about", "collection", "shop", "events", "faq"];
+const builtinEl = (id) => ({ hero: document.querySelector(".hero"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq") })[id];
+function fullOrder() {
+  const blocks = SITE.blocks || [], seen = new Set(), out = [];
+  const ok = (id) => (SECTION_IDS.includes(id) ? !!builtinEl(id) : blocks.some((b) => b.id === id));
+  (SITE.layout || []).forEach((id) => { if (!seen.has(id) && ok(id)) { seen.add(id); out.push(id); } });
+  SECTION_IDS.forEach((id) => { if (!seen.has(id) && ok(id)) { seen.add(id); out.push(id); } });
+  blocks.forEach((b) => { if (!seen.has(b.id)) { seen.add(b.id); out.push(b.id); } });
+  return out;
+}
+function blockHtml(b, i) {
+  const ed = SP.editing, P = (f) => `blocks.${i}.${f}`, layout = b.layout || "text", align = b.align || "center";
+  const title = b.title || ed ? `<h2 data-path="${P("title")}" data-placeholder="Add a heading…">${esc(b.title || "")}</h2>` : "";
+  const body = ed ? `<p class="b-text" data-multiline data-placeholder="Write something…" data-path="${P("body")}">${esc(b.body || "")}</p>`
+    : (b.body ? String(b.body).split(/\n{2,}/).map((t) => `<p class="b-text">${esc(t).replace(/\n/g, "<br>")}</p>`).join("") : "");
+  const btns = (b.buttons || []).map((x, j) => `<span class="b-btn-wrap">${ed ? `<button class="x" data-act="blk-del-btn" data-b="${i}" data-j="${j}" aria-label="Remove button">✕</button>` : ""}<a class="btn${x.style === "ghost" ? " ghost" : ""}" href="${esc(safeHref(x.url) || "#")}" data-path="${P("buttons." + j + ".label")}" data-href-path="${P("buttons." + j + ".url")}">${esc(x.label || "")}</a></span>`).join("");
+  let media = "";
+  if (layout.startsWith("photo")) media = `<figure class="b-img" data-img="${P("image")}">${safeUrl(b.image) ? `<img src="${esc(variant(safeUrl(b.image), "web"))}" alt="${esc(b.title || "")}" loading="lazy">` : `<div class="ph" data-slot="Photo">${CACTUS_SVG}</div>`}${ed ? `<span class="img-hint">Click or drop a photo</span>` : ""}</figure>`;
+  if (layout === "gallery") media = `<div class="b-gallery"${ed ? ` data-sort="blockimgs:${i}" data-drop="blockgallery:${i}"` : ""}>${(b.images || []).map((u, k) => `<div class="bg-item"${ed ? ` data-i="${k}" draggable="true"` : ""}><img src="${esc(variant(safeUrl(u) || "", "thumb"))}" alt="" loading="lazy">${ed ? `<button class="x" data-act="blk-del-img" data-b="${i}" data-i="${k}" aria-label="Remove photo">✕</button>` : ""}</div>`).join("")}${ed ? `<button class="ce-add b-add" data-act="blk-add-imgs" data-b="${i}"><span>+</span>Add photos</button>` : ""}</div>`;
+  const copy = `<div class="b-copy">${title}${body}${btns || ed ? `<div class="b-btns">${btns}${ed ? `<button class="addbtn" data-act="blk-add-btn" data-b="${i}">+ Add a button</button>` : ""}</div>` : ""}</div>`;
+  const inner = layout === "photo-left" ? `<div class="b-grid">${media}${copy}</div>` : layout === "photo-right" ? `<div class="b-grid rev">${copy}${media}</div>` : layout === "photo-top" ? `${media}${copy}` : layout === "gallery" ? `${copy}${media}` : copy;
+  return `<div class="wrap b-wrap" data-align="${align}">${inner}</div>`;
+}
+function applyLayout() {
+  const footer = $("footer.footer"); if (!footer || document.body.dataset.page) return;
+  fullOrder().forEach((id) => {
+    const el = builtinEl(id) || document.getElementById(id); if (!el) return;
+    footer.before(el); el.classList.toggle("sec-hidden", !!(SITE.hidden && SITE.hidden[id]));
+  });
+}
+function renderBlocks() {
+  if (document.body.dataset.page) return;
+  document.querySelectorAll("[data-block]").forEach((n) => n.remove());
+  const footer = $("footer.footer"); if (!footer) return;
+  (SITE.blocks || []).forEach((b, i) => {
+    const el = document.createElement("section");
+    el.className = `section block bg-${b.bg || "light"}`; el.id = b.id; el.dataset.block = b.id;
+    el.innerHTML = blockHtml(b, i); footer.before(el);
+  });
+  applyLayout();
+}
 function renderAll() {
-  syncConfig(); applyPaths(); renderAbout(); renderContactArea(); renderFaq();
+  syncConfig(); renderAbout(); renderContactArea(); renderFaq(); renderBlocks();
   if ($("#collectionGrid")) renderCollection();
   if (document.body.dataset.page === "plant" && SP.rerenderPlant) SP.rerenderPlant();
   applyPaths();
 }
 function applyPlantOverrides() {
   products.forEach((p) => {
-    const ov = SITE.plants && SITE.plants[normKey(p.name)]; if (!ov) return;
+    if (!p.origKey) p.origKey = normKey(p.name);
+    const ov = SITE.plants && SITE.plants[p.origKey]; if (!ov) return;
+    if (typeof ov.name === "string" && ov.name.trim()) p.name = ov.name.trim();
+    if (typeof ov.genus === "string" && ov.genus.trim()) p.genus = ov.genus.trim();
+    if (ov.price !== undefined && ov.price !== "" && !isNaN(parseFloat(ov.price))) p.price = parseFloat(ov.price);
+    if (ov.salePrice !== undefined && ov.salePrice !== "" && !isNaN(parseFloat(ov.salePrice))) p.salePrice = parseFloat(ov.salePrice);
+    if (ov.stock !== undefined && ov.stock !== "" && !isNaN(parseInt(ov.stock, 10))) p.stock = Math.max(0, parseInt(ov.stock, 10));
+    if (typeof ov.status === "string" && ov.status) p.status = ov.status;
     if (typeof ov.description === "string" && ov.description.trim()) p.description = ov.description;
     if (Array.isArray(ov.images) && ov.images.length) p.images = ov.images.map(safeUrl).filter(Boolean);
   });
 }
-Object.assign(SP, { normKey, getPath, setPath, esc, md, renderAll, renderAbout, renderFaq, renderCollection: () => renderCollection(), safeUrl, variant, applyPaths, applyPlantOverrides, renderPortrait,
+Object.assign(SP, { fullOrder, builtinEl, renderBlocks, applyLayout, safeHref, normKey, getPath, setPath, esc, md, renderAll, renderAbout, renderFaq, renderCollection: () => renderCollection(), safeUrl, variant, applyPaths, applyPlantOverrides, renderPortrait,
   getSite: () => SITE, setSite: (x) => { SITE = x; }, upcomingEvents });
 Object.defineProperty(SP, "products", { get: () => products });
 
@@ -268,6 +332,7 @@ async function loadInventory() {
       description: p.description || "",
       images: String(p.image || "").split("|").map(safeUrl).filter(Boolean),
     }));
+    products.forEach((p) => (p.origKey = normKey(p.name)));
     applyPlantOverrides();
   } catch (e) {
     products = [];
@@ -342,7 +407,7 @@ function openQuickView(id, opener) {
   $("#qvGenus").innerHTML = p.genus ? `Genus <i>${esc(p.genus)}</i>` : "";
   $("#qvDesc").textContent = p.description || "More details coming soon.";
   $("#qvMeta").textContent = stockLine(p);
-  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : "Add to cart";
+  const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : addLabel();
   const pics = p.images;
   const show = (k) => {
     $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
@@ -496,7 +561,7 @@ document.addEventListener("click", (e) => {
   if (!t) return;
   if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); $("#filters").classList.remove("on"); }
   else if (t.id === "backShop") { try { if (sessionStorage.getItem(RET_KEY)) sessionStorage.setItem("sp-restore", "1"); } catch (err) {} }
-  else if (t.dataset.view && $("#qv")) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
+  else if (t.dataset.view && $("#qv") && !SP.editing) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
   else if (t.id === "plantAdd" && plantCurrent) {
     addToCart(plantCurrent.id, Math.max(1, Math.min(maxQty(plantCurrent), parseInt($("#plantQty").value, 10) || 1)));
     toggleCart(true);
@@ -506,7 +571,7 @@ document.addEventListener("click", (e) => {
   else if (t.dataset.plantpic !== undefined && plantCurrent) plantCurrent.show(+t.dataset.plantpic);
   else if (t.id === "qvAdd" && qvProduct) {
     addToCart(qvProduct.id, 1);
-    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = "Add to cart"; }, 1400);
+    const b = $("#qvAdd"); b.textContent = "Added ✓"; setTimeout(() => { if (qvProduct) b.textContent = addLabel(); }, 1400);
     const bag = $("#cartOpen"); bag.classList.remove("pulse"); void bag.offsetWidth; bag.classList.add("pulse");
   }
   else if (t.classList.contains("add")) {
@@ -562,7 +627,7 @@ async function submitSignup(e) {
 /* ---------- PLANT PAGE ---------- */
 let plantCurrent = null;
 SP.rerenderPlant = () => { applyPlantOverrides(); renderPlantPage(); };
-SP.plantKey = () => (plantCurrent ? normKey(plantCurrent.name) : "");
+SP.plantKey = () => (plantCurrent ? (plantCurrent.origKey || normKey(plantCurrent.name)) : "");
 SP.plantImages = () => { const k = SP.plantKey(); const ov = SITE.plants && SITE.plants[k]; return ov && Array.isArray(ov.images) ? ov.images : (plantCurrent ? plantCurrent.images : []); };
 SP.setPlantImages = (list) => { const k = SP.plantKey(); setPath(SITE, `plants.${k}.images`, list); if (plantCurrent) plantCurrent.images = list.map(safeUrl).filter(Boolean); SP.rerenderPlant(); };
 const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
@@ -587,7 +652,7 @@ function renderPlantPage() {
   const pics = p.images, bn = banner(p);
   const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
   root.innerHTML = `<div class="wrap-wide">
-    <a class="back" id="backShop" href="index.html#shop">← Back to shop</a>
+    <a class="back" id="backShop" href="index.html#shop" data-path="text.backToShop">${esc((SITE.text && SITE.text.backToShop) || "← Back to shop")}</a>
     <div class="plant-grid">
       <div class="plant-media">
         <div class="plant-main" id="plantMain"></div>
@@ -595,10 +660,16 @@ function renderPlantPage() {
         ${SP.editing ? `<div class="plant-photo-edit" data-sort="plantimgs" data-drop="plant"><p class="edit-tip">Drag to reorder. Drop photos here or click +.</p>${pics.map((u, i) => `<div class="pe-item" data-i="${i}" draggable="true"><img src="${esc(variant(u, "thumb"))}" alt=""><button class="x" data-act="del-pimg" data-i="${i}" aria-label="Remove photo">✕</button></div>`).join("")}<button class="pe-add" data-act="add-pimg" aria-label="Add photos">+</button></div>` : ""}
       </div>
       <div class="plant-info">
+        ${SP.editing ? `<div class="prod-edit"><h4>Edit this product</h4>
+          <label>Name<input data-pf="name" value="${esc(p.name)}"></label>
+          <label>Genus<input data-pf="genus" value="${esc(p.genus || "")}"></label>
+          <div class="pf-row"><label>Price $<input data-pf="price" inputmode="decimal" value="${p.price ? p.price : ""}"></label><label>Sale price $<input data-pf="salePrice" inputmode="decimal" value="${p.salePrice ? p.salePrice : ""}"></label><label>In stock<input data-pf="stock" inputmode="numeric" value="${p.stock === null ? "" : p.stock}"></label></div>
+          <label>Status<select data-pf="status">${[...new Set(["In Stock", "Sale", "Pre-Order", "Sold Out", p.status])].map((o) => `<option${o === p.status ? " selected" : ""}>${esc(o)}</option>`).join("")}</select></label>
+          <p class="edit-tip">These replace the spreadsheet values for this plant only. Clear a box to go back to the spreadsheet.</p></div>` : ""}
         <h1 class="plant-title">${esc(p.name)}</h1>
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
         <p class="plant-price">${priceHtml(p)}</p>
-        <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${normKey(p.name)}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
+        <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${p.origKey}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
         <dl class="specs">
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
@@ -607,12 +678,12 @@ function renderPlantPage() {
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
-          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : "Add to cart"}</button>
+          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : `<span data-path="text.addToCart">${esc(addLabel())}</span>`}</button>
         </div>
         <p class="fine">Not every plant comes to every event. Reserve it, pick the event you'll attend, and we'll bring it. Pay in person at pickup.</p>
       </div>
     </div>
-    ${related.length ? `<section class="related"><h2>You may also like</h2><div class="product-grid">${related.map(cardHtml).join("")}</div></section>` : ""}
+    ${related.length ? `<section class="related"><h2 data-path="text.relatedHeading">${esc((SITE.text && SITE.text.relatedHeading) || "You may also like")}</h2><div class="product-grid">${related.map(cardHtml).join("")}</div></section>` : ""}
   </div>`;
   const show = (k) => {
     $("#plantMain").innerHTML = (bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "") + (pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`);
@@ -638,8 +709,9 @@ function renderPlantPage() {
 function initPage() {
   syncConfig();
   $("#year").textContent = new Date().getFullYear();
-  applyPaths(); renderAbout(); renderContactArea(); renderFaq();
+  renderAbout(); renderContactArea(); renderFaq(); renderBlocks();
   if ($("#collectionGrid")) renderCollection();
+  applyPaths();
   renderCart();
 }
 function addProductSchema() {

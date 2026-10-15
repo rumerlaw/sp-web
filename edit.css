@@ -78,3 +78,38 @@ body.editing a.ed-text{pointer-events:auto}
 .pe-item .x{position:absolute;top:3px;right:3px;width:24px;height:24px;font-size:.75rem}
 .pe-add{width:92px;height:92px;border:2px dashed #b08d4f;border-radius:8px;background:transparent;font-size:2rem;color:#b08d4f}
 .pe-add:hover{background:rgba(220,185,120,.25)}
+
+/* ===== section chrome ===== */
+.ed-sec{position:relative}
+.editing .sec-hidden{display:block!important;opacity:.4;outline:3px dashed #b08d4f;outline-offset:-3px}
+.sec-bar{position:absolute;top:12px;right:12px;z-index:60;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end;max-width:calc(100% - 24px);padding:6px 8px;background:rgba(30,43,31,.94);color:#fff;border-radius:10px;font-family:var(--sans);font-size:.78rem;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.hero > .sec-bar{top:92px}
+.sec-bar .sb-name{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.7rem;color:#dcb978;margin-right:4px}
+.sec-bar button,.sec-bar select{padding:4px 9px;border:1px solid rgba(255,255,255,.35);border-radius:6px;background:transparent;color:#fff;font:inherit;font-weight:600}
+.sec-bar select{background:#1e2b1f}
+.sec-bar button:hover{background:rgba(255,255,255,.15)}
+.sec-bar button[disabled]{opacity:.3;pointer-events:none}
+.sec-bar button.on{background:#dcb978;color:#1e2b1f;border-color:#dcb978}
+.sec-bar .danger:hover{background:#7b3b3b;border-color:#7b3b3b}
+.add-between{text-align:center;padding:10px 0;background:#f2eddf;border-top:1px dashed #b08d4f;border-bottom:1px dashed #b08d4f}
+.add-between button{padding:8px 20px;border:2px dashed #b08d4f;border-radius:999px;background:#fff;color:#4a4228;font-weight:700;font-size:.9rem}
+.add-between button:hover{background:#dcb978}
+.ed-menu{position:fixed;z-index:210;background:#fff;border:1px solid #cfc7b2;border-radius:12px;box-shadow:0 16px 40px -10px rgba(0,0,0,.4);padding:8px;display:grid;gap:4px;min-width:240px}
+.ed-menu button{text-align:left;padding:10px 14px;border-radius:8px;font-weight:600;color:var(--ink)}
+.ed-menu button:hover{background:#f2eddf}
+.ed-menu small{display:block;font-weight:500;color:#6a6350}
+/* format bar */
+.ed-fmt{position:fixed;z-index:205;display:flex;align-items:center;gap:4px;padding:6px 8px;background:#1e2b1f;color:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.4);font-family:var(--sans)}
+.ed-fmt[hidden]{display:none}
+.ed-fmt button{min-width:34px;height:32px;border:1px solid rgba(255,255,255,.3);border-radius:6px;background:transparent;color:#fff;font-weight:700}
+.ed-fmt button:hover{background:rgba(255,255,255,.18)}
+.ed-fmt button.on{background:#dcb978;color:#1e2b1f;border-color:#dcb978}
+.ed-fmt .sep{width:1px;height:20px;background:rgba(255,255,255,.3);margin:0 4px}
+.ed-fmt input{width:210px;height:32px;padding:0 10px;border:0;border-radius:6px;font:inherit;font-size:.85rem}
+.ed-fmt .fl[hidden]{display:none}
+/* block photos */
+.b-img.ed-img{min-height:80px}
+.bg-item .x{position:absolute;top:6px;right:6px}
+.b-add{min-height:120px;border-color:#b08d4f;color:#4a4228;background:transparent}
+.b-btns .addbtn{margin-top:0}
+.b-btn-wrap .x{position:absolute;top:-10px;right:-10px;z-index:3;width:24px;height:24px;font-size:.7rem}

@@ -64,3 +64,9 @@ Open `edit.html` once and sign in with a GitHub fine-grained token (Contents: Re
 - On a plant's page you can write its description and manage its photos (this overrides the spreadsheet for that plant only).
 - Press **Save changes** (or Ctrl/⌘+S). One commit goes to GitHub and the site redeploys in about a minute. **Exit** leaves edit mode; **Sign out** removes the key from this browser.
 Content lives in `data/site.json`; uploaded photos go to `assets/uploads/` (resized to 1400px and stripped of GPS/camera data in the browser before upload). The editor needs `https://api.github.com` in the page security policy (already added). Keep the token private; revoke it from GitHub if a device is lost.
+
+### Editor: buttons, sections, centering, products
+- **Buttons & headings:** every heading, menu item and button label is editable (click and type). Click a button to also set **where it links** in the bar that appears (type `#shop`, `#about`, a web address, `mailto:you@…`, etc.). **A− / A+** change text size; **⇤ ↔ ⇥** align left / center / right; **↺** undoes size and alignment.
+- **Sections:** every section has a small bar: **▲ ▼** move it, **Hide/Show**. Click **+ Add a section here** between sections to add Text, Photo + text, Photo gallery, or Buttons. Custom sections have layout, alignment, background (white/cream/green), delete, **+ Add a button**, and photo drop areas.
+- **Products:** on a plant's page you get an **Edit this product** box (name, genus, price, sale price, stock, status) plus description and photos. These override the spreadsheet for that plant only. If the price or stock later changes in the spreadsheet, clear the box here so the sheet wins again.
+- **About page:** `about.html` shows the same About content as the home page section; editing either place changes both. The menu's "About" goes to the page; "Meet the Doctor" jumps to the home section.

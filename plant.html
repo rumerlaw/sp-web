@@ -30,28 +30,28 @@
 <header class="nav" id="top" role="banner">
   <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span></button>
   <nav class="nav-center" aria-label="Main">
-    <a class="nl" href="index.html#about">About</a>
-    <a class="nl" href="index.html#collection">Collection</a>
+    <a class="nl" href="about.html" data-path="text.navAbout" data-href-path="links.navAbout">About</a>
+    <a class="nl" href="index.html#collection" data-path="text.navCollection" data-href-path="links.navCollection">Collection</a>
     <a href="index.html#top" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
       <span class="brand-text"><span class="brand-main">Spina <em>&amp;</em> Spiritus</span>
 </span>
     </a>
-    <a class="nl" href="index.html#shop">Shop</a>
-    <a class="nl" href="index.html#contact">Contact</a>
-    <a class="nl" href="faq.html">FAQ</a>
+    <a class="nl" href="index.html#shop" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
+    <a class="nl" href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
+    <a class="nl" href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
   <div class="nav-right">
     <button class="bag-btn" id="cartOpen" aria-label="Open checkout">
       <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
-      <span class="bag-label">Checkout</span><span class="bag-count" id="cartCount">0</span>
+      <span class="bag-label" data-path="text.checkoutLabel">Checkout</span><span class="bag-count" id="cartCount">0</span>
     </button>
   </div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    <a href="index.html#about">About</a>
-    <a href="index.html#collection">Collection</a>
-    <a href="index.html#shop">Shop</a>
-    <a href="index.html#contact">Contact</a>
-    <a href="faq.html">FAQ</a>
+    <a href="about.html" data-path="text.navAbout" data-href-path="links.navAbout">About</a>
+    <a href="index.html#collection" data-path="text.navCollection" data-href-path="links.navCollection">Collection</a>
+    <a href="index.html#shop" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
+    <a href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
+    <a href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
 </header>
 <main class="plant" id="plantPage"><div class="wrap-wide"><p class="empty">Loading…</p></div></main>
@@ -63,7 +63,7 @@
     <form class="signup-form" id="signupForm" novalidate>
       <input type="email" name="email" required maxlength="120" placeholder="Your email address" autocomplete="email" aria-label="Email address">
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" class="btn">Notify me</button>
+      <button type="submit" class="btn"><span data-path="text.notifyBtn">Notify me</span></button>
     </form>
     <p class="form-msg" id="signupMsg" role="status" aria-live="polite"></p>
   </div>
