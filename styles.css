@@ -83,7 +83,7 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 /* ABOUT */
 .about{background:var(--bg)}
 .two-col{display:grid;grid-template-columns:5fr 6fr;gap:80px;align-items:center}
-.portrait{aspect-ratio:4/5;border:1px solid var(--line);outline:1px solid var(--gold);outline-offset:12px}
+.portrait{aspect-ratio:4/5;border:0;outline:0}
 .portrait img{width:100%;height:100%;object-fit:cover}
 .about p{margin-bottom:1.1rem;color:#34322c}
 .dropcap::first-letter{font-family:var(--serif);font-size:4.2rem;float:left;line-height:.8;padding:6px 10px 0 0;color:var(--gold)}
