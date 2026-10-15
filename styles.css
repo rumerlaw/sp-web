@@ -215,7 +215,8 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 /* LOGO IN HERO */
 .hero::before,.hero::after{display:none}
 .hero{padding-top:100px}
-.hero-logo{width:min(380px,70vw);height:auto;margin:0 auto 6px}
+.hero-logo{width:min(120px,30vw);height:auto;margin:0 auto 4px}
+.hero-spina{width:min(400px,78vw);height:auto;margin:0 auto;display:block}
 .hero h1{font-size:clamp(2.8rem,7vw,5.4rem)}
 .hero .eyebrow{margin-bottom:.5rem}
 @media(max-width:960px){.hero{padding-top:90px}}
