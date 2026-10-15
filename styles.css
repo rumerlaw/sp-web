@@ -645,3 +645,9 @@ body.lock{overflow:hidden}
 /* smooth arrival: page fades in once positioned */
 html{transition:opacity .5s ease}
 @media(prefers-reduced-motion:reduce){html{transition:none}}
+
+/* signup text: larger, darker, easier to read */
+.signup-sub{font-size:1.3rem;font-weight:600;color:var(--ink);line-height:1.5;max-width:30ch;margin:0 auto 14px}
+.signup-promise{display:flex;flex-direction:column;gap:4px;font-size:1.1rem;font-weight:600;color:#3b392f;line-height:1.5;margin:0 auto 26px}
+.signup-promise span:nth-child(2){color:var(--sage-deep)}
+@media(min-width:760px){.signup-sub{max-width:36ch}}
