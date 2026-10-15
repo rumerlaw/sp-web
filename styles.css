@@ -659,3 +659,8 @@ html{transition:opacity .5s ease}
 .facts strong{font-size:3rem;font-weight:700;color:var(--sage-deep)}
 .facts span{font-size:.9rem;font-weight:700;letter-spacing:.14em;color:var(--ink)}
 @media(max-width:520px){.about p,.aboutpage p{font-size:1.15rem}.facts{gap:22px}.facts strong{font-size:2.4rem}.facts span{font-size:.78rem}}
+
+/* signup text: toned down */
+.signup-sub{font-size:1.1rem;font-weight:500;max-width:40ch}
+.signup-promise{font-size:1rem;font-weight:500;color:#3b392f}
+.signup-promise span:nth-child(1){color:var(--sage-deep)}
