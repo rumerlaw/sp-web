@@ -625,3 +625,19 @@ body.lock{overflow:hidden}
 .contact-lines a{font-weight:700}
 .insta span{font-weight:700}
 #contact{scroll-margin-top:60px}
+
+/* v7: bolder, easier-to-read product text (quick view + plant page) */
+.qv-info h3,.plant-title{font-weight:700}
+.qv-genus,.genus{font-weight:600;color:var(--ink)}
+.qv-genus i,.genus i{font-weight:600}
+.qv-price,.plant-price{font-weight:700}
+.qv-meta{font-size:.9rem;font-weight:700;letter-spacing:.12em;color:var(--price)}
+.qv-desc,.plant-desc{font-weight:500;color:var(--ink);font-size:1.12rem;line-height:1.7}
+.qv-info .fine,.plant-info .fine{font-weight:500;color:#3b392f;font-size:.88rem}
+.qv-link{font-weight:700}
+.specs dt{font-weight:600;color:#3b392f}
+.specs dd{font-weight:600;color:var(--ink)}
+.status{font-weight:700}
+.card .name{font-weight:700}
+.card .price{font-weight:700}
+.qv-info .btn,.plant-info .btn,.buy .btn{font-weight:700}
