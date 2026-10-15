@@ -641,3 +641,7 @@ body.lock{overflow:hidden}
 .card .name{font-weight:700}
 .card .price{font-weight:700}
 .qv-info .btn,.plant-info .btn,.buy .btn{font-weight:700}
+
+/* smooth arrival: page fades in once positioned */
+html{transition:opacity .5s ease}
+@media(prefers-reduced-motion:reduce){html{transition:none}}

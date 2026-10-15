@@ -92,14 +92,16 @@ if (onHome) {
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   // Arriving from another page with #section: stay hidden until we are already at that section (no scroll from the top).
   if (!pendingRestore && location.hash.length > 1) {
-    document.documentElement.style.visibility = "hidden";
-    setTimeout(() => { document.documentElement.style.visibility = ""; }, 2500);
+    document.documentElement.style.opacity = "0";
+    setTimeout(() => { document.documentElement.style.opacity = ""; }, 2500);
   }
   if (pendingRestore) {
-    document.documentElement.style.visibility = "hidden";
-    setTimeout(() => { document.documentElement.style.visibility = ""; }, 2500);
+    document.documentElement.style.opacity = "0";
+    setTimeout(() => { document.documentElement.style.opacity = ""; }, 2500);
   }
 }
+// Fade the page in (waits two frames so the browser has painted the hidden state and can animate it).
+const reveal = () => requestAnimationFrame(() => requestAnimationFrame(() => { document.documentElement.style.opacity = ""; }));
 const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ y: Math.round(window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
 
 let products = [];
@@ -547,14 +549,26 @@ loadInventory().then((ok) => {
       if ($("#sort")) $("#sort").value = state.sort;
     }
     renderCats(); renderProducts(); addProductSchema();
-    if (pendingRestore) requestAnimationFrame(() => { window.scrollTo({ top: pendingRestore.y, behavior: "instant" }); document.documentElement.style.visibility = ""; });
+    if (pendingRestore) requestAnimationFrame(() => { window.scrollTo({ top: pendingRestore.y, behavior: "instant" }); reveal(); });
   }
   if (onHome && !pendingRestore && location.hash.length > 1) {
     const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
     history.replaceState(null, "", location.pathname + location.search);
-    requestAnimationFrame(() => { if (el) el.scrollIntoView({ behavior: "instant", block: "start" }); document.documentElement.style.visibility = ""; });
+    requestAnimationFrame(() => { if (el) el.scrollIntoView({ behavior: "instant", block: "start" }); reveal(); });
   } else if (onHome && location.hash) history.replaceState(null, "", location.pathname + location.search);
 });
+
+// Gentle, eased scroll from wherever the visitor is (no jump). Instant if they prefer reduced motion.
+function glideTo(el) {
+  const cs = getComputedStyle(el), off = (parseFloat(cs.scrollMarginTop) || 0) + 76;
+  const target = Math.max(0, Math.round(el.getBoundingClientRect().top + scrollY - off));
+  const from = scrollY, dist = target - from;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || Math.abs(dist) < 4) { scrollTo(0, target); return; }
+  const dur = Math.min(2000, 600 + Math.abs(dist) * 0.16), t0 = performance.now();
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const step = (now) => { const t = Math.min(1, (now - t0) / dur); scrollTo(0, from + dist * ease(t)); if (t < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
 
 // Home page: remember scroll position for refresh, and keep #section out of the address bar.
 if (onHome) {
@@ -564,7 +578,7 @@ if (onHome) {
     const a = e.target.closest("a[href]"); if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
     const m = /^(?:index\.html)?#([\w-]+)$/.exec(a.getAttribute("href") || ""); if (!m) return;
     const el = document.getElementById(m[1]); if (!el) return;
-    e.preventDefault(); el.scrollIntoView({ behavior: "instant", block: "start" });
+    e.preventDefault(); glideTo(el);
     try { sessionStorage.setItem("sp-y", String(Math.round(scrollY))); } catch (err) {}
   });
 }
