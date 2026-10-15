@@ -1,5 +1,5 @@
 sku,name,genus,category,price,sale_price,status,stock,size,description,image
-6-adeniums,"6"" Adeniums",Adenium,Adenium,35,,In Stock,6,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
+6-adeniums,"6"" Adeniums",Adenium,Adenium,35,,In Stock,1,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
 lophantha,Lophantha,Agave,Agave,35,,In Stock,4,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
 victoriae-reginae-prm,Victoriae-Reginae PRM,Agave,Agave,65,,In Stock,3,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
 aloes,Aloes,Aloe,Aloe,16,,In Stock,2,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
@@ -33,3 +33,5 @@ decaryii-x-milli,Decaryii x Milli,Euphorbia,Euphorbia,20,,In Stock,2,,"A varied 
 petiolaris,Petiolaris,Ficus,Ficus,30,,In Stock,2,,"A fig tree grown as a caudex plant, with a swollen trunk and glossy leaves.",
 saxx-x-althea,Saxx x Althea,Trichocereus,Trichocereus,40,,In Stock,3,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 tetragonus,Tetragonus,Acanthocereus,Acanthocereus,25,,In Stock,2,,"A sprawling, branching columnar cactus with ribbed stems and sharp spines. Tough and fast growing.",
+medium-adeniums,medium Adeniums,Adenium,Adenium,25,,In Stock,3,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
+multiflorum,Multiflorum,Adenium,Adenium,20,,In Stock,1,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
