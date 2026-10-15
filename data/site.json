@@ -1,202 +1,202 @@
 {
- "text": {
-  "heroPresents": "presents",
-  "collectionEyebrow": "Not for sale",
-  "collectionHeading": "My Personal Collection",
-  "shopHeading": "The Shop",
-  "shopIntro": "We can't bring every plant to every event. Browse everything we have, reserve what you want, choose your event, and we'll bring it. Pay in person, no shipping.",
-  "eventsHeading": "Upcoming events",
-  "eventsNote": "Different locations: we will update the site and post on social media a couple of days prior.",
-  "contactQ": "Questions about a plant or an event? Reach out.",
-  "faqHeading": "Questions",
-  "signupHeading": "Be the first to know",
-  "signupText": "Join the list and we'll email you once a week, every time we update the inventory.",
-  "signupP1": "Never spam.",
-  "signupP2": "Unsubscribe anytime.",
-  "navAbout": "About",
-  "navCollection": "Collection",
-  "navShop": "Shop",
-  "navContact": "Contact",
-  "navFaq": "FAQ",
-  "checkoutLabel": "Checkout",
-  "notifyBtn": "Notify me",
-  "heroBtn1": "Shop the plants",
-  "heroBtn2": "Meet the Doctor",
-  "faqMore": "See all questions",
-  "filtCatalog": "Catalog",
-  "filtAvail": "Availability",
-  "filtSort": "Sort",
-  "addToCart": "Add to cart",
-  "backToShop": "← Back to shop",
-  "relatedHeading": "You may also like",
-  "aboutMore": "More about me →",
-  "aboutBtn1": "Shop the plants",
-  "aboutBtn2": "Find us at the market"
- },
- "images": {
-  "aboutPortrait": ""
- },
- "about": {
-  "title": "AzCactusDoctor",
-  "paragraphs": [
-   "Placeholder — write your story here. Who you are, how the obsession with desert plants began, what Spina & Spiritus means to you, and what makes your plants different.",
-   "Add a second paragraph about your growing philosophy: sourcing, seed-grown versus field-collected, care, and how you rescue and rehabilitate struggling plants."
+  "text": {
+    "heroPresents": "presents",
+    "collectionEyebrow": "Not for sale",
+    "collectionHeading": "My Personal Collection",
+    "shopHeading": "The Shop",
+    "shopIntro": "We can't bring every plant to every event. Browse everything we have, reserve what you want, choose your event, and we'll bring it. Pay in person, no shipping.",
+    "eventsHeading": "Upcoming events",
+    "eventsNote": "Different locations: we will update the site and post on social media a couple of days prior.",
+    "contactQ": "Questions about a plant or an event? Reach out.",
+    "faqHeading": "Questions",
+    "signupHeading": "Be the first to know",
+    "signupText": "Join the list and we'll email you once a week, every time we update the inventory.",
+    "signupP1": "Never spam.",
+    "signupP2": "Unsubscribe anytime.",
+    "navAbout": "About",
+    "navCollection": "Collection",
+    "navShop": "Shop",
+    "navContact": "Contact",
+    "navFaq": "FAQ",
+    "checkoutLabel": "Checkout",
+    "notifyBtn": "Notify me",
+    "heroBtn1": "Shop the plants",
+    "heroBtn2": "Meet the Doctor",
+    "faqMore": "See all questions",
+    "filtCatalog": "Catalog",
+    "filtAvail": "Availability",
+    "filtSort": "Sort",
+    "addToCart": "Add to cart",
+    "backToShop": "← Back to shop",
+    "relatedHeading": "You may also like",
+    "aboutMore": "More about me →",
+    "aboutBtn1": "Shop the plants",
+    "aboutBtn2": "Find us at the market"
+  },
+  "images": {
+    "aboutPortrait": "assets/uploads/about-doctor.jpg"
+  },
+  "about": {
+    "title": "AzCactusDoctor",
+    "paragraphs": [
+      "Placeholder — write your story here. Who you are, how the obsession with desert plants began, what Spina & Spiritus means to you, and what makes your plants different.",
+      "Add a second paragraph about your growing philosophy: sourcing, seed-grown versus field-collected, care, and how you rescue and rehabilitate struggling plants."
+    ],
+    "stats": [
+      {
+        "value": "00",
+        "label": "Years growing"
+      },
+      {
+        "value": "000+",
+        "label": "Species"
+      },
+      {
+        "value": "AZ",
+        "label": "Grown in Arizona"
+      }
+    ]
+  },
+  "contact": {
+    "email": "email@placeholder.com",
+    "instagram": "azcactusdoctor"
+  },
+  "events": [
+    {
+      "name": "Roadrunner Park Farmers Market",
+      "where": "3502 E Cactus Rd, Phoenix, AZ 85032",
+      "when": "Every Saturday, 8am–12pm",
+      "date": ""
+    }
   ],
-  "stats": [
-   {
-    "value": "00",
-    "label": "Years growing"
-   },
-   {
-    "value": "000+",
-    "label": "Species"
-   },
-   {
-    "value": "AZ",
-    "label": "Grown in Arizona"
-   }
+  "faq": [
+    {
+      "q": "What's a genus?",
+      "a": "Every plant has a two-part Latin name, like *Opuntia microdasys*. The first word is the **genus**: a group of closely related plants, like a family name. The second word is the **species**, the specific plant, like a first name. So *Opuntia* is the genus of all prickly pears, and *microdasys* is the bunny ears cactus."
+    },
+    {
+      "q": "How do reservations work?",
+      "a": "We can't bring every plant to every event, so browse the whole shop, reserve what you want, and choose the event you'll attend. We bring your plants there and message you to confirm. You pay in person when you pick them up."
+    },
+    {
+      "q": "Do you ship?",
+      "a": "No. Plants are pickup only, at our farmers market and events. Check the [Upcoming events](index.html#events) section for where we'll be."
+    },
+    {
+      "q": "Where can I find you?",
+      "a": "Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, [3502 E Cactus Rd, Phoenix, AZ 85032](https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032) (opens a map). For other locations we update the site and post on social media a couple of days before."
+    },
+    {
+      "q": "How do I pay?",
+      "a": "You pay when you pick up your plants at the event. There are no online payments."
+    },
+    {
+      "q": "How often should I water my cactus?",
+      "a": "Water deeply, then wait until the soil is completely dry before watering again. In the Arizona summer that is usually every week or two, and in winter much less, often once a month or less. Use a pot with a drainage hole and never leave it sitting in water. Too much water hurts a cactus faster than too little."
+    },
+    {
+      "q": "What if a plant is sold out?",
+      "a": "Sold out plants show a banner and can't be reserved. Join the email list at the bottom of the page and we'll send you a weekly update whenever we update the inventory."
+    },
+    {
+      "q": "Can I reserve more than one of a plant?",
+      "a": "Yes, up to the number we have in stock, which is shown on each plant's page."
+    },
+    {
+      "q": "How do I handle a prickly pear safely?",
+      "a": "Carry it by the pot. Opuntia pads have spines and tiny hair-like barbs called glochids that irritate skin. Use tongs or thick gloves if you need to touch the plant."
+    },
+    {
+      "q": "Who do I contact with questions?",
+      "a": "Message [@azcactusdoctor](https://instagram.com/azcactusdoctor) or ask us at the market."
+    }
+  ],
+  "collection": [
+    {
+      "image": "assets/photos/private-12.jpg",
+      "alt": "Cacti in handmade pots in front of a sun-dappled adobe wall"
+    },
+    {
+      "image": "assets/photos/private-19.jpg",
+      "alt": "Two tall columnar cacti in a large terracotta pot with a mountain view"
+    },
+    {
+      "image": "assets/photos/private-18.jpg",
+      "alt": "Cacti and prickly pear in sculpted pots along a rust-stained wall under an iron fence"
+    },
+    {
+      "image": "assets/photos/private-21.jpg",
+      "alt": "Columnar cacti and a large arching plant on a covered patio"
+    },
+    {
+      "image": "assets/photos/private-13.jpg",
+      "alt": "Prickly pear and columnar cacti in handmade pots on turf"
+    },
+    {
+      "image": "assets/photos/private-14.jpg",
+      "alt": "Prickly pear and columnar cacti beside a rust-stained wall"
+    },
+    {
+      "image": "assets/photos/private-15.jpg",
+      "alt": "Handmade pots including a gargoyle-sculpted planter with cacti"
+    },
+    {
+      "image": "assets/photos/private-16.jpg",
+      "alt": "Row of cacti in sculpted and glazed pots under a wrought-iron fence"
+    },
+    {
+      "image": "assets/photos/private-20.jpg",
+      "alt": "Tall euphorbia in a yellow glazed pot beside a stone wall"
+    },
+    {
+      "image": "assets/photos/collection-columnar-wide.jpg",
+      "alt": "Tall columnar cacti in handmade pots with an Arizona mountain behind"
+    },
+    {
+      "image": "assets/photos/collection-patio.jpg",
+      "alt": "Cacti and euphorbia in sculpted pots on a stone patio beneath a pergola"
+    },
+    {
+      "image": "assets/photos/collection-table.jpg",
+      "alt": "Table full of potted cacti in handmade ceramic pots, seen from above"
+    },
+    {
+      "image": "assets/photos/pottery-owl-wall.jpg",
+      "alt": "Cacti and agave in handmade pots including a turquoise owl planter"
+    },
+    {
+      "image": "assets/photos/garden-wall-corner.jpg",
+      "alt": "Tall euphorbia and columnar cacti in pots against an adobe wall"
+    },
+    {
+      "image": "assets/photos/lawn-garden-1.jpg",
+      "alt": "Columnar cacti, golden barrel and agave in sculpted pots on a lawn"
+    },
+    {
+      "image": "assets/photos/lawn-garden-2.jpg",
+      "alt": "Cacti in sculpted pots on a lawn"
+    },
+    {
+      "image": "assets/photos/lawn-garden-3.jpg",
+      "alt": "Large white pot with agave among cacti in a garden"
+    },
+    {
+      "image": "assets/photos/collection-pots-row.jpg",
+      "alt": "Row of cacti in handmade pots including a turquoise planter"
+    }
+  ],
+  "plants": {},
+  "links": {},
+  "align": {},
+  "size": {},
+  "hidden": {},
+  "blocks": [],
+  "layout": [
+    "hero",
+    "about",
+    "collection",
+    "shop",
+    "events",
+    "faq"
   ]
- },
- "contact": {
-  "email": "email@placeholder.com",
-  "instagram": "azcactusdoctor"
- },
- "events": [
-  {
-   "name": "Roadrunner Park Farmers Market",
-   "where": "3502 E Cactus Rd, Phoenix, AZ 85032",
-   "when": "Every Saturday, 8am–12pm",
-   "date": ""
-  }
- ],
- "faq": [
-  {
-   "q": "What's a genus?",
-   "a": "Every plant has a two-part Latin name, like *Opuntia microdasys*. The first word is the **genus**: a group of closely related plants, like a family name. The second word is the **species**, the specific plant, like a first name. So *Opuntia* is the genus of all prickly pears, and *microdasys* is the bunny ears cactus."
-  },
-  {
-   "q": "How do reservations work?",
-   "a": "We can't bring every plant to every event, so browse the whole shop, reserve what you want, and choose the event you'll attend. We bring your plants there and message you to confirm. You pay in person when you pick them up."
-  },
-  {
-   "q": "Do you ship?",
-   "a": "No. Plants are pickup only, at our farmers market and events. Check the [Upcoming events](index.html#events) section for where we'll be."
-  },
-  {
-   "q": "Where can I find you?",
-   "a": "Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, [3502 E Cactus Rd, Phoenix, AZ 85032](https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032) (opens a map). For other locations we update the site and post on social media a couple of days before."
-  },
-  {
-   "q": "How do I pay?",
-   "a": "You pay when you pick up your plants at the event. There are no online payments."
-  },
-  {
-   "q": "How often should I water my cactus?",
-   "a": "Water deeply, then wait until the soil is completely dry before watering again. In the Arizona summer that is usually every week or two, and in winter much less, often once a month or less. Use a pot with a drainage hole and never leave it sitting in water. Too much water hurts a cactus faster than too little."
-  },
-  {
-   "q": "What if a plant is sold out?",
-   "a": "Sold out plants show a banner and can't be reserved. Join the email list at the bottom of the page and we'll send you a weekly update whenever we update the inventory."
-  },
-  {
-   "q": "Can I reserve more than one of a plant?",
-   "a": "Yes, up to the number we have in stock, which is shown on each plant's page."
-  },
-  {
-   "q": "How do I handle a prickly pear safely?",
-   "a": "Carry it by the pot. Opuntia pads have spines and tiny hair-like barbs called glochids that irritate skin. Use tongs or thick gloves if you need to touch the plant."
-  },
-  {
-   "q": "Who do I contact with questions?",
-   "a": "Message [@azcactusdoctor](https://instagram.com/azcactusdoctor) or ask us at the market."
-  }
- ],
- "collection": [
-  {
-   "image": "assets/photos/private-12.jpg",
-   "alt": "Cacti in handmade pots in front of a sun-dappled adobe wall"
-  },
-  {
-   "image": "assets/photos/private-19.jpg",
-   "alt": "Two tall columnar cacti in a large terracotta pot with a mountain view"
-  },
-  {
-   "image": "assets/photos/private-18.jpg",
-   "alt": "Cacti and prickly pear in sculpted pots along a rust-stained wall under an iron fence"
-  },
-  {
-   "image": "assets/photos/private-21.jpg",
-   "alt": "Columnar cacti and a large arching plant on a covered patio"
-  },
-  {
-   "image": "assets/photos/private-13.jpg",
-   "alt": "Prickly pear and columnar cacti in handmade pots on turf"
-  },
-  {
-   "image": "assets/photos/private-14.jpg",
-   "alt": "Prickly pear and columnar cacti beside a rust-stained wall"
-  },
-  {
-   "image": "assets/photos/private-15.jpg",
-   "alt": "Handmade pots including a gargoyle-sculpted planter with cacti"
-  },
-  {
-   "image": "assets/photos/private-16.jpg",
-   "alt": "Row of cacti in sculpted and glazed pots under a wrought-iron fence"
-  },
-  {
-   "image": "assets/photos/private-20.jpg",
-   "alt": "Tall euphorbia in a yellow glazed pot beside a stone wall"
-  },
-  {
-   "image": "assets/photos/collection-columnar-wide.jpg",
-   "alt": "Tall columnar cacti in handmade pots with an Arizona mountain behind"
-  },
-  {
-   "image": "assets/photos/collection-patio.jpg",
-   "alt": "Cacti and euphorbia in sculpted pots on a stone patio beneath a pergola"
-  },
-  {
-   "image": "assets/photos/collection-table.jpg",
-   "alt": "Table full of potted cacti in handmade ceramic pots, seen from above"
-  },
-  {
-   "image": "assets/photos/pottery-owl-wall.jpg",
-   "alt": "Cacti and agave in handmade pots including a turquoise owl planter"
-  },
-  {
-   "image": "assets/photos/garden-wall-corner.jpg",
-   "alt": "Tall euphorbia and columnar cacti in pots against an adobe wall"
-  },
-  {
-   "image": "assets/photos/lawn-garden-1.jpg",
-   "alt": "Columnar cacti, golden barrel and agave in sculpted pots on a lawn"
-  },
-  {
-   "image": "assets/photos/lawn-garden-2.jpg",
-   "alt": "Cacti in sculpted pots on a lawn"
-  },
-  {
-   "image": "assets/photos/lawn-garden-3.jpg",
-   "alt": "Large white pot with agave among cacti in a garden"
-  },
-  {
-   "image": "assets/photos/collection-pots-row.jpg",
-   "alt": "Row of cacti in handmade pots including a turquoise planter"
-  }
- ],
- "plants": {},
- "links": {},
- "align": {},
- "size": {},
- "hidden": {},
- "blocks": [],
- "layout": [
-  "hero",
-  "about",
-  "collection",
-  "shop",
-  "events",
-  "faq"
- ]
 }
