@@ -8,7 +8,7 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#faf8f3">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://formspree.io https://api.web3forms.com https://docs.google.com https://*.googleusercontent.com; form-action 'self'; base-uri 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self'; connect-src 'self' https://api.github.com https://formspree.io https://api.web3forms.com https://docs.google.com https://*.googleusercontent.com; form-action 'self'; base-uri 'self'; object-src 'none'">
 <link rel="canonical" href="https://azcactusdoctor.com/plant.html">
 <link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -57,9 +57,9 @@
 <main class="plant" id="plantPage"><div class="wrap-wide"><p class="empty">Loading…</p></div></main>
 <footer class="footer">
   <div class="signup">
-    <h3>Be the first to know</h3>
-    <p class="signup-sub">Join the list and we'll email you once a week, every time we update the inventory.</p>
-    <p class="signup-promise"><span>Never spam.</span><span>Unsubscribe anytime.</span></p>
+    <h3 data-path="text.signupHeading">Be the first to know</h3>
+    <p class="signup-sub" data-path="text.signupText">Join the list and we'll email you once a week, every time we update the inventory.</p>
+    <p class="signup-promise"><span data-path="text.signupP1">Never spam.</span><span data-path="text.signupP2">Unsubscribe anytime.</span></p>
     <form class="signup-form" id="signupForm" novalidate>
       <input type="email" name="email" required maxlength="120" placeholder="Your email address" autocomplete="email" aria-label="Email address">
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">

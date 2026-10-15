@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Build the FAQ (home-page section + faq.html) from the list below.
+"""NOTE: the live FAQ is now edited in the visual editor (data/site.json). This script only rebuilds the plain-HTML fallback
+that shows if JavaScript is off. Build the FAQ (home-page section + faq.html) from the list below.
 Edit FAQS, then run: python3 scripts/build_faq.py
 Answers may use <b>, <i> and <a>. The first HOME_COUNT questions show on the home page."""
 import html, json, re
@@ -30,7 +31,7 @@ FAQS = [
 ]
 def item(q, a): return f'<details class="faq-item"><summary><span>{html.escape(q)}</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>{a}</p></div></details>'
 def plain(a): return re.sub(r"<[^>]+>", "", a).replace("&amp;", "&")
-def block(n): return '<div class="faq-list">\n' + "\n".join(item(q, a) for q, a in FAQS[:n]) + "\n</div>"
+def block(n): return '<div class="faq-list" id="faqList">\n' + "\n".join(item(q, a) for q, a in FAQS[:n]) + "\n</div>"
 ld = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":plain(a)}} for q, a in FAQS]}, ensure_ascii=False) + '</script>'
 # home page
 p = ROOT / "index.html"; h = p.read_text()

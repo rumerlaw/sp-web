@@ -56,7 +56,7 @@ const CONFIG = {
 };
 
 /* ============================================================ */
-const upcomingEvents = () => { const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
+const upcomingEvents = () => { if (typeof SP !== "undefined" && SP.editing) return CONFIG.events; const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
 const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const mapHref = (where) => (isApple ? `https://maps.apple.com/?q=${encodeURIComponent(where)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`);
 const mapLink = (e) => (e.where ? `<a class="maplink" href="${mapHref(e.where)}" target="_blank" rel="noopener">${esc(e.where)} <span aria-hidden="true">↗</span><span class="sr">(opens ${isApple ? "Apple Maps" : "map"})</span></a>` : "");
@@ -67,7 +67,13 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 // Only allow same-site relative paths or https URLs for images coming from the spreadsheet.
 const safeUrl = (u) => { u = String(u || "").trim(); return /^(https:\/\/|assets\/|\.\/assets\/)/i.test(u) && !/[<>"']/.test(u) ? u : ""; };
 // Fast-loading variants made by scripts/strip_media.py (assets/photos/web, assets/photos/thumb).
-const variant = (src, kind) => { const m = /^(?:\.\/)?assets\/photos\/([^/]+)\.(?:jpe?g|png|webp)$/i.exec(src); return m ? `assets/photos/${kind}/${m[1]}.webp` : src; };
+const variant = (src, kind) => {
+  if (SP.pending[src]) return SP.pending[src].url;
+  let m = /^assets\/uploads\/([^/]+\.jpg)$/i.exec(src);
+  if (m) return kind === "thumb" ? `assets/uploads/thumb/${m[1]}` : src;
+  m = /^(?:\.\/)?assets\/photos\/([^/]+)\.(?:jpe?g|png|webp)$/i.exec(src);
+  return m ? `assets/photos/${kind}/${m[1]}.webp` : src;
+};
 const CACTUS_SVG = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M32 58V14a5 5 0 0 1 10 0v0M32 40h-9a4 4 0 0 1-4-4V26M32 34h9a4 4 0 0 0 4-4V22"/><path d="M22 58h20"/></svg>`;
 
 // ---- "Back to shop" memory: remember scroll + filters when leaving the shop for a plant page ----
@@ -103,6 +109,118 @@ if (onHome) {
 // Fade the page in (waits two frames so the browser has painted the hidden state and can animate it).
 const reveal = () => requestAnimationFrame(() => requestAnimationFrame(() => { document.documentElement.style.opacity = ""; }));
 const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ y: Math.round(window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
+
+/* ---------- EDITABLE CONTENT (data/site.json) ---------- */
+// Everything the owner can change in the visual editor lives in data/site.json. The static HTML already contains the same
+// text as a fallback, so the page still works if the file is missing.
+let SITE = { text: {}, images: {}, plants: {} };
+let resolveReady; 
+const SP = (window.SP = { editing: false, pending: {}, ready: new Promise((r) => (resolveReady = r)) });
+const normKey = (n) => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const getPath = (o, p) => String(p).split(".").reduce((a, k) => (a == null ? undefined : a[k]), o);
+const setPath = (o, p, v) => {
+  const ks = String(p).split("."); let a = o;
+  ks.slice(0, -1).forEach((k, i) => { if (a[k] == null || typeof a[k] !== "object") a[k] = /^\d+$/.test(ks[i + 1]) ? [] : {}; a = a[k]; });
+  a[ks[ks.length - 1]] = v;
+};
+// Tiny safe markup for FAQ answers: **bold**, *italic*, [words](link). Everything else is escaped.
+function md(src) {
+  let t = esc(src);
+  t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|index\.html#[\w-]+|faq\.html)\)/g, (m, txt, url) => /^https?:/.test(url) ? `<a href="${url}" target="_blank" rel="noopener">${txt}</a>` : `<a href="${url}">${txt}</a>`);
+  t = t.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\*([^*]+)\*/g, "<i>$1</i>");
+  return t.replace(/\n/g, "<br>");
+}
+async function loadSite() {
+  try {
+    const r = await fetch("data/site.json", { cache: "no-store" });
+    if (r.ok) SITE = Object.assign({ text: {}, images: {}, plants: {} }, await r.json());
+  } catch (e) {}
+}
+function syncConfig() {
+  if (Array.isArray(SITE.events)) CONFIG.events = SITE.events;
+  if (SITE.contact) {
+    if (SITE.contact.email) CONFIG.email = SITE.contact.email;
+    if (SITE.contact.instagram) { CONFIG.instagram = String(SITE.contact.instagram).replace(/^@/, ""); CONFIG.instagramUrl = "https://instagram.com/" + encodeURIComponent(CONFIG.instagram); }
+  }
+  if (Array.isArray(SITE.collection)) CONFIG.collection = SITE.collection;
+}
+function applyPaths(root = document) {
+  root.querySelectorAll("[data-path]").forEach((el) => {
+    if (el.hasAttribute("data-rich") && !SP.editing) return;
+    const v = getPath(SITE, el.dataset.path);
+    if (typeof v === "string" && el.textContent !== v) el.textContent = v;
+  });
+}
+const editAttrs = (path, extra = "") => ` data-path="${path}"${extra}`;
+const dragHandle = `<span class="drag" title="Drag to reorder" aria-hidden="true">⠿</span>`;
+
+function renderAbout() {
+  const a = SITE.about; if (!a || !$("#aboutBody")) return;
+  $("#aboutTitle").textContent = a.title || "";
+  const paras = a.paragraphs || [];
+  $("#aboutBody").innerHTML = paras.map((t, i) => `<div class="para"${SP.editing ? ` data-i="${i}" draggable="true"` : ""}>${SP.editing ? dragHandle : ""}<p${editAttrs("about.paragraphs." + i)}>${esc(t)}</p>${SP.editing ? `<button class="x" data-act="del-para" data-i="${i}" aria-label="Remove paragraph">✕</button>` : ""}</div>`).join("") + (SP.editing ? `<button class="addbtn" data-act="add-para">+ Add a paragraph</button>` : "");
+  if (SP.editing) $("#aboutBody").setAttribute("data-sort", "paragraphs"); else $("#aboutBody").removeAttribute("data-sort");
+  $("#aboutStats").innerHTML = (a.stats || []).map((s, i) => `<li><strong${editAttrs("about.stats." + i + ".value")}>${esc(s.value)}</strong><span${editAttrs("about.stats." + i + ".label")}>${esc(s.label)}</span></li>`).join("");
+  renderPortrait();
+}
+function renderPortrait() {
+  const el = $("#aboutPortrait"); if (!el) return;
+  const src = SITE.images && SITE.images.aboutPortrait;
+  el.setAttribute("data-img", "images.aboutPortrait");
+  if (safeUrl(src)) { el.classList.remove("ph"); el.innerHTML = `<img src="${esc(variant(safeUrl(src), "web"))}" alt="${esc((SITE.about && SITE.about.title) || "Portrait")}">`; }
+  else { el.classList.add("ph"); el.innerHTML = ""; }
+  if (SP.editing) el.insertAdjacentHTML("beforeend", `<span class="img-hint">Click or drop a photo</span>`);
+}
+function renderContactArea() {
+  if (!$("#contactEmail")) return;
+  $("#contactEmail").textContent = CONFIG.email;
+  $("#contactEmail").href = "mailto:" + CONFIG.email;
+  $("#contactEmail").setAttribute("data-path", "contact.email");
+  $("#contactInsta").href = CONFIG.instagramUrl;
+  const it = $("#contactInstaText"); if (it) { it.textContent = CONFIG.instagram; it.setAttribute("data-path", "contact.instagram"); }
+  const ev = upcomingEvents();
+  if (SP.editing) {
+    $("#marketList").setAttribute("data-sort", "events");
+    $("#marketList").innerHTML = ev.map((e, i) => `<li class="ev-edit" data-i="${i}" draggable="true">${dragHandle}<b${editAttrs("events." + i + ".name")}>${esc(e.name)}</b><span${editAttrs("events." + i + ".where")}>${esc(e.where || "")}</span><span class="when"${editAttrs("events." + i + ".when")}>${esc(e.when)}</span><label class="evdate">Hide after <input type="date" data-date="${i}" value="${esc(e.date || "")}"></label><button class="x" data-act="del-event" data-i="${i}" aria-label="Remove event">✕</button></li>`).join("") + `<li class="add-row"><button class="addbtn" data-act="add-event">+ Add an event</button></li>`;
+  } else {
+    $("#marketList").removeAttribute("data-sort");
+    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+  }
+  const mapEv = ev.find((e) => e.where);
+  if ($("#eventMap")) $("#eventMap").innerHTML = mapEv ? `<iframe title="Map to ${esc(mapEv.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(mapEv.where)}&output=embed"></iframe>` : "";
+  if ($("#marketSelect")) $("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
+}
+function renderFaq() {
+  const box = $("#faqList"); const items = SITE.faq;
+  if (!box || !Array.isArray(items)) return;
+  const onHome = !!$("#faq");
+  const list = onHome && !SP.editing ? items.slice(0, 5) : items;
+  if (SP.editing) {
+    box.setAttribute("data-sort", "faq");
+    box.innerHTML = (onHome ? `<p class="edit-tip">Only the first 5 questions show on the home page; all show on the FAQ page. Drag ⠿ to reorder. Links: [words](https://…). Bold: **word**.</p>` : `<p class="edit-tip">Drag ⠿ to reorder. Links: [words](https://…). Bold: **word**.</p>`) +
+      list.map((f, i) => `<div class="faq-edit" data-i="${i}" draggable="true">${dragHandle}<div class="fe-body"><h4${editAttrs("faq." + i + ".q")}>${esc(f.q)}</h4><p data-rich data-multiline${editAttrs("faq." + i + ".a")}>${esc(f.a)}</p></div><button class="x" data-act="del-faq" data-i="${i}" aria-label="Remove question">✕</button></div>`).join("") + `<button class="addbtn" data-act="add-faq">+ Add a question</button>`;
+  } else {
+    box.removeAttribute("data-sort");
+    box.innerHTML = list.map((f) => `<details class="faq-item"><summary><span>${esc(f.q)}</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p data-rich>${md(f.a)}</p></div></details>`).join("");
+  }
+  document.querySelectorAll('script[type="application/ld+json"]').forEach((sc) => { try { if (JSON.parse(sc.textContent)["@type"] === "FAQPage") sc.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: items.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: String(f.a).replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\*([^*]+)\*/g, "$1").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") } })) }); } catch (e) {} });
+}
+function renderAll() {
+  syncConfig(); applyPaths(); renderAbout(); renderContactArea(); renderFaq();
+  if ($("#collectionGrid")) renderCollection();
+  if (document.body.dataset.page === "plant" && SP.rerenderPlant) SP.rerenderPlant();
+  applyPaths();
+}
+function applyPlantOverrides() {
+  products.forEach((p) => {
+    const ov = SITE.plants && SITE.plants[normKey(p.name)]; if (!ov) return;
+    if (typeof ov.description === "string" && ov.description.trim()) p.description = ov.description;
+    if (Array.isArray(ov.images) && ov.images.length) p.images = ov.images.map(safeUrl).filter(Boolean);
+  });
+}
+Object.assign(SP, { normKey, getPath, setPath, esc, md, renderAll, renderAbout, renderFaq, renderCollection: () => renderCollection(), safeUrl, variant, applyPaths, applyPlantOverrides, renderPortrait,
+  getSite: () => SITE, setSite: (x) => { SITE = x; }, upcomingEvents });
+Object.defineProperty(SP, "products", { get: () => products });
 
 let products = [];
 const state = { cat: "All", q: "", avail: false, sort: "name" };
@@ -150,6 +268,7 @@ async function loadInventory() {
       description: p.description || "",
       images: String(p.image || "").split("|").map(safeUrl).filter(Boolean),
     }));
+    applyPlantOverrides();
   } catch (e) {
     products = [];
     const g = $("#productGrid") || $("#plantPage");
@@ -314,7 +433,12 @@ async function submitOrder(e) {
 }
 
 /* ---------- COLLECTION SLIDESHOW ---------- */
+function renderCollectionEdit() {
+  const root = $("#collectionGrid"); const list = CONFIG.collection || [];
+  root.innerHTML = `<div class="coll-edit" data-sort="collection" data-drop="collection">${list.map((c, i) => `<div class="ce-item" data-i="${i}" draggable="true"><img src="${esc(variant(safeUrl(c.image) || "", "thumb"))}" alt=""><button class="x" data-act="del-coll" data-i="${i}" aria-label="Remove photo">✕</button><input class="ce-alt" data-alt="${i}" value="${esc(c.alt || "")}" placeholder="Describe this photo (for search engines)"></div>`).join("")}<button class="ce-add" data-act="add-coll"><span>+</span>Drop photos here<br>or click to choose</button></div><p class="edit-tip light">Drag a photo to reorder. Drop new photos anywhere in this box.</p>`;
+}
 function renderCollection() {
+  if (SP.editing) return renderCollectionEdit();
   const slides = CONFIG.collection.filter((c) => safeUrl(c.image));
   const root = $("#collectionGrid");
   if (!slides.length) { root.innerHTML = `<div class="ph slide-empty" data-slot="Collection photos coming soon">${CACTUS_SVG}</div>`; return; }
@@ -437,6 +561,10 @@ async function submitSignup(e) {
 
 /* ---------- PLANT PAGE ---------- */
 let plantCurrent = null;
+SP.rerenderPlant = () => { applyPlantOverrides(); renderPlantPage(); };
+SP.plantKey = () => (plantCurrent ? normKey(plantCurrent.name) : "");
+SP.plantImages = () => { const k = SP.plantKey(); const ov = SITE.plants && SITE.plants[k]; return ov && Array.isArray(ov.images) ? ov.images : (plantCurrent ? plantCurrent.images : []); };
+SP.setPlantImages = (list) => { const k = SP.plantKey(); setPath(SITE, `plants.${k}.images`, list); if (plantCurrent) plantCurrent.images = list.map(safeUrl).filter(Boolean); SP.rerenderPlant(); };
 const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
 function renderPlantPage() {
   const root = $("#plantPage");
@@ -464,12 +592,13 @@ function renderPlantPage() {
       <div class="plant-media">
         <div class="plant-main" id="plantMain"></div>
         <div class="plant-thumbs" id="plantThumbs"></div>
+        ${SP.editing ? `<div class="plant-photo-edit" data-sort="plantimgs" data-drop="plant"><p class="edit-tip">Drag to reorder. Drop photos here or click +.</p>${pics.map((u, i) => `<div class="pe-item" data-i="${i}" draggable="true"><img src="${esc(variant(u, "thumb"))}" alt=""><button class="x" data-act="del-pimg" data-i="${i}" aria-label="Remove photo">✕</button></div>`).join("")}<button class="pe-add" data-act="add-pimg" aria-label="Add photos">+</button></div>` : ""}
       </div>
       <div class="plant-info">
         <h1 class="plant-title">${esc(p.name)}</h1>
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
         <p class="plant-price">${priceHtml(p)}</p>
-        <p class="plant-desc">${esc(p.description || "More details coming soon.")}</p>
+        <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${normKey(p.name)}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
         <dl class="specs">
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
@@ -491,8 +620,9 @@ function renderPlantPage() {
   };
   $("#plantThumbs").innerHTML = pics.length > 1 ? pics.map((u, k) => `<button data-plantpic="${k}" aria-label="Photo ${k + 1}"><img src="${esc(variant(u, "thumb"))}" alt=""></button>`).join("") : "";
   plantCurrent.show = show; show(0);
+  const oldLd = document.getElementById("plantld"); if (oldLd) oldLd.remove();
   const ld = document.createElement("script");
-  ld.type = "application/ld+json";
+  ld.type = "application/ld+json"; ld.id = "plantld";
   ld.textContent = JSON.stringify({
     "@context": "https://schema.org", "@type": "Product", name: p.name, sku: p.id, category: p.category, description: desc,
     ...(p.genus ? { additionalProperty: [{ "@type": "PropertyValue", name: "Genus", value: p.genus }] } : {}),
@@ -505,19 +635,13 @@ function renderPlantPage() {
 }
 
 /* ---------- INIT ---------- */
-$("#year").textContent = new Date().getFullYear();
-if ($("#contactEmail")) {
-  $("#contactEmail").textContent = CONFIG.email;
-  $("#contactEmail").href = "mailto:" + CONFIG.email;
-  $("#contactInsta").href = CONFIG.instagramUrl;
-  const ev = upcomingEvents();
-  $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
-  const mapEv = ev.find((e) => e.where);
-  if (mapEv && $("#eventMap")) $("#eventMap").innerHTML = `<iframe title="Map to ${esc(mapEv.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(mapEv.where)}&output=embed"></iframe>`;
+function initPage() {
+  syncConfig();
+  $("#year").textContent = new Date().getFullYear();
+  applyPaths(); renderAbout(); renderContactArea(); renderFaq();
+  if ($("#collectionGrid")) renderCollection();
+  renderCart();
 }
-$("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
-if ($("#collectionGrid")) renderCollection();
-renderCart();
 function addProductSchema() {
   const el = document.createElement("script");
   el.type = "application/ld+json";
@@ -537,8 +661,9 @@ function addProductSchema() {
   });
   document.head.appendChild(el);
 }
-loadInventory().then((ok) => {
-  if (!ok) return;
+const siteReady = loadSite();
+siteReady.then(() => { initPage(); return loadInventory(); }).then((ok) => {
+  if (!ok) { resolveReady(); return; }
   renderCart();
   if (document.body.dataset.page === "plant") renderPlantPage();
   else if ($("#productGrid")) {
@@ -556,6 +681,7 @@ loadInventory().then((ok) => {
     history.replaceState(null, "", location.pathname + location.search);
     requestAnimationFrame(() => { if (el) el.scrollIntoView({ behavior: "instant", block: "start" }); reveal(); });
   } else if (onHome && location.hash) history.replaceState(null, "", location.pathname + location.search);
+  resolveReady();
 });
 
 // Gentle, eased scroll from wherever the visitor is (no jump). Instant if they prefer reduced motion.
@@ -582,3 +708,15 @@ if (onHome) {
     try { sessionStorage.setItem("sp-y", String(Math.round(scrollY))); } catch (err) {}
   });
 }
+
+// Visual editor: only for the owner. Visit edit.html once (sign in), then every page opens in edit mode until they exit.
+SP.ready.then(() => {
+  try {
+    const q = new URLSearchParams(location.search);
+    if (q.has("edit")) { sessionStorage.setItem("sp-edit", "1"); q.delete("edit"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "")); }
+    if (sessionStorage.getItem("sp-edit") !== "1") return;
+    if (!localStorage.getItem("sp-gh-token")) { sessionStorage.removeItem("sp-edit"); location.href = "edit.html"; return; }
+    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "edit.css"; document.head.appendChild(css);
+    const js = document.createElement("script"); js.src = "edit.js"; document.body.appendChild(js);
+  } catch (e) {}
+});

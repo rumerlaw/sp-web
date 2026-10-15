@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in to edit · Spina &amp; Spiritus</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.github.com; form-action 'self'; base-uri 'self'; object-src 'none'">
+<link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="edit-login.css">
+</head>
+<body class="login-page">
+<main class="login">
+  <h1>Edit your website</h1>
+  <p class="lead">Sign in once on this device. After that, open any page of the site and you can click text to change it, click or drop photos to replace them, and drag things into a new order.</p>
+
+  <section id="signedOut">
+    <label for="tok">Your editing key</label>
+    <input id="tok" type="password" autocomplete="off" placeholder="Paste your key here" spellcheck="false">
+    <p class="err" id="err" role="alert"></p>
+    <button class="btn" id="go">Sign in</button>
+    <details class="how">
+      <summary>How do I get an editing key?</summary>
+      <ol>
+        <li>Sign in at github.com, then open <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</b>.</li>
+        <li>Name it "Website editor". Set an expiration (for example 1 year).</li>
+        <li>Under <b>Repository access</b>, choose <b>Only select repositories</b> and pick <b>sp-web</b>.</li>
+        <li>Under <b>Permissions → Repository permissions</b>, set <b>Contents</b> to <b>Read and write</b>. Leave everything else off.</li>
+        <li>Click <b>Generate token</b>, copy it, and paste it above.</li>
+      </ol>
+      <p>The key is kept only in this browser. Anyone who has it can change your site, so don't share it. You can delete it any time from the same GitHub page.</p>
+    </details>
+  </section>
+
+  <section id="signedIn" hidden>
+    <p class="ok">You're signed in.</p>
+    <button class="btn" id="cont">Start editing</button>
+    <button class="btn ghost" id="out">Sign out</button>
+  </section>
+  <p class="back"><a href="index.html">← Back to the website</a></p>
+</main>
+<script src="edit-login.js"></script>
+</body>
+</html>
