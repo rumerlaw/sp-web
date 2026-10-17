@@ -717,3 +717,4 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .hero-cta{padding:0 20px}
 @media(max-width:640px){.hero{padding-top:64px;padding-bottom:44px}.hero-spina{height:360px;min-height:0}}
 .hero-copy{margin-top:0;padding:0;width:100%}.hero-cta{margin-top:26px}
+.nav{background:rgba(240,226,210,.96);border-bottom:1px solid rgba(176,141,79,.25)}
