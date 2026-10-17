@@ -720,3 +720,10 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .nav{background:rgba(240,226,210,.96);border-bottom:1px solid rgba(176,141,79,.25)}
 @media(max-width:960px){.nav-links{background:#f0e2d2 !important;border-bottom:1px solid rgba(176,141,79,.25) !important}.nav-links a{border-top:1px solid rgba(176,141,79,.2) !important}}
 .mobile-menu{background:#f0e2d2 !important;border-bottom:1px solid rgba(176,141,79,.25) !important}.mobile-menu a{border-top:1px solid rgba(176,141,79,.2) !important}
+
+.events .exnote{display:block;margin-top:4px;font-size:.95rem;font-weight:600;color:var(--gold);letter-spacing:.04em}
+.evlink{display:inline-block;margin-top:10px;padding:10px 20px;background:var(--sage-deep);color:#fff;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.evlink:hover{background:var(--ink)}
+.event-map{display:grid;gap:14px;border:0;max-width:760px}
+.event-map iframe{border:1px solid var(--line)}
+@media(min-width:900px){.event-map{max-width:1040px;grid-template-columns:repeat(auto-fit,minmax(0,1fr))}.event-map iframe{height:320px}}

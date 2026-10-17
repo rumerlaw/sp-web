@@ -44,12 +44,12 @@
     ],
     "stats": [
       {
-        "value": "00",
+        "value": "15",
         "label": "Years growing"
       },
       {
-        "value": "000+",
-        "label": "Species"
+        "value": "2,300+",
+        "label": "Plants in the collection"
       },
       {
         "value": "AZ",
@@ -58,7 +58,7 @@
     ]
   },
   "contact": {
-    "email": "email@placeholder.com",
+    "email": "spinanspiritus@gmail.com",
     "instagram": "azcactusdoctor"
   },
   "events": [
@@ -66,7 +66,15 @@
       "name": "Roadrunner Park Farmers Market",
       "where": "3502 E Cactus Rd, Phoenix, AZ 85032",
       "when": "Every Saturday, 8am–12pm",
-      "date": ""
+      "date": "",
+      "except": "2026-11-07"
+    },
+    {
+      "name": "Sonoran Spiritual and Wellness Market",
+      "where": "New Vision Center for Spiritual Living, Phoenix, AZ 85032",
+      "when": "Saturday, November 7, 2026 · 9:00 AM",
+      "date": "2026-11-07",
+      "url": "https://www.ticketsource.com/sonoranmarket/t-rzjqpvr"
     }
   ],
   "faq": [

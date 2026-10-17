@@ -22,12 +22,13 @@ const CONFIG = {
   // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
   // `date` (YYYY-MM-DD) is optional: once that day has passed the event disappears automatically.
   events: [
-    { name: "Roadrunner Park Farmers Market", where: "3502 E Cactus Rd, Phoenix, AZ 85032", when: "Every Saturday, 8am–12pm", date: "" },
+    { name: "Roadrunner Park Farmers Market", where: "3502 E Cactus Rd, Phoenix, AZ 85032", when: "Every Saturday, 8am–12pm", date: "", except: "2026-11-07" },
+    { name: "Sonoran Spiritual and Wellness Market", where: "New Vision Center for Spiritual Living, Phoenix, AZ 85032", when: "Saturday, November 7, 2026 · 9:00 AM", date: "2026-11-07", url: "https://www.ticketsource.com/sonoranmarket/t-rzjqpvr" },
   ],
 
 
 
-  email: "email@placeholder.com",
+  email: "spinanspiritus@gmail.com",
   instagram: "azcactusdoctor",
   instagramUrl: "https://instagram.com/azcactusdoctor",
 
@@ -58,10 +59,18 @@ const CONFIG = {
 /* ============================================================ */
 const addLabel = () => (SITE.text && SITE.text.addToCart) || "Add to cart";
 const upcomingEvents = () => { if (typeof SP !== "undefined" && SP.editing) return CONFIG.events; const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); };
+// Dates a recurring event does NOT happen (e.g. the Doctor is at another market). Shown as "Not on Nov 7".
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const exceptNote = (ev) => {
+  const today = new Date().toISOString().slice(0, 10), editing = typeof SP !== "undefined" && SP.editing;
+  const ds = (String(ev.except || "").match(/\d{4}-\d{2}-\d{2}/g) || []).filter((d) => editing || d >= today).sort();
+  return ds.length ? "Not on " + ds.map((d) => MONTHS[+d.slice(5, 7) - 1] + " " + +d.slice(8)).join(", ") : "";
+};
 const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const mapHref = (where) => (isApple ? `https://maps.apple.com/?q=${encodeURIComponent(where)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}`);
 const mapLink = (e) => (e.where ? `<a class="maplink" href="${mapHref(e.where)}" target="_blank" rel="noopener">${esc(e.where)} <span aria-hidden="true">↗</span><span class="sr">(opens ${isApple ? "Apple Maps" : "map"})</span></a>` : "");
-const eventLabel = (ev) => `${ev.name} — ${ev.when}`;
+const eventLabel = (ev) => `${ev.name} — ${ev.when}${exceptNote(ev) ? " (" + exceptNote(ev).replace(/^Not/, "not") + ")" : ""}`;
+const ticketLink = (e) => (safeUrl(e.url) ? `<a class="evlink" href="${esc(safeUrl(e.url))}" target="_blank" rel="noopener noreferrer">Get your free ticket <span aria-hidden="true">↗</span></a>` : "");
 const $ = (s) => document.querySelector(s);
 const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -195,13 +204,13 @@ function renderContactArea() {
   const ev = upcomingEvents();
   if (SP.editing) {
     $("#marketList").setAttribute("data-sort", "events");
-    $("#marketList").innerHTML = ev.map((e, i) => `<li class="ev-edit" data-i="${i}" draggable="true">${dragHandle}<b${editAttrs("events." + i + ".name")}>${esc(e.name)}</b><span${editAttrs("events." + i + ".where")}>${esc(e.where || "")}</span><span class="when"${editAttrs("events." + i + ".when")}>${esc(e.when)}</span><label class="evdate">Hide after <input type="date" data-date="${i}" value="${esc(e.date || "")}"></label><button class="x" data-act="del-event" data-i="${i}" aria-label="Remove event">✕</button></li>`).join("") + `<li class="add-row"><button class="addbtn" data-act="add-event">+ Add an event</button></li>`;
+    $("#marketList").innerHTML = ev.map((e, i) => `<li class="ev-edit" data-i="${i}" draggable="true">${dragHandle}<b${editAttrs("events." + i + ".name")}>${esc(e.name)}</b><span${editAttrs("events." + i + ".where")}>${esc(e.where || "")}</span><span class="when"${editAttrs("events." + i + ".when")}>${esc(e.when)}</span><span class="evx"${editAttrs("events." + i + ".except")} data-ph="Not on dates (2026-11-07, …)">${esc(e.except || "")}</span><span class="evx"${editAttrs("events." + i + ".url")} data-ph="Ticket link (https://…)">${esc(e.url || "")}</span><label class="evdate">Hide after <input type="date" data-date="${i}" value="${esc(e.date || "")}"></label><button class="x" data-act="del-event" data-i="${i}" aria-label="Remove event">✕</button></li>`).join("") + `<li class="add-row"><button class="addbtn" data-act="add-event">+ Add an event</button></li>`;
   } else {
     $("#marketList").removeAttribute("data-sort");
-    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span></li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<span class="exnote">${esc(exceptNote(e))}</span>` : ""}${ticketLink(e)}</li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
   }
-  const mapEv = ev.find((e) => e.where);
-  if ($("#eventMap")) $("#eventMap").innerHTML = mapEv ? `<iframe title="Map to ${esc(mapEv.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(mapEv.where)}&output=embed"></iframe>` : "";
+  const mapEvs = ev.filter((e) => e.where);
+  if ($("#eventMap")) $("#eventMap").innerHTML = mapEvs.map((e) => `<iframe title="Map to ${esc(e.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(e.where)}&output=embed"></iframe>`).join("");
   if ($("#marketSelect")) $("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
 }
 function renderFaq() {
@@ -674,7 +683,7 @@ function renderPlantPage() {
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
-          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
+          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
         </dl>
         <div class="buy">
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>

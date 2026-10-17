@@ -113,3 +113,6 @@ body.editing a.ed-text{pointer-events:auto}
 .b-add{min-height:120px;border-color:#b08d4f;color:#4a4228;background:transparent}
 .b-btns .addbtn{margin-top:0}
 .b-btn-wrap .x{position:absolute;top:-10px;right:-10px;z-index:3;width:24px;height:24px;font-size:.7rem}
+
+.events .ev-edit .evx{grid-column:2;font-size:.9rem;color:#6a6350;min-height:1.2em}
+.events .ev-edit .evx:empty::before{content:attr(data-ph);opacity:.55}
