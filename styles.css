@@ -719,3 +719,4 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .hero-copy{margin-top:0;padding:0;width:100%}.hero-cta{margin-top:26px}
 .nav{background:rgba(240,226,210,.96);border-bottom:1px solid rgba(176,141,79,.25)}
 @media(max-width:960px){.nav-links{background:#f0e2d2 !important;border-bottom:1px solid rgba(176,141,79,.25) !important}.nav-links a{border-top:1px solid rgba(176,141,79,.2) !important}}
+.mobile-menu{background:#f0e2d2 !important;border-bottom:1px solid rgba(176,141,79,.25) !important}.mobile-menu a{border-top:1px solid rgba(176,141,79,.2) !important}
