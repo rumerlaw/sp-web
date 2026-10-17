@@ -727,3 +727,7 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .event-map{display:grid;gap:14px;border:0;max-width:760px}
 .event-map iframe{border:1px solid var(--line)}
 @media(min-width:900px){.event-map{max-width:1040px;grid-template-columns:repeat(auto-fit,minmax(0,1fr))}.event-map iframe{height:320px}}
+
+.ev-map{width:100%;max-width:640px;margin:16px auto 10px}
+.ev-map iframe{display:block;width:100%;height:300px;border:1px solid var(--line)}
+@media(max-width:640px){.ev-map iframe{height:240px}}
