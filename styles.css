@@ -731,3 +731,9 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .ev-map{width:100%;max-width:640px;margin:16px auto 10px}
 .ev-map iframe{display:block;width:100%;height:300px;border:1px solid var(--line)}
 @media(max-width:640px){.ev-map iframe{height:240px}}
+
+.qv-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:rgba(250,248,243,.88);color:var(--ink);display:grid;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.18);cursor:pointer;transition:background .2s,transform .2s}
+.qv-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.06)}
+.qv-arrow svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.qv-arrow.prev{left:12px}.qv-arrow.next{right:12px}
+@media(max-width:760px){.qv-arrow{width:38px;height:38px}}

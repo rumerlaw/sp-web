@@ -418,10 +418,13 @@ function openQuickView(id, opener) {
   const add = $("#qvAdd"); add.disabled = isOut(p) || noPrice(p); add.textContent = isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : addLabel();
   const pics = p.images;
   const show = (k) => {
+    qvProduct.cur = k;
     $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
     document.querySelectorAll(".qv-thumbs button").forEach((b, j) => b.classList.toggle("on", j === k));
   };
   $("#qvThumbs").innerHTML = pics.length > 1 ? pics.map((u, k) => `<button data-qvpic="${k}" aria-label="Photo ${k + 1}"><img src="${esc(variant(u, "thumb"))}" alt=""></button>`).join("") : "";
+  document.querySelectorAll(".qv-arrow").forEach((a) => a.remove());
+  if (pics.length > 1) $(".qv-media").insertAdjacentHTML("beforeend", `<button class="qv-arrow prev" data-qvnav="-1" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg></button><button class="qv-arrow next" data-qvnav="1" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg></button>`);
   qvProduct.show = show; show(0);
   $("#qv").classList.add("on"); $("#qv").setAttribute("aria-hidden", "false");
   document.body.classList.add("lock");
@@ -576,6 +579,7 @@ document.addEventListener("click", (e) => {
   }
   else if (t.dataset.step && $("#plantQty")) { const q = $("#plantQty"); q.value = Math.max(1, Math.min(plantCurrent ? maxQty(plantCurrent) : 20, (parseInt(q.value, 10) || 1) + +t.dataset.step)); }
   else if (t.dataset.qvpic !== undefined && qvProduct) qvProduct.show(+t.dataset.qvpic);
+  else if (t.closest("[data-qvnav]") && qvProduct) { const n = qvProduct.images.length; qvProduct.show((qvProduct.cur + +t.closest("[data-qvnav]").dataset.qvnav + n) % n); }
   else if (t.dataset.plantpic !== undefined && plantCurrent) plantCurrent.show(+t.dataset.plantpic);
   else if (t.id === "qvAdd" && qvProduct) {
     addToCart(qvProduct.id, 1);
@@ -600,7 +604,8 @@ document.addEventListener("click", (e) => {
 const on = (sel, ev, fn) => { const el = $(sel); if (el) el.addEventListener(ev, fn); };
 on("#orderForm", "submit", submitOrder);
 on("#signupForm", "submit", submitSignup);
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") { if ($("#qv") && $("#qv").classList.contains("on")) closeQuickView(); else toggleCart(false); } });
+document.addEventListener("keydown", (e) => { if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && $("#qv") && $("#qv").classList.contains("on") && qvProduct && qvProduct.images.length > 1) { const n = qvProduct.images.length; qvProduct.show((qvProduct.cur + (e.key === "ArrowRight" ? 1 : -1) + n) % n); return; }
+  if (e.key === "Escape") { if ($("#qv") && $("#qv").classList.contains("on")) closeQuickView(); else toggleCart(false); } });
 on("#scrim", "click", () => toggleCart(false));
 on("#search", "input", (e) => { state.q = e.target.value.toLowerCase().trim(); renderProducts(); });
 on("#onlyAvail", "change", (e) => { state.avail = e.target.checked; renderProducts(); });
