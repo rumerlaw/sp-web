@@ -654,7 +654,7 @@ function renderPlantPage() {
     return;
   }
   plantCurrent = p;
-  const url = `https://azcactusdoctor.com/plant.html?id=${encodeURIComponent(p.id)}`;
+  const url = `https://spinanspiritus.com/plant.html?id=${encodeURIComponent(p.id)}`;
   const desc = (p.description && !/^placeholder/i.test(p.description) ? p.description : `${p.name} — ${p.category}. Reserve online and we'll bring it to your next Arizona farmers market.`).slice(0, 300);
   document.title = `${p.name} · Spina & Spiritus`;
   setMeta('meta[name="description"]', "content", desc);

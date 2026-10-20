@@ -6,7 +6,7 @@ import csv, sys
 from pathlib import Path
 from urllib.parse import quote
 ROOT = Path(__file__).resolve().parent.parent
-base = (sys.argv[1] if len(sys.argv) > 1 else "https://azcactusdoctor.com").rstrip("/")
+base = (sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].strip() else "https://spinanspiritus.com").rstrip("/")
 urls = [(base + "/", "1.0", "weekly"), (base + "/faq.html", "0.6", "monthly"), (base + "/about.html", "0.6", "monthly")]
 with open(ROOT / "data/inventory.csv", newline="", encoding="utf-8") as f:
     for r in csv.DictReader(f):

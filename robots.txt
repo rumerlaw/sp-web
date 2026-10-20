@@ -3,4 +3,4 @@ Allow: /
 Disallow: /incoming/
 Disallow: /scripts/
 Disallow: /edit.html
-Sitemap: https://azcactusdoctor.com/sitemap.xml
+Sitemap: https://spinanspiritus.com/sitemap.xml
