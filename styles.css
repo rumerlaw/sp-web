@@ -737,3 +737,21 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .qv-arrow svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .qv-arrow.prev{left:12px}.qv-arrow.next{right:12px}
 @media(max-width:760px){.qv-arrow{width:38px;height:38px}}
+
+/* shop page: 3 plants across on desktop/tablet, 2 on phones */
+.shop-main .product-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 26px}
+@media(max-width:640px){.shop-main .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}}
+/* home: 3-plant preview + browse button */
+.product-grid[data-preview]{grid-template-columns:repeat(3,minmax(0,1fr));gap:26px;max-width:1000px;margin:0 auto}
+.shop-browse{margin-top:2.4rem}
+@media(max-width:640px){
+  .product-grid[data-preview]{gap:10px}
+  .product-grid[data-preview] .name{font-size:.82rem;line-height:1.25}
+  .product-grid[data-preview] .price{font-size:.9rem}
+  .product-grid[data-preview] .peek{display:none}
+}
+/* mobile hero: show the whole artwork, nothing cut off */
+@media(max-width:640px){.hero-spina{height:auto;min-height:0;object-fit:contain}}
+.shop .section-head{text-align:center}
+.shop .section-head h1{font-size:clamp(2.6rem,6vw,4.2rem);letter-spacing:.02em}
+body:not([data-page]) .shop .section-head{padding-left:0}

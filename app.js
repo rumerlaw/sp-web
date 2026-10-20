@@ -88,12 +88,14 @@ const CACTUS_SVG = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" s
 
 // ---- "Back to shop" memory: remember scroll + filters when leaving the shop for a plant page ----
 const RET_KEY = "sp-return";
-const onHome = !document.body.dataset.page;
+const isHome = !document.body.dataset.page, isShop = document.body.dataset.page === "shop";
+const onHome = isHome || isShop;   // pages that remember scroll + filters for "Back to shop"
 let pendingRestore = null;
 if (onHome) {
   try {
     if (sessionStorage.getItem("sp-restore") === "1") {
       pendingRestore = JSON.parse(sessionStorage.getItem(RET_KEY) || "null");
+      if (pendingRestore && pendingRestore.from && pendingRestore.from !== (isShop ? "shop" : "home")) pendingRestore = null;
       sessionStorage.removeItem("sp-restore");
     }
   } catch (e) {}
@@ -118,7 +120,7 @@ if (onHome) {
 }
 // Fade the page in (waits two frames so the browser has painted the hidden state and can animate it).
 const reveal = () => requestAnimationFrame(() => requestAnimationFrame(() => { document.documentElement.style.opacity = ""; }));
-const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ y: Math.round(window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
+const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ from: isShop ? "shop" : "home", y: Math.round(window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
 
 /* ---------- EDITABLE CONTENT (data/site.json) ---------- */
 // Everything the owner can change in the visual editor lives in data/site.json. The static HTML already contains the same
@@ -371,6 +373,7 @@ function addToCart(id, qty) {
 }
 
 function renderCats() {
+  if (!$("#catList")) return;   // home page shows only a short preview, no catalog sidebar
   const counts = {};
   products.forEach((p) => (counts[p.category] = (counts[p.category] || 0) + 1));
   const cats = ["All", ...Object.keys(counts).sort()];
@@ -386,12 +389,17 @@ function renderProducts() {
     (!state.q || (p.name + " " + p.genus + " " + p.category + " " + p.description).toLowerCase().includes(state.q))
   );
   const sorts = {
-    name: (a, b) => a.name.localeCompare(b.name),
+    name: (a, b) => isOut(a) - isOut(b) || a.name.localeCompare(b.name),   // available plants first, sold out last
     priceAsc: (a, b) => a.price - b.price,
     priceDesc: (a, b) => b.price - a.price,
   };
   list.sort(sorts[state.sort]);
-  $("#productGrid").innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="empty">No plants match your selection.</p>`;
+  const grid = $("#productGrid");
+  if (grid.hasAttribute("data-preview")) {   // home page: just 3 in-stock plants (with photos first); the rest is on shop.html
+    const ok = products.filter((p) => !isOut(p) && !noPrice(p));
+    list = [...ok.filter((p) => p.images.length), ...ok.filter((p) => !p.images.length)].slice(0, 3);
+  }
+  grid.innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="empty">No plants match your selection.</p>`;
 }
 const pageUrl = (p) => `plant.html?id=${encodeURIComponent(p.id)}`;
 function cardHtml(p) {
@@ -570,7 +578,7 @@ document.addEventListener("click", (e) => {
   if (planta && onHome) saveReturn();
   const t = e.target.closest("button, a");
   if (!t) return;
-  if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); $("#filters").classList.remove("on"); }
+  if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); if ($("#filters")) $("#filters").classList.remove("on"); }
   else if (t.id === "backShop") { try { if (sessionStorage.getItem(RET_KEY)) sessionStorage.setItem("sp-restore", "1"); } catch (err) {} }
   else if (t.dataset.view && $("#qv") && !SP.editing) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
   else if (t.id === "plantAdd" && plantCurrent) {
@@ -644,6 +652,7 @@ SP.plantKey = () => (plantCurrent ? (plantCurrent.origKey || normKey(plantCurren
 SP.plantImages = () => { const k = SP.plantKey(); const ov = SITE.plants && SITE.plants[k]; return ov && Array.isArray(ov.images) ? ov.images : (plantCurrent ? plantCurrent.images : []); };
 SP.setPlantImages = (list) => { const k = SP.plantKey(); setPath(SITE, `plants.${k}.images`, list); if (plantCurrent) plantCurrent.images = list.map(safeUrl).filter(Boolean); SP.rerenderPlant(); };
 const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
+const backHref = () => { try { const r = JSON.parse(sessionStorage.getItem(RET_KEY) || "null"); if (r && r.from === "home") return "index.html#shop"; } catch (e) {} return "shop.html"; };
 function renderPlantPage() {
   const root = $("#plantPage");
   const id = new URLSearchParams(location.search).get("id");
@@ -665,7 +674,7 @@ function renderPlantPage() {
   const pics = p.images, bn = banner(p);
   const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
   root.innerHTML = `<div class="wrap-wide">
-    <a class="back" id="backShop" href="index.html#shop" data-path="text.backToShop">${esc((SITE.text && SITE.text.backToShop) || "← Back to shop")}</a>
+    <a class="back" id="backShop" href="${backHref()}" data-path="text.backToShop">${esc((SITE.text && SITE.text.backToShop) || "← Back to shop")}</a>
     <div class="plant-grid">
       <div class="plant-media">
         <div class="plant-main" id="plantMain"></div>
@@ -761,11 +770,11 @@ siteReady.then(() => { initPage(); return loadInventory(); }).then((ok) => {
     renderCats(); renderProducts(); addProductSchema();
     if (pendingRestore) requestAnimationFrame(() => { window.scrollTo({ top: pendingRestore.y, behavior: "instant" }); reveal(); });
   }
-  if (onHome && !pendingRestore && location.hash.length > 1) {
+  if (isHome && !pendingRestore && location.hash.length > 1) {
     const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
     history.replaceState(null, "", location.pathname + location.search);
     requestAnimationFrame(() => { if (el) el.scrollIntoView({ behavior: "instant", block: "start" }); reveal(); });
-  } else if (onHome && location.hash) history.replaceState(null, "", location.pathname + location.search);
+  } else if (isHome && location.hash) history.replaceState(null, "", location.pathname + location.search);
   resolveReady();
 });
 

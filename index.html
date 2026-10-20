@@ -40,7 +40,7 @@
     <a href="index.html#top" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
       <img class="brand-mark" src="assets/brand/spina-wordmark.png" width="833" height="272" alt="Spina &amp; Spiritus">
     </a>
-    <a class="nl" href="index.html#shop" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
+    <a class="nl" href="shop.html" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
     <a class="nl" href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
     <a class="nl" href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
@@ -53,7 +53,7 @@
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
     <a href="about.html" data-path="text.navAbout" data-href-path="links.navAbout">About</a>
     <a href="index.html#collection" data-path="text.navCollection" data-href-path="links.navCollection">Collection</a>
-    <a href="index.html#shop" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
+    <a href="shop.html" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
     <a href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
     <a href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
@@ -64,7 +64,7 @@
   <div class="hero-copy">
     <h1 class="hero-brand"><img class="hero-spina" data-img="images.heroBrand" data-img-key="images.heroBrand" src="assets/brand/hero.webp" width="1774" height="887" alt="Spina &amp; Spiritus — plants, metaphysical, spirits"></h1>
     <div class="hero-cta">
-      <a href="#shop" class="btn" data-path="text.heroBtn1" data-href-path="links.heroBtn1">Shop the plants</a>
+      <a href="shop.html" class="btn" data-path="text.heroBtn1" data-href-path="links.heroBtn1">Shop the plants</a>
       <a href="#about" class="btn ghost" data-path="text.heroBtn2" data-href-path="links.heroBtn2">Meet the Doctor</a>
     </div>
   </div>
@@ -111,32 +111,8 @@
       <p class="sub shop-sub" data-path="text.shopIntro">We can't bring every plant to every event. Browse everything we have, reserve what you want, choose your event, and we'll bring it. Pay in person, no shipping.</p>
     </div>
 
-    <div class="shop-layout">
-      <aside class="filters" id="filters">
-        <button class="filters-close" id="filtersClose" aria-label="Close filters">Close ×</button>
-        <input type="search" id="search" placeholder="Search plants…" aria-label="Search plants">
-
-        <h3 data-path="text.filtCatalog">Catalog</h3>
-        <ul class="cat-list" id="catList"></ul>
-
-        <h3 data-path="text.filtAvail">Availability</h3>
-        <label class="check"><input type="checkbox" id="onlyAvail"> In stock only</label>
-
-        <h3 data-path="text.filtSort">Sort</h3>
-        <select id="sort">
-          <option value="name">Name A–Z</option>
-          <option value="priceAsc">Price: low to high</option>
-          <option value="priceDesc">Price: high to low</option>
-        </select>
-      </aside>
-
-      <div class="shop-main">
-        <div class="shop-bar">
-          <button class="btn ghost small filters-open" id="filtersOpen">Filters</button>
-        </div>
-        <div class="product-grid" id="productGrid"></div>
-      </div>
-    </div>
+    <div class="product-grid" id="productGrid" data-preview></div>
+    <p class="center shop-browse"><a class="btn" href="shop.html" data-path="text.shopBrowse" data-href-path="links.shopBrowse">Browse all plants</a></p>
   </div>
 </section>
 
