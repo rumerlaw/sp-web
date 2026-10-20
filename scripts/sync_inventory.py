@@ -78,17 +78,39 @@ def load_photos():
             for r in csv.DictReader(f): out[r["key"]] = r["image"]
     return out
 
-def photos_for(name, photos, claimed):
-    """Photos named '<plant>.jpg', '<plant> 2.jpg', ... in order."""
-    k = re.sub(r"[^a-z0-9]", "", name.lower()); found = []
+def _nk(s): return re.sub(r"[^a-z0-9]", "", str(s or "").lower())
+
+def assign_photos(photos, plants):
+    """Match photo files to plants. Ignores capitals/spaces/punctuation, allows a trailing number for extra
+    photos ('Name 2'), an optional genus in front ('Adenium Multiflorum'), and small misspellings.
+    plants = [(name, genus)]; returns {plant index: [(order, path, filekey)]}."""
+    from difflib import SequenceMatcher
+    forms = []
+    for name, genus in plants:
+        n, g = _nk(name), _nk(genus)
+        forms.append({n, g + n} if g else {n})
+    out = {}
     for fk, path in photos.items():
-        if fk == k: found.append((1, path, fk))
-        else:
-            m = re.fullmatch(re.escape(k) + r"(\d{1,2})", fk)
-            if m: found.append((int(m.group(1)), path, fk))
-    found.sort()
-    for _, _, fk in found: claimed.add(fk)
-    return "|".join(p for _, p, _ in found)
+        bases = [(fk, 1)]
+        m = re.fullmatch(r"(.+?)(\d{1,2})", fk)
+        if m: bases.append((m.group(1), int(m.group(2))))
+        best = None   # (score, plant index, order)
+        for base, order in bases:
+            scores = []
+            for pi, fs in enumerate(forms):
+                if base in fs: sc = 1.0
+                else: sc = max(SequenceMatcher(None, base, f).ratio() for f in fs) if len(base) >= 5 else 0
+                scores.append((sc, pi))
+            scores.sort(reverse=True)
+            top = scores[0]
+            if top[0] < 0.84: continue
+            ties = [p for sc, p in scores if sc == top[0]]
+            if top[0] < 1.0 and len(scores) > 1 and scores[1][0] > top[0] - 0.04 and len(ties) == 1: continue   # ambiguous misspelling
+            if best is None or top[0] > best[0]: best = (top[0], ties, order)
+        if best:
+            for pi in best[1]: out.setdefault(pi, []).append((best[2], path, fk))
+    for v in out.values(): v.sort()
+    return out
 
 def load_genus_desc():
     out = {}
@@ -129,6 +151,15 @@ def main():
         with open(EXTRAS, newline="", encoding="utf-8") as f:
             for r in csv.DictReader(f): extras[key(r.get("name"))] = r
     photos, claimed = load_photos(), set()
+    plist = []
+    for row in rows:
+        if not row or idx["name"] >= len(row): continue
+        nm = clean(row[idx["name"]])
+        if not nm or re.fullmatch(r"(grand )?totals?:?", key(nm)): continue
+        gv = clean(row[idx["genus"]]) if "genus" in idx and idx["genus"] < len(row) else ""
+        plist.append((nm, gv or extras.get(key(nm), {}).get("genus", "")))
+    matched = assign_photos(photos, plist)
+    pn = -1
     gdesc = load_genus_desc()
     import json
     cache = json.loads(DESC_CACHE.read_text()) if DESC_CACHE.exists() else {}
@@ -138,6 +169,7 @@ def main():
         if not row or idx["name"] >= len(row): continue
         name = clean(row[idx["name"]])
         if not name or re.fullmatch(r"(grand )?totals?:?", key(name)): continue   # skip blanks and the sheet's Total row
+        pn += 1
         g = lambda f: row[idx[f]] if f in idx and idx[f] < len(row) else None
         price = num(g("price"))
         ex = extras.get(key(name), {})
@@ -149,7 +181,8 @@ def main():
         out.append({"sku": sku, "name": name, "genus": genus, "category": ex.get("category") or genus or "Plants",
                     "price": ("%g" % price) if price else "", "sale_price": ex.get("sale_price", ""),
                     "status": ex.get("status") or "In Stock", "stock": stock_val(g("stock")),
-                    "size": ex.get("size", ""), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": photos_for(name, photos, claimed) or ex.get("image", "")})
+                    "size": ex.get("size", ""), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": "|".join(p for _, p, _ in matched.get(pn, [])) or ex.get("image", "")})
+        for _, _, fk in matched.get(pn, []): claimed.add(fk)
         if len(out) >= MAX_ROWS: break
     if not out: sys.exit("No plants found; leaving inventory.csv unchanged")
     print(f"sheet '{title}': {len(out)} plants, total stock {sum(int(r['stock'] or 0) for r in out)} ({sum(1 for r in out if r['image'])} with photos, {sum(1 for r in out if not r['price'])} without a price)")
