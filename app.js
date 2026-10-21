@@ -395,9 +395,9 @@ function renderProducts() {
   };
   list.sort(sorts[state.sort]);
   const grid = $("#productGrid");
-  if (grid.hasAttribute("data-preview")) {   // home page: just 3 in-stock plants (with photos first); the rest is on shop.html
+  if (grid.hasAttribute("data-preview")) {   // home page: 9 in-stock plants (with photos first); the rest is on shop.html
     const ok = products.filter((p) => !isOut(p) && !noPrice(p));
-    list = [...ok.filter((p) => p.images.length), ...ok.filter((p) => !p.images.length)].slice(0, 3);
+    list = [...ok.filter((p) => p.images.length), ...ok.filter((p) => !p.images.length)].slice(0, 9);
   }
   grid.innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="empty">No plants match your selection.</p>`;
 }
@@ -580,7 +580,7 @@ document.addEventListener("click", (e) => {
   if (!t) return;
   if (t.dataset.cat) { state.cat = t.dataset.cat; renderCats(); renderProducts(); if ($("#filters")) $("#filters").classList.remove("on"); }
   else if (t.id === "backShop") { try { if (sessionStorage.getItem(RET_KEY)) sessionStorage.setItem("sp-restore", "1"); } catch (err) {} }
-  else if (t.dataset.view && $("#qv") && !SP.editing) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
+  else if (t.dataset.view && $("#qv") && !SP.editing && !matchMedia("(max-width:760px)").matches) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
   else if (t.id === "plantAdd" && plantCurrent) {
     addToCart(plantCurrent.id, Math.max(1, Math.min(maxQty(plantCurrent), parseInt($("#plantQty").value, 10) || 1)));
     toggleCart(true);

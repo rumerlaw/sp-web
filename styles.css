@@ -755,3 +755,14 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .shop .section-head{text-align:center}
 .shop .section-head h1{font-size:clamp(2.6rem,6vw,4.2rem);letter-spacing:.02em}
 body:not([data-page]) .shop .section-head{padding-left:0}
+
+/* bolder plant names everywhere */
+.card .name{font-weight:700}
+/* phones: 3 plants across on the shop page and home preview, no quick view (tap goes to the plant page) */
+@media(max-width:760px){
+  .shop-main .product-grid,.product-grid[data-preview]{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 8px}
+  .shop-main .product-grid .name,.product-grid[data-preview] .name{font-size:.82rem;line-height:1.25;font-weight:700}
+  .shop-main .product-grid .price,.product-grid[data-preview] .price{font-size:.9rem}
+  .card .peek{display:none}
+  .shop-main .product-grid .banner{font-size:.5rem;letter-spacing:.08em;padding:4px 2px}
+}
