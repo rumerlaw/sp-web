@@ -879,3 +879,10 @@ body[data-page="plant"] .specs dd i,body[data-page="plant"] .genus,body[data-pag
 /* product page: product name smaller and lighter */
 body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font-size:clamp(1.9rem,3vw,2.4rem) !important;font-weight:500 !important;line-height:1.15}
 @media(max-width:760px){body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font-size:1.8rem !important}}
+
+/* desktop hero: the banner picture exactly as supplied, shown whole */
+@media(min-width:641px){
+  .hero{background:#f0e2d2;padding:68px 0 52px}
+  .hero-spina{width:min(100%,1440px);height:auto;aspect-ratio:2/1;object-fit:contain;-webkit-mask-image:none;mask-image:none;margin:0 auto}
+  .hero-cta{margin-top:26px}
+}
