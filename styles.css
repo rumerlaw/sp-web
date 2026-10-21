@@ -835,9 +835,11 @@ a,button,select,summary,label,input[type=checkbox]{touch-action:manipulation;-we
 /* scrolling inside the checkout drawer / quick view never scrolls the page behind */
 .cart,.cart-items,.cart-foot,.qv,.qv-wrap,.filters{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .scrim{touch-action:none}
+@media(max-width:760px){
 /* product page: no italics, no thin serif font (solid sans everywhere) */
 body[data-page="plant"] i,body[data-page="plant"] em,body[data-page="plant"] .specs dd i{font-style:normal !important}
 body[data-page="plant"] h1,body[data-page="plant"] h2,body[data-page="plant"] h3,body[data-page="plant"] .plant-title{font-family:var(--sans) !important;font-weight:700 !important;letter-spacing:0}
+}
 
 /* home shop: full shop on desktop; short 9-plant preview + browse button on phones */
 @media(min-width:761px){body:not([data-page]) .shop-browse{display:none}}
@@ -854,10 +856,9 @@ body[data-page="plant"] h1,body[data-page="plant"] h2,body[data-page="plant"] h3
   .hero-copy{margin-top:0}
   .hero-cta{margin-top:20px}
 }
-/* quick view: product name + genus less heavy */
-#qv .qv-info h3,#qvTitle{font-weight:500 !important}
-#qv .qv-genus,#qv .qv-genus i{font-weight:500 !important}
+@media(max-width:760px){
 /* product page: product name + genus less heavy (matches the quick view) */
 body[data-page="plant"] .plant-title,body[data-page="plant"] h1{font-weight:500 !important}
 body[data-page="plant"] .specs dd i,body[data-page="plant"] .genus,body[data-page="plant"] .genus i{font-weight:500 !important}
-body[data-page="plant"] .related h2,body[data-page="plant"] h2{font-weight:500 !important}
+@media(max-width:760px){body[data-page="plant"] .related h2,body[data-page="plant"] h2{font-weight:500 !important}}
+}
