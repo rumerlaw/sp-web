@@ -373,6 +373,8 @@ async function loadInventory() {
 
 /* ---------- SHOP ---------- */
 const isOut = (p) => /sold/i.test(p.status) || p.stock === 0;
+// Sold-out plants are hidden from the shop (the owner still sees them while editing; a direct plant link still works).
+const listed = (p) => SP.editing || !isOut(p);
 const isSale = (p) => /sale/i.test(p.status) && p.salePrice > 0 && p.salePrice < p.price;
 const now = (p) => (isSale(p) ? p.salePrice : p.price);
 const noPrice = (p) => now(p) <= 0;
@@ -393,15 +395,16 @@ function addToCart(id, qty) {
 function renderCats() {
   if (!$("#catList")) return;   // home page shows only a short preview, no catalog sidebar
   const counts = {};
-  products.forEach((p) => (counts[p.category] = (counts[p.category] || 0) + 1));
+  products.filter(listed).forEach((p) => (counts[p.category] = (counts[p.category] || 0) + 1));
   const cats = ["All", ...Object.keys(counts).sort()];
   $("#catList").innerHTML = cats
-    .map((c) => `<li><button class="${c === state.cat ? "active" : ""}" data-cat="${esc(c)}">${esc(c)}<small>${c === "All" ? products.length : counts[c]}</small></button></li>`)
+    .map((c) => `<li><button class="${c === state.cat ? "active" : ""}" data-cat="${esc(c)}">${esc(c)}<small>${c === "All" ? products.filter(listed).length : counts[c]}</small></button></li>`)
     .join("");
 }
 
 function renderProducts() {
   let list = products.filter((p) =>
+    listed(p) &&
     (state.cat === "All" || p.category === state.cat) &&
     (!state.avail || !isOut(p)) &&
     (!state.q || (p.name + " " + p.genus + " " + p.category + " " + p.description).toLowerCase().includes(state.q))
@@ -710,7 +713,7 @@ function renderPlantPage() {
   setMeta('meta[property="og:title"]', "content", `${p.name} · Spina & Spiritus`);
   setMeta('meta[property="og:description"]', "content", desc);
   const pics = p.images, bn = banner(p);
-  const related = [...products.filter((x) => x.id !== p.id && x.category === p.category), ...products.filter((x) => x.id !== p.id && x.category !== p.category)].slice(0, 4);
+  const related = [...products.filter((x) => listed(x) && x.id !== p.id && x.category === p.category), ...products.filter((x) => listed(x) && x.id !== p.id && x.category !== p.category)].slice(0, 4);
   root.innerHTML = `<div class="wrap-wide">
     <a class="back" id="backShop" href="${backHref()}" data-path="text.backToShop">${esc((SITE.text && SITE.text.backToShop) || "← Back to shop")}</a>
     <div class="plant-grid">
