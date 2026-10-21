@@ -818,3 +818,7 @@ input::placeholder,textarea::placeholder{font-weight:500;color:#6b675b;opacity:1
 .related .card .name{font-size:1.4rem;line-height:1.25}
 .related .card .price{font-size:1.15rem}
 @media(max-width:760px){.related h2{font-size:2.3rem}.related .card .name{font-size:1.15rem}.related .card .price{font-size:1rem}}
+/* FAQ page: same cream as the header and hero */
+body[data-page="faq"],body[data-page="faq"] main,body[data-page="faq"] .faqpage{background:#f0e2d2}
+body[data-page="faq"] .faq-item{border-bottom-color:rgba(176,141,79,.35)}
+body[data-page="faq"] .footer,body[data-page="faq"] .footer-bar{background:#f0e2d2}
