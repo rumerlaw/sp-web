@@ -201,9 +201,19 @@ function renderPortrait() {
 function renderMarketSelect() {
   const sel = $("#marketSelect"); if (!sel) return;
   const keep = sel.value;
-  sel.innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
+  // The list shows just the event name (so it fits on a phone); the full name + time is shown under the box once chosen.
+  sel.innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option value="${esc(eventLabel(e))}">${esc(e.name)}</option>`).join("");
   if (keep) sel.value = keep;
+  showPicked();
 }
+function showPicked() {
+  const sel = $("#marketSelect"); if (!sel) return;
+  let box = $("#marketPicked");
+  if (!box) { box = document.createElement("p"); box.id = "marketPicked"; box.className = "market-picked"; box.setAttribute("aria-live", "polite"); sel.closest("label").after(box); }
+  box.textContent = sel.value ? "Pickup: " + sel.value : "";
+  box.hidden = !sel.value;
+}
+document.addEventListener("change", (e) => { if (e.target && e.target.id === "marketSelect") showPicked(); });
 function renderContactArea() {
   renderMarketSelect();
   if (!$("#contactEmail")) return;
