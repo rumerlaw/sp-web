@@ -756,8 +756,10 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 .shop .section-head h1{font-size:clamp(2.6rem,6vw,4.2rem);letter-spacing:.02em}
 body:not([data-page]) .shop .section-head{padding-left:0}
 
+@media(max-width:760px){
 /* bolder plant names everywhere */
 .card .name{font-weight:700}
+}
 /* phones: 3 plants across on the shop page and home preview, no quick view (tap goes to the plant page) */
 @media(max-width:760px){
   .shop-main .product-grid,.product-grid[data-preview]{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 8px}
@@ -767,6 +769,7 @@ body:not([data-page]) .shop .section-head{padding-left:0}
   .shop-main .product-grid .banner{font-size:.5rem;letter-spacing:.08em;padding:4px 2px}
 }
 
+@media(max-width:760px){
 /* bolder upcoming events + FAQ */
 .events h2,.faq h2,.faqpage h1{font-weight:700}
 .events li b{font-weight:700}
@@ -777,11 +780,15 @@ body:not([data-page]) .shop .section-head{padding-left:0}
 .events-note,.contact-q{font-weight:700}
 .faq-item summary{font-weight:700}
 .faq-a p{font-weight:500}
+}
+@media(max-width:760px){
 /* plant names: clearly bold (shop + home preview) */
 .card .name,.product-grid[data-preview] .name,.shop-main .product-grid .name{font-family:var(--sans);font-weight:700;letter-spacing:.01em;color:var(--ink)}
 .card .name{font-size:1.1rem}
 @media(max-width:760px){.card .name{font-size:.8rem}}
+}
 
+@media(max-width:760px){
 /* ---- no thin/light type anywhere: small text uses solid sans, big headings use bold serif ---- */
 :root{--muted:#47443b}
 body{font-weight:500}
@@ -795,6 +802,7 @@ h1,h2,h3,h4,.brand-main{font-weight:700}
 .faq-item summary,.events li b,.card h4,.coll-card h4,.facts strong,.genus,.qv-genus{font-weight:700 !important}
 .sub,.lede,.about p,.faq-a p,.qv-desc,.plant-desc{font-weight:500 !important}
 .dropcap::first-letter{font-family:var(--serif) !important;font-weight:700}
+}
 /* phones: bigger plant names in the 3-across grids (home preview + shop) */
 @media(max-width:760px){
   .shop-main .product-grid .name,.product-grid[data-preview] .name,.card .name{font-size:1rem;line-height:1.2;font-weight:700}
@@ -810,14 +818,13 @@ h1,h2,h3,h4,.brand-main{font-weight:700}
 }
 /* phone hero: portrait artwork, shown whole */
 @media(max-width:640px){.hero{padding-top:64px;padding-bottom:36px}.hero-brand picture{display:block}.hero-spina{width:100%;height:auto;min-height:0;object-fit:contain}}
+@media(max-width:760px){
 /* form fields + the "pick your event" dropdown (event times): solid, not light */
 select,option,input,textarea,.form label,#marketSelect,#marketSelect option{font-family:var(--sans) !important;font-weight:600 !important;color:var(--ink)}
 input::placeholder,textarea::placeholder{font-weight:500;color:#6b675b;opacity:1}
-/* plant page: bigger titles in the "You may also like" area */
-.related h2{font-size:clamp(2.4rem,5vw,3.4rem);font-weight:700;margin-bottom:2rem}
-.related .card .name{font-size:1.4rem;line-height:1.25}
-.related .card .price{font-size:1.15rem}
-@media(max-width:760px){.related h2{font-size:2.3rem}.related .card .name{font-size:1.15rem}.related .card .price{font-size:1rem}}
+}
+/* plant page: bigger titles in the "You may also like" area (phones only) */
+@media(max-width:760px){.related h2{font-size:2.3rem;font-weight:700;margin-bottom:2rem}.related .card .name{font-size:1.15rem;line-height:1.25}.related .card .price{font-size:1rem}}
 /* FAQ page: same cream as the header and hero */
 body[data-page="faq"],body[data-page="faq"] main,body[data-page="faq"] .faqpage{background:#f0e2d2}
 body[data-page="faq"] .faq-item{border-bottom-color:rgba(176,141,79,.35)}
