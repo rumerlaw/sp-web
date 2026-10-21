@@ -887,13 +887,8 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
   .hero-cta{margin-top:26px}
 }
 
-/* home About (desktop only): the name sits inside the photo */
-.portrait-name{display:none}
-@media(min-width:761px){
-  body:not([data-page]) #about.name-on-photo #aboutTitle{display:none}
-  body:not([data-page]) #about .portrait{position:relative;overflow:hidden}
-  body:not([data-page]) #about .portrait-name{display:block;position:absolute;left:0;right:0;bottom:0;padding:48px 18px 18px;text-align:center;color:#fff;font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,2.4vw,2rem);letter-spacing:.02em;line-height:1.1;background:linear-gradient(to top,rgba(20,24,18,.62),rgba(20,24,18,0))}
-}
+/* home About (desktop): name beside the photo, lighter and sized to sit neatly next to it */
+@media(min-width:761px){body:not([data-page]) #about #aboutTitle{font-size:clamp(2rem,3.4vw,2.9rem);font-weight:500;line-height:1.1;white-space:nowrap;margin-bottom:.4rem}}
 
 /* home page shop: bigger plant names */
 @media(min-width:761px){body:not([data-page]) .shop .card .name{font-size:1.5rem;line-height:1.2;font-weight:600}}
