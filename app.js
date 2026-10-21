@@ -397,7 +397,7 @@ function renderProducts() {
     (!state.q || (p.name + " " + p.genus + " " + p.category + " " + p.description).toLowerCase().includes(state.q))
   );
   const sorts = {
-    name: (a, b) => isOut(a) - isOut(b) || a.name.localeCompare(b.name),   // available plants first, sold out last
+    name: (a, b) => a.name.localeCompare(b.name),
     priceAsc: (a, b) => a.price - b.price,
     priceDesc: (a, b) => b.price - a.price,
   };
