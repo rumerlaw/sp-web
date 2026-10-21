@@ -810,3 +810,6 @@ h1,h2,h3,h4,.brand-main{font-weight:700}
 }
 /* phone hero: portrait artwork, shown whole */
 @media(max-width:640px){.hero{padding-top:64px;padding-bottom:36px}.hero-brand picture{display:block}.hero-spina{width:100%;height:auto;min-height:0;object-fit:contain}}
+/* form fields + the "pick your event" dropdown (event times): solid, not light */
+select,option,input,textarea,.form label,#marketSelect,#marketSelect option{font-family:var(--sans) !important;font-weight:600 !important;color:var(--ink)}
+input::placeholder,textarea::placeholder{font-weight:500;color:#6b675b;opacity:1}
