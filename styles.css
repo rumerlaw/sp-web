@@ -766,3 +766,18 @@ body:not([data-page]) .shop .section-head{padding-left:0}
   .card .peek{display:none}
   .shop-main .product-grid .banner{font-size:.5rem;letter-spacing:.08em;padding:4px 2px}
 }
+
+/* bolder upcoming events + FAQ */
+.events h2,.faq h2,.faqpage h1{font-weight:700}
+.events li b{font-weight:700}
+.events li span,.events .maplink{font-weight:600;color:var(--ink)}
+.events .maplink{border-bottom:2px solid var(--gold)}
+.events .when{font-weight:700}
+.events .exnote{font-weight:700}
+.events-note,.contact-q{font-weight:700}
+.faq-item summary{font-weight:700}
+.faq-a p{font-weight:500}
+/* plant names: clearly bold (shop + home preview) */
+.card .name,.product-grid[data-preview] .name,.shop-main .product-grid .name{font-family:var(--sans);font-weight:700;letter-spacing:.01em;color:var(--ink)}
+.card .name{font-size:1.1rem}
+@media(max-width:760px){.card .name{font-size:.8rem}}
