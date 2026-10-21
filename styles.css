@@ -813,3 +813,8 @@ h1,h2,h3,h4,.brand-main{font-weight:700}
 /* form fields + the "pick your event" dropdown (event times): solid, not light */
 select,option,input,textarea,.form label,#marketSelect,#marketSelect option{font-family:var(--sans) !important;font-weight:600 !important;color:var(--ink)}
 input::placeholder,textarea::placeholder{font-weight:500;color:#6b675b;opacity:1}
+/* plant page: bigger titles in the "You may also like" area */
+.related h2{font-size:clamp(2.4rem,5vw,3.4rem);font-weight:700;margin-bottom:2rem}
+.related .card .name{font-size:1.4rem;line-height:1.25}
+.related .card .price{font-size:1.15rem}
+@media(max-width:760px){.related h2{font-size:2.3rem}.related .card .name{font-size:1.15rem}.related .card .price{font-size:1rem}}
