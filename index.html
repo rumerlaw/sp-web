@@ -111,7 +111,32 @@
       <p class="sub shop-sub" data-path="text.shopIntro">We can't bring every plant to every event. Browse everything we have, reserve what you want, choose your event, and we'll bring it. Pay in person, no shipping.</p>
     </div>
 
-    <div class="product-grid" id="productGrid" data-preview></div>
+    <div class="shop-layout">
+      <aside class="filters" id="filters">
+        <button class="filters-close" id="filtersClose" aria-label="Close filters">Close ×</button>
+        <input type="search" id="search" placeholder="Search plants…" aria-label="Search plants">
+
+        <h3 data-path="text.filtCatalog">Catalog</h3>
+        <ul class="cat-list" id="catList"></ul>
+
+        <h3 data-path="text.filtAvail">Availability</h3>
+        <label class="check"><input type="checkbox" id="onlyAvail"> In stock only</label>
+
+        <h3 data-path="text.filtSort">Sort</h3>
+        <select id="sort">
+          <option value="name">Name A–Z</option>
+          <option value="priceAsc">Price: low to high</option>
+          <option value="priceDesc">Price: high to low</option>
+        </select>
+      </aside>
+
+      <div class="shop-main">
+        <div class="shop-bar">
+          <button class="btn ghost small filters-open" id="filtersOpen">Filters</button>
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+      </div>
+    </div>
     <p class="center shop-browse"><a class="btn" href="shop.html" data-path="text.shopBrowse" data-href-path="links.shopBrowse">Browse all plants</a></p>
   </div>
 </section>

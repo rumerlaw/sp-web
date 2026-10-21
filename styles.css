@@ -752,7 +752,6 @@ header.nav + .section:not(.hero),header.nav ~ .section.block:first-of-type{scrol
 @media(max-width:640px){.hero-spina{height:auto;min-height:0;object-fit:contain}}
 .shop .section-head{text-align:center}
 .shop .section-head h1{font-size:clamp(2.6rem,6vw,4.2rem);letter-spacing:.02em}
-body:not([data-page]) .shop .section-head{padding-left:0}
 
 @media(max-width:760px){
 /* bolder plant names everywhere */
@@ -839,3 +838,11 @@ a,button,select,summary,label,input[type=checkbox]{touch-action:manipulation;-we
 /* product page: no italics, no thin serif font (solid sans everywhere) */
 body[data-page="plant"] i,body[data-page="plant"] em,body[data-page="plant"] .specs dd i{font-style:normal !important}
 body[data-page="plant"] h1,body[data-page="plant"] h2,body[data-page="plant"] h3,body[data-page="plant"] .plant-title{font-family:var(--sans) !important;font-weight:700 !important;letter-spacing:0}
+
+/* home shop: full shop on desktop; short 9-plant preview + browse button on phones */
+@media(min-width:761px){body:not([data-page]) .shop-browse{display:none}}
+@media(max-width:760px){body:not([data-page]) .shop .filters,body:not([data-page]) .shop-bar{display:none}body:not([data-page]) .shop .section-head{padding-left:0}}
+/* desktop hero: smaller banner (artwork shown whole, same cream all round) */
+@media(min-width:641px){.hero-spina{height:min(40vw,500px);min-height:0;object-fit:contain}.hero{padding-bottom:48px}}
+@media(min-width:641px){.hero-spina{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%,#000 92%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%,#000 92%,transparent 100%);mask-composite:intersect}}
+@media(min-width:641px){.hero-spina{width:min(100%,1000px);height:auto;aspect-ratio:2/1;margin:0 auto;object-fit:cover}}

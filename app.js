@@ -403,7 +403,9 @@ function renderProducts() {
   };
   list.sort(sorts[state.sort]);
   const grid = $("#productGrid");
-  if (grid.hasAttribute("data-preview")) {   // home page: 9 in-stock plants (with photos first); the rest is on shop.html
+  const preview = isHome && matchMedia("(max-width:760px)").matches;   // phones: short preview on the home page; desktop: the full shop
+  grid.toggleAttribute("data-preview", preview);
+  if (preview) {   // home page: 9 in-stock plants (with photos first); the rest is on shop.html
     const ok = products.filter((p) => !isOut(p) && !noPrice(p));
     list = [...ok.filter((p) => p.images.length), ...ok.filter((p) => !p.images.length)].slice(0, 9);
   }
@@ -754,12 +756,19 @@ function renderPlantPage() {
 }
 
 /* ---------- INIT ---------- */
+// "Shop" links: on desktop they go to the shop section on the home page, on phones to the full shop page.
+const shopLinks = () => {
+  const desk = !matchMedia("(max-width:760px)").matches;
+  document.querySelectorAll('[data-href-path="links.navShop"],[data-href-path="links.heroBtn1"]').forEach((a) => a.setAttribute("href", desk ? (isHome ? "#shop" : "index.html#shop") : "shop.html"));
+};
+matchMedia("(max-width:760px)").addEventListener("change", () => { shopLinks(); if (isHome && $("#productGrid") && products.length) renderProducts(); });
 function initPage() {
   syncConfig();
   $("#year").textContent = new Date().getFullYear();
   renderAbout(); renderContactArea(); renderFaq(); renderBlocks();
   if ($("#collectionGrid")) renderCollection();
   applyPaths();
+  shopLinks();
   renderCart();
 }
 function addProductSchema() {
