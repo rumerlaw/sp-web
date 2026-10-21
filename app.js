@@ -777,7 +777,7 @@ const shopLinks = () => {
 matchMedia("(max-width:760px)").addEventListener("change", () => { shopLinks(); if (isHome && $("#productGrid") && products.length) renderProducts(); });
 function initPage() {
   syncConfig();
-  $("#year").textContent = new Date().getFullYear();
+  $("#year").textContent = new Date().getFullYear() + " · site version oct21-b";
   renderAbout(); renderContactArea(); renderFaq(); renderBlocks();
   if ($("#collectionGrid")) renderCollection();
   applyPaths();
