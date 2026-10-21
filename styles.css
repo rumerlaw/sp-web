@@ -801,3 +801,10 @@ h1,h2,h3,h4,.brand-main{font-weight:700}
   .shop-main .product-grid .price,.product-grid[data-preview] .price{font-size:.95rem}
   .product-grid[data-preview] .body,.shop-main .product-grid .body{padding-left:2px;padding-right:2px}
 }
+/* phones: the "Every Saturday…" time is never bigger than the event name */
+@media(max-width:760px){
+  .events li b{font-size:1.4rem}
+  .events .when{font-size:1.3rem !important}
+  .specs dd b{font-size:1.1rem}
+  .specs dd .when{font-size:1.05rem !important}
+}
