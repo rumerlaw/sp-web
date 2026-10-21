@@ -195,6 +195,13 @@ function renderPortrait() {
   if (safeUrl(src)) { el.classList.remove("ph"); el.innerHTML = `<img src="${esc(variant(safeUrl(src), "web"))}" alt="${esc((SITE.about && SITE.about.title) || "Portrait")}">`; }
   else { el.classList.add("ph"); el.innerHTML = ""; }
   if (SP.editing) el.insertAdjacentHTML("beforeend", `<span class="img-hint">Click or drop a photo</span>`);
+  // Home page: the name sits inside the photo (caption). While editing, the normal editable title is shown instead.
+  const t = $("#aboutTitle");
+  if (isHome && t) {
+    t.style.display = SP.editing ? "" : "none";
+    if (!SP.editing && safeUrl(src)) el.insertAdjacentHTML("beforeend", `<span class="portrait-name">${esc((SITE.about && SITE.about.title) || "")}</span>`);
+    else if (!SP.editing) t.style.display = "";
+  }
 }
 // The checkout "which event will you pick up at?" list. Lives in the cart drawer, which every page has,
 // so it is filled on every page (not only where the contact block exists).
