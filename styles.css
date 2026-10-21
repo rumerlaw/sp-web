@@ -822,3 +822,8 @@ input::placeholder,textarea::placeholder{font-weight:500;color:#6b675b;opacity:1
 body[data-page="faq"],body[data-page="faq"] main,body[data-page="faq"] .faqpage{background:#f0e2d2}
 body[data-page="faq"] .faq-item{border-bottom-color:rgba(176,141,79,.35)}
 body[data-page="faq"] .footer,body[data-page="faq"] .footer-bar{background:#f0e2d2}
+
+/* snappier taps on phones (no double-tap delay) */
+a,button,select,summary,label,input[type=checkbox]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.order-fallback{margin-top:12px;display:grid;gap:10px}
+.order-fallback textarea{width:100%;padding:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;resize:vertical}

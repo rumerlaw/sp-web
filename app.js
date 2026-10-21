@@ -498,6 +498,13 @@ async function submitOrder(e) {
   const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nPICKUP EVENT: ${market}\n\nPlease bring these to the event:\n${lines}\n\nTotal: ${total} (pay in person at pickup)\n\nNotes: ${notes || "-"}`;
 
   if (!CONFIG.orderEndpoint) {                        // fallback until an endpoint is configured
+    // No order form is connected yet: open the customer's email app, and ALWAYS show the order text with a copy button,
+    // because on some phones the email app never opens.
+    say("Almost done. Your email app should open: press Send. If it doesn't, copy your order below and email it to " + CONFIG.email + ".");
+    let box = $("#orderFallback");
+    if (!box) { box = document.createElement("div"); box.id = "orderFallback"; box.className = "order-fallback"; msg.after(box); }
+    box.innerHTML = `<textarea readonly rows="7" aria-label="Your order">${esc(summary)}</textarea><button type="button" class="btn small" id="copyOrder">Copy my order</button>`;
+    $("#copyOrder").onclick = async () => { try { await navigator.clipboard.writeText(summary); $("#copyOrder").textContent = "Copied ✓"; } catch (err) { box.querySelector("textarea").select(); $("#copyOrder").textContent = "Press copy on your keyboard"; } };
     location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Plant reservation: " + name)}&body=${encodeURIComponent(summary)}`;
     return;
   }
