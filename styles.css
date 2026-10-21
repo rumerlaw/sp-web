@@ -846,3 +846,11 @@ body[data-page="plant"] h1,body[data-page="plant"] h2,body[data-page="plant"] h3
 @media(min-width:641px){.hero-spina{height:min(40vw,500px);min-height:0;object-fit:contain}.hero{padding-bottom:48px}}
 @media(min-width:641px){.hero-spina{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%,#000 92%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%,#000 92%,transparent 100%);mask-composite:intersect}}
 @media(min-width:641px){.hero-spina{width:min(100%,1000px);height:auto;aspect-ratio:2/1;margin:0 auto;object-fit:cover}}
+
+/* desktop hero: just the Spina & Spiritus logo, centered on soft white-cream (as before the banner) */
+@media(min-width:641px){
+  .hero{background:linear-gradient(180deg,#f7f4ec 0%,#eee9dc 100%);padding:120px 24px 90px}
+  .hero-spina{width:min(400px,60vw);height:auto;aspect-ratio:auto;object-fit:contain;-webkit-mask-image:none;mask-image:none;margin:0 auto}
+  .hero-copy{margin-top:0}
+  .hero-cta{margin-top:20px}
+}
