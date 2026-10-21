@@ -298,7 +298,7 @@ h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-bottom:.6rem}
 .card-hit:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
 
 /* ===== QUICK VIEW ===== */
-body.lock{overflow:hidden}
+body.lock{overflow:hidden;position:fixed;left:0;right:0;width:100%}
 .qv-wrap{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .35s}
 .qv-wrap.on{opacity:1;pointer-events:auto}
 .qv-scrim{position:absolute;inset:0;background:rgba(36,32,24,.5);backdrop-filter:blur(3px)}
@@ -827,3 +827,7 @@ body[data-page="faq"] .footer,body[data-page="faq"] .footer-bar{background:#f0e2
 a,button,select,summary,label,input[type=checkbox]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .order-fallback{margin-top:12px;display:grid;gap:10px}
 .order-fallback textarea{width:100%;padding:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;resize:vertical}
+
+/* scrolling inside the checkout drawer / quick view never scrolls the page behind */
+.cart,.cart-items,.cart-foot,.qv,.qv-wrap,.filters{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scrim{touch-action:none}

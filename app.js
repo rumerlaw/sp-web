@@ -443,12 +443,12 @@ function openQuickView(id, opener) {
   if (pics.length > 1) $(".qv-media").insertAdjacentHTML("beforeend", `<button class="qv-arrow prev" data-qvnav="-1" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg></button><button class="qv-arrow next" data-qvnav="1" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg></button>`);
   qvProduct.show = show; show(0);
   $("#qv").classList.add("on"); $("#qv").setAttribute("aria-hidden", "false");
-  document.body.classList.add("lock");
+  lockPage(true);
   $(".qv").focus();
 }
 function closeQuickView() {
   $("#qv").classList.remove("on"); $("#qv").setAttribute("aria-hidden", "true");
-  document.body.classList.remove("lock");
+  lockPage(false);
   if (qvOpener) qvOpener.focus(); qvProduct = null;
 }
 
@@ -467,10 +467,21 @@ function renderCart() {
   $("#cartTotal").textContent = money(items.reduce((s, c) => s + now(c.p) * c.qty, 0));
   $("#checkout").disabled = !items.length;
 }
+// Freeze the page behind the cart / quick view so scrolling inside them never moves the page underneath (also works on iPhone).
+let lockCount = 0, lockY = 0;
+function lockPage(on) {
+  if (on) {
+    if (lockCount++ === 0) { lockY = window.scrollY; document.body.style.top = -lockY + "px"; document.body.classList.add("lock"); }
+  } else if (lockCount > 0 && --lockCount === 0) {
+    document.body.classList.remove("lock"); document.body.style.top = ""; window.scrollTo(0, lockY);
+  }
+}
+let cartLocked = false;
 function toggleCart(on) {
   $("#cart").classList.toggle("on", on);
   $("#scrim").classList.toggle("on", on);
   $("#cart").setAttribute("aria-hidden", String(!on));
+  if (on !== cartLocked) { cartLocked = !!on; lockPage(!!on); }
 }
 function cartLines() {
   return cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
@@ -808,7 +819,7 @@ function glideTo(el) {
 // Home page: remember scroll position for refresh, and keep #section out of the address bar.
 if (onHome) {
   let tick = null;
-  addEventListener("scroll", () => { if (tick) return; tick = setTimeout(() => { tick = null; try { sessionStorage.setItem("sp-y", String(Math.round(scrollY))); } catch (e) {} }, 150); }, { passive: true });
+  addEventListener("scroll", () => { if (tick) return; tick = setTimeout(() => { tick = null; if (document.body.classList.contains("lock")) return; try { sessionStorage.setItem("sp-y", String(Math.round(scrollY))); } catch (e) {} }, 150); }, { passive: true });
   document.addEventListener("click", (e) => {
     const a = e.target.closest("a[href]"); if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
     const m = /^(?:index\.html)?#([\w-]+)$/.exec(a.getAttribute("href") || ""); if (!m) return;
