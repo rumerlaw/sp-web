@@ -831,3 +831,6 @@ a,button,select,summary,label,input[type=checkbox]{touch-action:manipulation;-we
 /* scrolling inside the checkout drawer / quick view never scrolls the page behind */
 .cart,.cart-items,.cart-foot,.qv,.qv-wrap,.filters{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .scrim{touch-action:none}
+/* product page: no italics, no thin serif font (solid sans everywhere) */
+body[data-page="plant"] i,body[data-page="plant"] em,body[data-page="plant"] .specs dd i{font-style:normal !important}
+body[data-page="plant"] h1,body[data-page="plant"] h2,body[data-page="plant"] h3,body[data-page="plant"] .plant-title{font-family:var(--sans) !important;font-weight:700 !important;letter-spacing:0}
