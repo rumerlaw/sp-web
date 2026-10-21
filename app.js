@@ -120,7 +120,7 @@ if (onHome) {
 }
 // Fade the page in (waits two frames so the browser has painted the hidden state and can animate it).
 const reveal = () => requestAnimationFrame(() => requestAnimationFrame(() => { document.documentElement.style.opacity = ""; }));
-const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ from: isShop ? "shop" : "home", y: Math.round(window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
+const saveReturn = () => { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ from: isShop ? "shop" : "home", y: Math.round(document.body.classList.contains("lock") ? lockY : window.scrollY), cat: state.cat, q: state.q, avail: state.avail, sort: state.sort })); } catch (e) {} };
 
 /* ---------- EDITABLE CONTENT (data/site.json) ---------- */
 // Everything the owner can change in the visual editor lives in data/site.json. The static HTML already contains the same
