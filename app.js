@@ -195,12 +195,12 @@ function renderPortrait() {
   if (safeUrl(src)) { el.classList.remove("ph"); el.innerHTML = `<img src="${esc(variant(safeUrl(src), "web"))}" alt="${esc((SITE.about && SITE.about.title) || "Portrait")}">`; }
   else { el.classList.add("ph"); el.innerHTML = ""; }
   if (SP.editing) el.insertAdjacentHTML("beforeend", `<span class="img-hint">Click or drop a photo</span>`);
-  // Home page: the name sits inside the photo (caption). While editing, the normal editable title is shown instead.
-  const t = $("#aboutTitle");
-  if (isHome && t) {
-    t.style.display = SP.editing ? "" : "none";
-    if (!SP.editing && safeUrl(src)) el.insertAdjacentHTML("beforeend", `<span class="portrait-name">${esc((SITE.about && SITE.about.title) || "")}</span>`);
-    else if (!SP.editing) t.style.display = "";
+  // Home page, desktop only: the name sits inside the photo (caption). Phones keep the normal title.
+  const sec = $("#about");
+  if (isHome && sec) {
+    const on = !SP.editing && safeUrl(src);
+    sec.classList.toggle("name-on-photo", !!on);
+    if (on) el.insertAdjacentHTML("beforeend", `<span class="portrait-name">${esc((SITE.about && SITE.about.title) || "")}</span>`);
   }
 }
 // The checkout "which event will you pick up at?" list. Lives in the cart drawer, which every page has,
@@ -784,7 +784,7 @@ const shopLinks = () => {
 matchMedia("(max-width:760px)").addEventListener("change", () => { shopLinks(); if (isHome && $("#productGrid") && products.length) renderProducts(); });
 function initPage() {
   syncConfig();
-  $("#year").textContent = new Date().getFullYear() + " · site version oct21-b";
+  $("#year").textContent = new Date().getFullYear();
   renderAbout(); renderContactArea(); renderFaq(); renderBlocks();
   if ($("#collectionGrid")) renderCollection();
   applyPaths();
