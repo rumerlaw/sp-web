@@ -781,3 +781,23 @@ body:not([data-page]) .shop .section-head{padding-left:0}
 .card .name,.product-grid[data-preview] .name,.shop-main .product-grid .name{font-family:var(--sans);font-weight:700;letter-spacing:.01em;color:var(--ink)}
 .card .name{font-size:1.1rem}
 @media(max-width:760px){.card .name{font-size:.8rem}}
+
+/* ---- no thin/light type anywhere: small text uses solid sans, big headings use bold serif ---- */
+:root{--muted:#47443b}
+body{font-weight:500}
+h1,h2,h3,h4,.brand-main{font-weight:700}
+.eyebrow,.filters h3,.card .price,.card .price s,.qv-price s,.plant-price s{font-weight:600}
+.when,.events .when,.specs dd .when,.specs dd,.specs dt,
+.genus,.qv-genus,.price,.qv-price,.plant-price,.contact-lines,.cart-item h5,.cart-total strong,
+.coll-card h4,.card h4,.facts strong,.faq-item summary,.events li b,.dropcap,.sub,.lede,
+.about p,.faq-a p,.events li span,.qv-desc,.plant-desc,.cart-item,.footer p{font-family:var(--sans) !important;font-weight:600 !important}
+.when,.events .when,.specs dd .when{font-weight:700 !important}
+.faq-item summary,.events li b,.card h4,.coll-card h4,.facts strong,.genus,.qv-genus{font-weight:700 !important}
+.sub,.lede,.about p,.faq-a p,.qv-desc,.plant-desc{font-weight:500 !important}
+.dropcap::first-letter{font-family:var(--serif) !important;font-weight:700}
+/* phones: bigger plant names in the 3-across grids (home preview + shop) */
+@media(max-width:760px){
+  .shop-main .product-grid .name,.product-grid[data-preview] .name,.card .name{font-size:1rem;line-height:1.2;font-weight:700}
+  .shop-main .product-grid .price,.product-grid[data-preview] .price{font-size:.95rem}
+  .product-grid[data-preview] .body,.shop-main .product-grid .body{padding-left:2px;padding-right:2px}
+}
