@@ -874,3 +874,5 @@ body[data-page="plant"] .specs dd i,body[data-page="plant"] .genus,body[data-pag
 @media(max-width:760px){
   .card .name,.shop-main .product-grid .name,.product-grid[data-preview] .name{font-size:.9rem;font-weight:600}
 }
+/* quick view genus: bigger and bolder */
+#qv .qv-genus,#qv .qv-genus i{font-size:1.4rem !important;font-weight:600 !important}
