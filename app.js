@@ -196,7 +196,16 @@ function renderPortrait() {
   else { el.classList.add("ph"); el.innerHTML = ""; }
   if (SP.editing) el.insertAdjacentHTML("beforeend", `<span class="img-hint">Click or drop a photo</span>`);
 }
+// The checkout "which event will you pick up at?" list. Lives in the cart drawer, which every page has,
+// so it is filled on every page (not only where the contact block exists).
+function renderMarketSelect() {
+  const sel = $("#marketSelect"); if (!sel) return;
+  const keep = sel.value;
+  sel.innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
+  if (keep) sel.value = keep;
+}
 function renderContactArea() {
+  renderMarketSelect();
   if (!$("#contactEmail")) return;
   $("#contactEmail").textContent = CONFIG.email;
   $("#contactEmail").href = "mailto:" + CONFIG.email;
@@ -212,7 +221,6 @@ function renderContactArea() {
     $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li><b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<span class="exnote">${esc(exceptNote(e))}</span>` : ""}${ticketLink(e)}${e.where ? `<div class="ev-map"><iframe title="Map to ${esc(e.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(e.where)}&output=embed"></iframe></div>` : ""}</li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
   }
   if ($("#eventMap")) $("#eventMap").innerHTML = "";
-  if ($("#marketSelect")) $("#marketSelect").innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option>${esc(eventLabel(e))}</option>`).join("");
 }
 function renderFaq() {
   const box = $("#faqList"); const items = SITE.faq;
