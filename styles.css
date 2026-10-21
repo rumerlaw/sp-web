@@ -895,3 +895,11 @@ body:not([data-page]) .shop .card .name{font-size:1.5rem;line-height:1.2;font-we
 @media(max-width:760px){body:not([data-page]) .shop .card .name,body:not([data-page]) .shop .product-grid[data-preview] .name{font-size:1.05rem;line-height:1.2;font-weight:600}}
 /* events note + "Questions about a plant or an event?" line: not as bold */
 .events-note,.contact-q,.sub.events-note,.sub.contact-q{font-weight:500 !important}
+/* desktop hero: the whole picture and the buttons fit on the first screen */
+@media(min-width:641px){
+  .hero{padding:68px 0 36px}
+  .hero-spina{width:auto;max-width:100%;height:auto;max-height:calc(100vh - 215px);aspect-ratio:auto;object-fit:contain;margin:0 auto;display:block;
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 4%,#000 96%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 3%,#000 97%,transparent 100%);-webkit-mask-composite:source-in;
+    mask-image:linear-gradient(to right,transparent 0,#000 4%,#000 96%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 3%,#000 97%,transparent 100%);mask-composite:intersect}
+  .hero-cta{margin-top:20px}
+}
