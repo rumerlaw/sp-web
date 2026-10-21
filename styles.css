@@ -854,3 +854,10 @@ body[data-page="plant"] h1,body[data-page="plant"] h2,body[data-page="plant"] h3
   .hero-copy{margin-top:0}
   .hero-cta{margin-top:20px}
 }
+/* quick view: product name + genus less heavy */
+#qv .qv-info h3,#qvTitle{font-weight:500 !important}
+#qv .qv-genus,#qv .qv-genus i{font-weight:500 !important}
+/* product page: product name + genus less heavy (matches the quick view) */
+body[data-page="plant"] .plant-title,body[data-page="plant"] h1{font-weight:500 !important}
+body[data-page="plant"] .specs dd i,body[data-page="plant"] .genus,body[data-page="plant"] .genus i{font-weight:500 !important}
+body[data-page="plant"] .related h2,body[data-page="plant"] h2{font-weight:500 !important}
