@@ -260,7 +260,7 @@ function fullOrder() {
   return out;
 }
 function blockHtml(b, i) {
-  const ed = SP.editing, P = (f) => `blocks.${i}.${f}`, layout = b.layout || "text", align = b.align || "center";
+  const ed = SP.editing, P = (f) => `blocks.${i}.${f}`, layout = ["text", "photo-left", "photo-right", "photo-top", "gallery"].includes(b.layout) ? b.layout : "text", align = ["left", "center", "right"].includes(b.align) ? b.align : "center";
   const title = b.title || ed ? `<h2 data-path="${P("title")}" data-placeholder="Add a heading…">${esc(b.title || "")}</h2>` : "";
   const body = ed ? `<p class="b-text" data-multiline data-placeholder="Write something…" data-path="${P("body")}">${esc(b.body || "")}</p>`
     : (b.body ? String(b.body).split(/\n{2,}/).map((t) => `<p class="b-text">${esc(t).replace(/\n/g, "<br>")}</p>`).join("") : "");

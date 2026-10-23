@@ -15,12 +15,13 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install openpyxl==3.1.5 Pillow pillow-heif
+      - run: pip install openpyxl==3.1.5 Pillow==12.3.0 pillow-heif==1.8.1
       - name: Pull and clean plant photos from the Dropbox photo folder
         env:
           DROPBOX_PHOTOS_URL: ${{ secrets.DROPBOX_PHOTOS_URL }}
