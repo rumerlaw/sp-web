@@ -80,33 +80,50 @@ def load_photos():
 
 def _nk(s): return re.sub(r"[^a-z0-9]", "", str(s or "").lower())
 
+SIZES = ("large", "small", "medium")
+def canon(key):
+    """Reduce a name to (core, size, variegated?) so abbreviations, word order and optional size words don't matter:
+    'vrg'/'var'/'variegata' -> variegated, 'lrg' -> large, 'sml' -> small; 'Semi Glabrata Large' == 'large semi glabrata'."""
+    k = _nk(key)
+    k = re.sub(r"vrgt?|varieg(?:ated|ata)?|var$", "variegated", k)
+    k = re.sub(r"lrg|lge", "large", k); k = re.sub(r"sml", "small", k); k = re.sub(r"med$", "medium", k)
+    size = next((z for z in SIZES if z in k), None)
+    for z in SIZES: k = k.replace(z, "")
+    var = "variegated" in k
+    return k.replace("variegated", ""), size, var
+
 def assign_photos(photos, plants):
     """Match photo files to plants. Ignores capitals/spaces/punctuation, allows a trailing number for extra
-    photos ('Name 2'), an optional genus in front ('Adenium Multiflorum'), and small misspellings.
-    plants = [(name, genus)]; returns {plant index: [(order, path, filekey)]}."""
+    photos ('Name 2'), an optional genus in front ('Adenium Multiflorum'), abbreviations (vrg = variegated),
+    word order and size words, and small misspellings. plants = [(name, genus)]; returns {plant index: [(order, path, filekey)]}."""
     from difflib import SequenceMatcher
-    forms = []
+    info = []
     for name, genus in plants:
-        n, g = _nk(name), _nk(genus)
-        forms.append({n, g + n} if g else {n})
+        core, size, var = canon(name); g = _nk(genus)
+        info.append(({core, g + core} if g else {core}, size, var))
     out = {}
     for fk, path in photos.items():
         bases = [(fk, 1)]
         m = re.fullmatch(r"(.+?)(\d{1,2})", fk)
         if m: bases.append((m.group(1), int(m.group(2))))
-        best = None   # (score, plant index, order)
+        best = None   # (score, [plant indexes], order)
         for base, order in bases:
+            core, size, var = canon(base)
             scores = []
-            for pi, fs in enumerate(forms):
-                if base in fs: sc = 1.0
-                else: sc = max(SequenceMatcher(None, base, f).ratio() for f in fs) if len(base) >= 5 else 0
+            for pi, (forms, psize, pvar) in enumerate(info):
+                if size and psize and size != psize: continue                  # 'large' vs 'small': never the same plant
+                if var and not pvar: continue                                  # a variegated photo never goes to a plain plant
+                sc = 1.0 if core in forms else (max(SequenceMatcher(None, core, f).ratio() for f in forms) if len(core) >= 5 else 0)
+                if sc < 0.84: continue
+                if size != psize: sc *= 0.97                                   # size given on only one side
+                if var != pvar: sc *= 0.93                                     # plant is variegated, photo name doesn't say so
                 scores.append((sc, pi))
+            if not scores: continue
             scores.sort(reverse=True)
-            top = scores[0]
-            if top[0] < 0.84: continue
-            ties = [p for sc, p in scores if sc == top[0]]
-            if top[0] < 1.0 and len(scores) > 1 and scores[1][0] > top[0] - 0.04 and len(ties) == 1: continue   # ambiguous misspelling
-            if best is None or top[0] > best[0]: best = (top[0], ties, order)
+            top = scores[0][0]
+            ties = [p for sc, p in scores if abs(sc - top) < 1e-9]
+            if top < 0.995 and len(ties) == 1 and len(scores) > 1 and scores[1][0] > top - 0.04: continue   # ambiguous guess
+            if best is None or top > best[0]: best = (top, ties, order)
         if best:
             for pi in best[1]: out.setdefault(pi, []).append((best[2], path, fk))
     for v in out.values(): v.sort()
