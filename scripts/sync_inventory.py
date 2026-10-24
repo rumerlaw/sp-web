@@ -176,6 +176,7 @@ def main():
         if not row or idx["name"] >= len(row): continue
         nm = clean(row[idx["name"]])
         if not nm or re.fullmatch(r"(grand )?totals?:?", key(nm)): continue
+        if "stock" in idx and idx["stock"] < len(row) and stock_val(row[idx["stock"]]) == "0": continue   # sold out / 0 = removed from the site
         gv = clean(row[idx["genus"]]) if "genus" in idx and idx["genus"] < len(row) else ""
         plist.append((nm, gv or extras.get(key(nm), {}).get("genus", "")))
     matched = assign_photos(photos, plist)
@@ -189,6 +190,7 @@ def main():
         if not row or idx["name"] >= len(row): continue
         name = clean(row[idx["name"]])
         if not name or re.fullmatch(r"(grand )?totals?:?", key(name)): continue   # skip blanks and the sheet's Total row
+        if "stock" in idx and idx["stock"] < len(row) and stock_val(row[idx["stock"]]) == "0": continue   # 0 in stock: plant is deleted from the site
         pn += 1
         g = lambda f: row[idx[f]] if f in idx and idx[f] < len(row) else None
         price = num(g("price"))
@@ -207,7 +209,17 @@ def main():
     if not out: sys.exit("No plants found; leaving inventory.csv unchanged")
     print(f"sheet '{title}': {len(out)} plants, total stock {sum(int(r['stock'] or 0) for r in out)} ({sum(1 for r in out if r['image'])} with photos, {sum(1 for r in out if not r['price'])} without a price)")
     loose = sorted(set(photos) - claimed)
-    if loose: print("photos that match no plant name:", ", ".join(loose[:15]))
+    if loose: print("photos that match no plant name (removed from the site):", ", ".join(loose[:15]))
+    if loose and not dry and len(claimed) > 0:
+        # A photo whose plant is gone from the sheet (or has 0 in stock) is deleted from the site. (Dropbox is untouched.)
+        ph_dir = ROOT / "assets/photos"
+        for k in loose:
+            for p in (ph_dir / f"photo-{k}.jpg", ph_dir / "web" / f"photo-{k}.webp", ph_dir / "thumb" / f"photo-{k}.webp"):
+                if p.exists(): p.unlink()
+        keep = [(k, v) for k, v in photos.items() if k not in loose]
+        with open(PHOTOS, "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f, lineterminator="\n"); w.writerow(["key", "image"])
+            for k, v in sorted(keep): w.writerow([k, v])
     if cache and not dry: DESC_CACHE.write_text(json.dumps(cache, indent=0, sort_keys=True, ensure_ascii=False))
     if dry: return
     buf = io.StringIO(); w = csv.DictWriter(buf, fieldnames=COLS, lineterminator="\n"); w.writeheader(); w.writerows(out)
