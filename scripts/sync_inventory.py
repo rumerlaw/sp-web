@@ -13,7 +13,7 @@ Usage:
   add --dry to print a summary without writing.
 Optional env: SHEET_NAME (tab to read; default: first tab with the right headers).
 """
-import csv, io, os, re, sys, urllib.request
+import json, csv, io, os, re, sys, urllib.request
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 from openpyxl import load_workbook
@@ -92,7 +92,17 @@ def canon(key):
     var = "variegated" in k
     return k.replace("variegated", ""), size, var
 
-def assign_photos(photos, plants):
+ABBR = {"vrg": "variegated", "vrgt": "variegated", "var": "variegated", "vari": "variegated", "varieg": "variegated", "variegata": "variegated",
+        "lrg": "large", "lge": "large", "sml": "small", "med": "medium"}
+def tokens(label):
+    return [ABBR.get(t, t) for t in re.findall(r"[a-z]+|\d+", str(label or "").lower())]
+
+def load_labels():
+    f = ROOT / "data/photos_labels.json"
+    try: return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+    except Exception: return {}
+
+def assign_photos(photos, plants, labels=None):
     """Match photo files to plants. Ignores capitals/spaces/punctuation, allows a trailing number for extra
     photos ('Name 2'), an optional genus in front ('Adenium Multiflorum'), abbreviations (vrg = variegated),
     word order and size words, and small misspellings. plants = [(name, genus)]; returns {plant index: [(order, path, filekey)]}."""
@@ -103,7 +113,7 @@ def assign_photos(photos, plants):
         forms = {core, g + core} if g else {core}
         if g:   # the sheet's "genus/type" column is sometimes part of the name (e.g. Jade Dwarf + Variegated striata)
             c2, s2, v2 = canon(name + " " + genus); forms.add(c2); size = size or s2; var = var or v2
-        info.append((forms, size, var))
+        info.append((forms, size, var, {frozenset(tokens(name)), frozenset(tokens(name) + tokens(genus))}))
     out = {}
     for fk, path in photos.items():
         bases = [(fk, 1)]
@@ -113,9 +123,13 @@ def assign_photos(photos, plants):
         for base, order in bases:
             core, size, var = canon(base)
             scores = []
-            for pi, (forms, psize, pvar) in enumerate(info):
+            for pi, (forms, psize, pvar, ptok) in enumerate(info):
                 if size and psize and size != psize: continue                  # 'large' vs 'small': never the same plant
                 if var and not pvar: continue                                  # a variegated photo never goes to a plain plant
+                tk = [t for t in tokens((labels or {}).get(fk)) ] if labels and fk in labels else []
+                if order > 1 and tk and tk[-1].isdigit(): tk = tk[:-1]
+                if tk and frozenset(tk) in ptok:      # same words in any order (Jade Dwarf Vrg Striata == Jade striata Dwarf Variegated)
+                    scores.append((1.0, pi)); continue
                 sc = 1.0 if core in forms else (max(SequenceMatcher(None, core, f).ratio() for f in forms) if len(core) >= 5 else 0)
                 if sc < 0.84: continue
                 if size != psize: sc *= 0.97                                   # size given on only one side
@@ -179,7 +193,7 @@ def main():
         if "stock" in idx and idx["stock"] < len(row) and stock_val(row[idx["stock"]]) == "0": continue   # sold out / 0 = removed from the site
         gv = clean(row[idx["genus"]]) if "genus" in idx and idx["genus"] < len(row) else ""
         plist.append((nm, gv or extras.get(key(nm), {}).get("genus", "")))
-    matched = assign_photos(photos, plist)
+    matched = assign_photos(photos, plist, load_labels())
     pn = -1
     gdesc = load_genus_desc()
     import json

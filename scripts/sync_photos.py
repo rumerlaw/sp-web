@@ -66,7 +66,7 @@ def main():
         if not url: print("DROPBOX_PHOTOS_URL not set; skipping photo sync"); return
         src = fetch_zip(url)
     manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
-    new_manifest, done, skipped, bad = {}, 0, [], []
+    new_manifest, done, skipped, bad, labels = {}, 0, [], [], {}
     with zipfile.ZipFile(src) as z:
         infos = [i for i in z.infolist() if not i.is_dir()]
         if len(infos) > MAX_FILES: sys.exit("Too many files in the photo folder")
@@ -83,6 +83,7 @@ def main():
             h = hashlib.sha1(data).hexdigest()
             if key in seen: bad.append(f"{name} (same name as {seen[key]})"); continue
             seen[key] = name
+            labels[key] = stem
             new_manifest[key] = h
             if manifest.get(key) == h and (PHOTOS / f"photo-{key}.jpg").exists(): continue
             try:
@@ -95,6 +96,7 @@ def main():
         for p in (PHOTOS / f"photo-{key}.jpg", PHOTOS / "web" / f"photo-{key}.webp", PHOTOS / "thumb" / f"photo-{key}.webp"):
             if p.exists(): p.unlink()
     MANIFEST.write_text(json.dumps(new_manifest, indent=0, sort_keys=True))
+    (ROOT / "data/photos_labels.json").write_text(json.dumps({k: labels.get(k, k) for k in new_manifest}, indent=0, sort_keys=True, ensure_ascii=False))
     with open(OUTCSV, "w", newline="") as f:
         w = csv.writer(f, lineterminator="\n"); w.writerow(["key", "image"])
         for k in sorted(new_manifest): w.writerow([k, f"assets/photos/photo-{k}.jpg"])
