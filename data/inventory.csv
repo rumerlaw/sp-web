@@ -1,7 +1,7 @@
 sku,name,genus,category,price,sale_price,status,stock,size,description,image
 6-adeniums,"6"" Adeniums",Adenium,Adenium,35,,In Stock,0,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
 lophantha,Lophantha,Agave,Agave,35,,In Stock,3,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
-victoriae-reginae-prm,Victoriae-Reginae PRM,Agave,Agave,65,,In Stock,3,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
+victoriae-reginae-prm,Victoriae-Reginae PRM,Agave,Agave,55,,In Stock,1,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
 aloes,Aloes,Aloe,Aloe,20,,In Stock,0,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
 aloes-2,Aloes,Aloe,Aloe,20,,In Stock,3,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
 cactus-6-pots,"Cactus 6"" pots",,Plants,20,,In Stock,15,,,
@@ -13,7 +13,7 @@ pubiglans,Pubiglans,Euphorbia,Euphorbia,20,,In Stock,0,,"A varied group of succu
 eve-s-needles,Eve's Needles,Austrocylindropuntia,Austrocylindropuntia,20,,In Stock,0,,"A South American cactus with jointed cylindrical stems and long, pointed spines.",
 pringlei,Pringlei,Ferocactus,Ferocactus,50,,In Stock,1,,"A sturdy barrel cactus with heavy ribs and thick, often hooked spines.",
 salglione,Salglione,Gymnocalycium,Gymnocalycium,150,,In Stock,2,,"A compact, rounded cactus that blooms readily with smooth-petaled flowers.",
-fat-albert,Fat Albert,Haworthia,Haworthia,15,,In Stock,0,,"A small rosette succulent with thick, often striped or translucent leaves.",
+fat-albert,Fat Albert,Haworthia,Haworthia,15,,In Stock,1,,"A small rosette succulent with thick, often striped or translucent leaves.",
 lophocereus,Lophocereus,Lophocereus,Lophocereus,25,,In Stock,1,,"A columnar cactus from the desert Southwest and Mexico, known for tall, ribbed stems.",
 compressa,Compressa,Mammillaria,Mammillaria,65,,In Stock,2,,"A small, clustering cactus covered in neat rows of tubercles and spines, often ringed with tiny flowers.",
 crested,Crested,Myrtillocactus,Myrtillocactus,80,,In Stock,2,,"A branching, tree-like columnar cactus with blue-green stems.",
@@ -23,19 +23,19 @@ opuntias,Opuntias,Opuntia,Opuntia,16,,In Stock,11,,"A prickly pear: a cactus wit
 small-variegated,Small Variegated,Opuntia,Opuntia,16,,In Stock,1,,"A prickly pear: a cactus with flat, paddle-shaped pads that blooms in spring or summer.",
 polaskia,Polaskia,Polaskia,Polaskia,25,,In Stock,1,,"A columnar cactus from Mexico with branching, ribbed stems.",
 stenocereus,Stenocereus,Stenocereus,Stenocereus,35,,In Stock,1,,"A columnar cactus from the Americas with thick, ribbed stems.",
-tephrocactus,Tephrocactus,Tephrocactus,Tephrocactus,15,,In Stock,3,,"A small cactus made of jointed, rounded segments, often with papery spines.",
+tephrocactus,Tephrocactus,Tephrocactus,Tephrocactus,15,,In Stock,2,,"A small cactus made of jointed, rounded segments, often with papery spines.",
 trich-stenocereus,trich/Stenocereus,Trichocereus,Trichocereus,25,,In Stock,2,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
-elephantides,Elephantides,Dioscorea,Dioscorea,10,,In Stock,3,,"A caudiciform vine grown for its large, textured, tortoise-shell-like base.",
+elephantides,Elephantides,Dioscorea,Dioscorea,10,,In Stock,4,,"A caudiciform vine grown for its large, textured, tortoise-shell-like base.",
 juttae-3-5-inch,Juttae 3.5 Inch,Cyphostemma,Cyphostemma,20,,In Stock,2,,"A caudex succulent with a thick, swollen trunk and fleshy leaves.",
 buruana,Buruana,Euphorbia,Euphorbia,25,,In Stock,1,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
 knuthii,Knuthii,Euphorbia,Euphorbia,20,,In Stock,3,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
 petiolaris,Petiolaris,Ficus,Ficus,30,,In Stock,2,,"A fig tree grown as a caudex plant, with a swollen trunk and glossy leaves.",
 saxx-x-althea,Saxx x Althea,Trichocereus,Trichocereus,40,,In Stock,4,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 tetragonus,Tetragonus,Acanthocereus,Acanthocereus,30,,In Stock,2,,"A sprawling, branching columnar cactus with ribbed stems and sharp spines. Tough and fast growing.",
-medium-adeniums,Medium Adeniums,,Plants,25,,In Stock,2,,,
+medium-adeniums,Medium Adeniums,,Plants,25,,In Stock,1,,,
 multiflorum,Multiflorum,Adenium,Adenium,20,,In Stock,1,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",assets/photos/photo-adeniummultiflorum.jpg
 obesum-red-flower,Obesum Red Flower,Adenium,Adenium,15,,In Stock,1,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
-obesum-grumbleys,Obesum Grumbleys,Adenium,Adenium,20,,In Stock,2,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",assets/photos/photo-obesumgrumbleyswhite.jpg|assets/photos/photo-obesumgrumbleyswhite2.jpg
+obesum-grumbleys,Obesum Grumbleys,Adenium,Adenium,20,,In Stock,1,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",assets/photos/photo-obesumgrumbleyswhite.jpg|assets/photos/photo-obesumgrumbleyswhite2.jpg
 arabicum-black-giant,Arabicum Black Giant,Adenium,Adenium,20,,In Stock,0,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
 arabicum-shada-form,Arabicum Shada Form,Adenium,Adenium,20,,In Stock,1,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",assets/photos/photo-arabicumshadaform.jpg|assets/photos/photo-arabicumshadaform2.jpg
 barnadii,Barnadii,Euphorbia,Euphorbia,20,,In Stock,1,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",assets/photos/photo-barnardii.jpg
@@ -45,7 +45,7 @@ sudanica,Sudanica,Euphorbia,Euphorbia,20,,In Stock,1,,"A varied group of succule
 avasmontana,Avasmontana,Euphorbia,Euphorbia,15,,In Stock,1,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",assets/photos/photo-avasmontana.jpg
 erlangeris,Erlangeris,Euphorbia,Euphorbia,20,,In Stock,1,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
 pumila-variegated,Pumila Variegated,Haworthia,Haworthia,15,,In Stock,0,,"A small rosette succulent with thick, often striped or translucent leaves.",
-little-circles,Little Circles,Haworthia,Haworthia,15,,In Stock,2,,"A small rosette succulent with thick, often striped or translucent leaves.",assets/photos/photo-littlecircles.jpg
+little-circles,Little Circles,Haworthia,Haworthia,15,,In Stock,0,,"A small rosette succulent with thick, often striped or translucent leaves.",assets/photos/photo-littlecircles.jpg
 limifolia-striata-variegated,Limifolia Striata Variegated,Haworthia,Haworthia,12,,In Stock,1,,"A small rosette succulent with thick, often striped or translucent leaves.",assets/photos/photo-limfoliavrgstriata.jpg
 tom-juul-giant,Tom Juul Giant,Trichocereus,Trichocereus,40,,In Stock,2,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",assets/photos/photo-tomjuulgiant.jpg
 large-opuntias,Large Opuntias,,Plants,24,,In Stock,3,,,
@@ -84,6 +84,6 @@ forbesii,Forbesii,Cereus,Cereus,25,,In Stock,1,,"A tall, upright columnar cactus
 falcata,Falcata,Consolea,Consolea,10,,In Stock,2,,,
 forbesii-small,Forbesii Small,Cereus,Cereus,15,,In Stock,1,,"A tall, upright columnar cactus with ribbed blue-green stems that grows into a sculptural plant.",
 leptoucalis,Leptoucalis,Cylindropuntia,Cylindropuntia,12,,In Stock,1,,"A cholla: a desert cactus with jointed, cylindrical stems covered in dense spines.",
-hybrid-2,Hybrid,Trichocereus,Trichocereus,35,,In Stock,4,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
+hybrid-2,Hybrid,Trichocereus,Trichocereus,35,,In Stock,3,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 hybrid-5,Hybrid #5,Trichocereus,Trichocereus,30,,In Stock,1,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 rigidissimus,Rigidissimus,Echinocereus,Echinocereus,15,,In Stock,0,,,
