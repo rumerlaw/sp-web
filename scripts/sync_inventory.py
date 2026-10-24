@@ -100,7 +100,10 @@ def assign_photos(photos, plants):
     info = []
     for name, genus in plants:
         core, size, var = canon(name); g = _nk(genus)
-        info.append(({core, g + core} if g else {core}, size, var))
+        forms = {core, g + core} if g else {core}
+        if g:   # the sheet's "genus/type" column is sometimes part of the name (e.g. Jade Dwarf + Variegated striata)
+            c2, s2, v2 = canon(name + " " + genus); forms.add(c2); size = size or s2; var = var or v2
+        info.append((forms, size, var))
     out = {}
     for fk, path in photos.items():
         bases = [(fk, 1)]
