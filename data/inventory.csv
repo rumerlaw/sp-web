@@ -24,9 +24,9 @@ tephrocactus,Tephrocactus,Tephrocactus,Tephrocactus,15,,In Stock,2,,"A small cac
 trich-stenocereus,trich/Stenocereus,Trichocereus,Trichocereus,25,,In Stock,2,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 elephantides,Elephantides,Dioscorea,Dioscorea,10,,In Stock,4,,"A caudiciform vine grown for its large, textured, tortoise-shell-like base.",
 juttae-3-5-inch,Juttae 3.5 Inch,Cyphostemma,Cyphostemma,20,,In Stock,2,,"A caudex succulent with a thick, swollen trunk and fleshy leaves.",
-buruana,Buruana,Euphorbia,Euphorbia,25,,In Stock,1,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
+buruana,Buruana,Euphorbia,Euphorbia,25,,In Stock,1,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",assets/photos/photo-buruana.jpg
 knuthii,Knuthii,Euphorbia,Euphorbia,20,,In Stock,3,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
-petiolaris,Petiolaris,Ficus,Ficus,30,,In Stock,4,,"A fig tree grown as a caudex plant, with a swollen trunk and glossy leaves.",
+petiolaris,Petiolaris,Ficus,Ficus,30,,In Stock,4,,"A fig tree grown as a caudex plant, with a swollen trunk and glossy leaves.",assets/photos/photo-petiolaris.jpg
 saxx-x-althea,Saxx x Althea,Trichocereus,Trichocereus,40,,In Stock,4,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 tetragonus,Tetragonus,Acanthocereus,Acanthocereus,30,,In Stock,2,,"A sprawling, branching columnar cactus with ribbed stems and sharp spines. Tough and fast growing.",
 medium-adeniums,Medium Adeniums,,Plants,25,,In Stock,1,,,
@@ -69,7 +69,7 @@ geayi,Geayi,Pachypodium,Pachypodium,20,,In Stock,3,,"A caudex succulent with a t
 shawnii-x-potatorum,Shawnii x Potatorum,Agave,Agave,35,,In Stock,1,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
 decaryi-x-milli,Decaryi x Milli,Euphorbia,Euphorbia,20,,In Stock,3,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
 retusa-variegated,Retusa Variegated,Haworthia,Haworthia,15,,In Stock,1,,"A small rosette succulent with thick, often striped or translucent leaves.",
-zebra,Zebra,Haworthia,Haworthia,10,,In Stock,4,,"A small rosette succulent with thick, often striped or translucent leaves.",
+zebra,Zebra,Haworthia,Haworthia,10,,In Stock,4,,"A small rosette succulent with thick, often striped or translucent leaves.",assets/photos/photo-zebra.jpg
 geometrizans,Geometrizans,Myrtillocactus,Myrtillocactus,25,,In Stock,1,,"A branching, tree-like columnar cactus with blue-green stems.",
 forbesii,Forbesii,Cereus,Cereus,25,,In Stock,1,,"A tall, upright columnar cactus with ribbed blue-green stems that grows into a sculptural plant.",
 falcata,Falcata,Consolea,Consolea,10,,In Stock,2,,,
@@ -79,18 +79,18 @@ hybrid-2,Hybrid,Trichocereus,Trichocereus,35,,In Stock,3,,"A fast-growing column
 hybrid-5,Hybrid #5,Trichocereus,Trichocereus,30,,In Stock,1,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 rorida-green,Rorida Green,,Plants,30,,In Stock,1,,,assets/photos/photo-roridagreen.jpg
 hybrid-3,Hybrid,Aloe,Aloe,20,,In Stock,2,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
-gabriel-x-cordova,Gabriel x Cordova,,Plants,40,,In Stock,2,,,assets/photos/photo-gabrielxcordova.jpg
+gabriel-x-cordova,Gabriel x Cordova,Trichocereus,Trichocereus,40,,In Stock,2,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",assets/photos/photo-gabrielxcordova.jpg
 gepeng,Gepeng,,Plants,30,,In Stock,2,,,assets/photos/photo-gepeng.jpg
 downsi-variegated,Downsi Variegated,,Plants,75,,In Stock,1,,,
-cordova-x-personi,Cordova x Personi,,Plants,25,,In Stock,2,,,assets/photos/photo-cordovaxpersoni.jpg
-small-downsi-variegated,Small Downsi Variegated,,Plants,50,,In Stock,1,,,
-little-sweet-celery,Little Sweet Celery,,Plants,12,,In Stock,1,,,assets/photos/photo-littlesweetcelery.jpg
-large-sweet-celery,Large Sweet Celery,,Plants,15,,In Stock,1,,,assets/photos/photo-largesweetcelery.jpg
-adelina,Adelina,,Plants,40,,In Stock,2,,,
+cordova-x-personi,Cordova x Personi,Trichocereus,Trichocereus,25,,In Stock,2,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",assets/photos/photo-cordovaxpersoni.jpg
+downsi-small-variegated,Downsi Small Variegated,,Plants,50,,In Stock,1,,,
+little-sweet-celery,Little Sweet Celery,Apium,Apium,12,,In Stock,1,,,assets/photos/photo-littlesweetcelery.jpg
+sweet-celery-large,Sweet Celery Large,Apium,Apium,15,,In Stock,1,,,
+adelina,Adelina,,Plants,40,,In Stock,2,,,assets/photos/photo-adelina.jpg
 beauty-sensation-variegated,Beauty Sensation Variegated,,Plants,35,,In Stock,1,,,
 chanin,Chanin,,Plants,40,,In Stock,1,,,assets/photos/photo-chanin.jpg
 riyad,Riyad,,Plants,25,,In Stock,1,,,assets/photos/photo-riyad.jpg
-black-mamba,Black Mamba,,Plants,24,,In Stock,1,,,
+black-mamba,Black Mamba,,Plants,24,,In Stock,1,,,assets/photos/photo-blackmamba.jpg
 jade-dwarf,Jade Dwarf,Variegated striata,Variegated striata,15,,In Stock,2,,,
 blue-leaf-variegated,Blue Leaf Variegated,,Plants,20,,In Stock,1,,,
 viscosa,Viscosa,Haworthia,Haworthia,10,,In Stock,1,,"A small rosette succulent with thick, often striped or translucent leaves.",assets/photos/photo-vicosa.jpg
