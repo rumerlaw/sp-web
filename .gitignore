@@ -1,3 +1,5 @@
 # Originals (may contain GPS/EXIF metadata) — never commit these.
 incoming/
 .DS_Store
+__pycache__/
+*.pyc
