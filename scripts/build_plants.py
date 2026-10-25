@@ -86,7 +86,15 @@ def build_page(shell, p, today):
     own = p["desc"] and not re.match(r"placeholder", p["desc"], re.I)
     kind = genus or p["category"] or "cactus"
     base_desc = p["desc"] if own else f"{name} — a {kind} plant grown in Arizona."
-    desc = clip(f"{base_desc} Reserve online and pick up at our Phoenix, AZ farmers market events. No shipping.", 158)
+    tail = " From Spina & Spiritus (AZ Cactus Doctor), Phoenix AZ."
+    room, picked = 172 - len(tail), ""
+    sents = re.split(r"(?<=[.!?])\s+", re.sub(r"\s+", " ", base_desc).strip())
+    for sent in sents:   # whole sentences only, never cut mid-sentence
+        cand = (picked + " " + sent).strip()
+        if len(cand) <= room: picked = cand
+        else: break
+    if not picked: picked = clip(sents[0], room).rstrip("…")
+    desc = (picked if picked.endswith((".", "!", "?")) else picked + ".") + tail
     imgs = [variant(u, "web") for u in p["images"]]
     og_src = next((u for u in p["images"] if u.lower().endswith((".jpg", ".jpeg", ".png"))), None) or (imgs[0] if imgs else None)
     og_img = f"{SITE}/{og_src.lstrip('./')}" if og_src else f"{SITE}/assets/og-image.jpg"
@@ -101,7 +109,7 @@ def build_page(shell, p, today):
         product["offers"] = {"@type": "Offer", "url": url, "price": ("%g" % price), "priceCurrency": "USD", "availability": avail,
                              "itemCondition": "https://schema.org/NewCondition", "availableDeliveryMethod": "https://schema.org/OnSitePickup",
                              "priceValidUntil": (today + timedelta(days=45)).isoformat(),
-                             "seller": {"@type": "Organization", "name": "Spina & Spiritus"}}
+                             "seller": {"@type": "Organization", "name": "Spina & Spiritus", "alternateName": ["Spina and Spiritus", "AZ Cactus Doctor", "AzCactusDoctor"], "url": SITE + "/"}}
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
         {"@type": "ListItem", "position": 2, "name": "Shop", "item": SITE + "/shop.html"},
@@ -133,7 +141,7 @@ def build_page(shell, p, today):
     s = re.sub(r'<meta property="og:title"[^>]*>', f'<meta property="og:title" content="{esc(title)}">', s, count=1)
     s = re.sub(r'<meta property="og:description"[^>]*>', f'<meta property="og:description" content="{esc(desc)}">', s, count=1)
     s = re.sub(r'<meta property="og:url"[^>]*>', f'<meta property="og:url" content="{esc(url)}">', s, count=1)
-    s = re.sub(r'<meta property="og:image"[^>]*>', f'<meta property="og:image" content="{esc(og_img)}">\n<meta property="og:image:alt" content="{esc(name)} — cactus and succulent for sale at Spina &amp; Spiritus">', s, count=1)
+    s = re.sub(r'<meta property="og:image"[^>]*>', f'<meta property="og:image" content="{esc(og_img)}">\n<meta property="og:image:alt" content="{esc(name)} — cactus and succulent for sale from Spina &amp; Spiritus (AZ Cactus Doctor)">', s, count=1)
     s = s.replace('<meta name="twitter:card" content="summary_large_image">',
                   f'<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:title" content="{esc(title)}">\n<meta name="twitter:description" content="{esc(desc)}">\n<meta name="twitter:image" content="{esc(og_img)}">', 1)
     s = s.replace("</head>", ld(product) + "\n" + ld(crumbs) + "\n</head>", 1)
@@ -141,6 +149,21 @@ def build_page(shell, p, today):
     s = s.replace('<body data-page="plant">', f'<body data-page="plant" data-static="1" data-plant-id="{esc(p["id"])}">', 1)
     s = re.sub(r'<main class="plant" id="plantPage">.*?</main>', lambda m: f'<main class="plant" id="plantPage">{body}</main>', s, count=1, flags=re.S)
     return sl, s
+
+
+def sync_faq_ld():
+    """faq.html carries a static FAQPage structured-data block (for search engines that don't run JavaScript); rebuild it from data/site.json."""
+    f, sf = ROOT / "faq.html", ROOT / "data/site.json"
+    if not (f.exists() and sf.exists()): return
+    try: faq = json.loads(sf.read_text(encoding="utf-8")).get("faq") or []
+    except Exception: return
+    if not faq: return
+    plain = lambda a: re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", str(a)).replace("**", "").replace("*", "")
+    ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q["q"], "acceptedAnswer": {"@type": "Answer", "text": plain(q["a"])}} for q in faq]}, ensure_ascii=False).replace("</", "<\\/")
+    t = f.read_text(encoding="utf-8")
+    t2 = re.sub(r'(<script type="application/ld\+json">)\{"@context": ?"https://schema.org", ?"@type": ?"FAQPage".*?(</script>)', lambda m: m.group(1) + ld + m.group(2), t, count=1, flags=re.S)
+    if t2 != t: f.write_text(t2, encoding="utf-8")
 
 
 def main():
@@ -172,6 +195,7 @@ def main():
         else: t2 = t.replace("<footer", block + "\n\n<footer", 1)
         if t2 != t: shop.write_text(t2, encoding="utf-8")
     (ROOT / "data/plants_index.json").write_text(json.dumps(index, indent=0, ensure_ascii=False), encoding="utf-8")
+    sync_faq_ld()
     print(f"plants/: {len(keep)} pages built, {removed} removed")
 
 
