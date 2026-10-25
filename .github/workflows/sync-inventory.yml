@@ -23,6 +23,7 @@ jobs:
           python-version: "3.12"
       - run: pip install openpyxl==3.1.5 Pillow==12.3.0 pillow-heif==1.8.1
       - name: Pull and clean plant photos from the Dropbox photo folder
+        continue-on-error: true   # if the photo folder is unreachable, still update the inventory
         env:
           DROPBOX_PHOTOS_URL: ${{ secrets.DROPBOX_PHOTOS_URL }}
         run: python scripts/sync_photos.py
