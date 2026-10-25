@@ -247,6 +247,12 @@ def main():
         for k in loose:
             for p in (ph_dir / f"photo-{k}.jpg", ph_dir / "web" / f"photo-{k}.webp", ph_dir / "thumb" / f"photo-{k}.webp"):
                 if p.exists(): p.unlink()
+        for fn in ("data/photos_manifest.json", "data/photos_labels.json"):   # forget them, so they aren't brought back as "kept"
+            fp = ROOT / fn
+            try:
+                d = json.loads(fp.read_text(encoding="utf-8")); [d.pop(k, None) for k in loose]
+                fp.write_text(json.dumps(d, indent=0, sort_keys=True, ensure_ascii=False), encoding="utf-8")
+            except Exception: pass
         keep = [(k, v) for k, v in photos.items() if k not in loose]
         with open(PHOTOS, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f, lineterminator="\n"); w.writerow(["key", "image"])

@@ -91,16 +91,21 @@ def main():
                 done += 1
             except Exception as e:
                 bad.append(f"{name} ({type(e).__name__})"); new_manifest.pop(key, None)
-    # remove photos that were deleted from Dropbox
+    # Photos you delete from Dropbox STAY on the site (the Dropbox folder only adds/updates photos).
+    # They are removed later by sync_inventory.py, once their plant is out of stock or gone from the sheet.
+    old_labels = {}
+    try: old_labels = json.loads((ROOT / "data/photos_labels.json").read_text(encoding="utf-8"))
+    except Exception: pass
+    kept = 0
     for key in set(manifest) - set(new_manifest):
-        for p in (PHOTOS / f"photo-{key}.jpg", PHOTOS / "web" / f"photo-{key}.webp", PHOTOS / "thumb" / f"photo-{key}.webp"):
-            if p.exists(): p.unlink()
+        if (PHOTOS / f"photo-{key}.jpg").exists():
+            new_manifest[key] = manifest[key]; labels.setdefault(key, old_labels.get(key, key)); kept += 1
     MANIFEST.write_text(json.dumps(new_manifest, indent=0, sort_keys=True))
     (ROOT / "data/photos_labels.json").write_text(json.dumps({k: labels.get(k, k) for k in new_manifest}, indent=0, sort_keys=True, ensure_ascii=False))
     with open(OUTCSV, "w", newline="") as f:
         w = csv.writer(f, lineterminator="\n"); w.writerow(["key", "image"])
         for k in sorted(new_manifest): w.writerow([k, f"assets/photos/photo-{k}.jpg"])
-    print(f"photos: {len(new_manifest)} in folder, {done} new/updated, {len(set(manifest) - set(new_manifest))} removed")
+    print(f"photos: {len(new_manifest)} on the site ({kept} no longer in Dropbox, kept), {done} new/updated")
     if skipped: print("skipped (not a photo):", ", ".join(skipped[:10]))
     if bad: print("could not use:", "; ".join(bad[:10]))
 
