@@ -96,16 +96,22 @@ def main():
     old_labels = {}
     try: old_labels = json.loads((ROOT / "data/photos_labels.json").read_text(encoding="utf-8"))
     except Exception: pass
-    kept = 0
+    kept = replaced = 0
+    now_hashes = set(new_manifest.values())
     for key in set(manifest) - set(new_manifest):
-        if (PHOTOS / f"photo-{key}.jpg").exists():
+        if manifest[key] in now_hashes:
+            # Same picture, new file name = it was renamed in Dropbox. The new name replaces the old one: delete the old copy.
+            for f in (PHOTOS / f"photo-{key}.jpg", PHOTOS / "web" / f"photo-{key}.webp", PHOTOS / "thumb" / f"photo-{key}.webp"):
+                if f.exists(): f.unlink()
+            replaced += 1
+        elif (PHOTOS / f"photo-{key}.jpg").exists():
             new_manifest[key] = manifest[key]; labels.setdefault(key, old_labels.get(key, key)); kept += 1
     MANIFEST.write_text(json.dumps(new_manifest, indent=0, sort_keys=True))
     (ROOT / "data/photos_labels.json").write_text(json.dumps({k: labels.get(k, k) for k in new_manifest}, indent=0, sort_keys=True, ensure_ascii=False))
     with open(OUTCSV, "w", newline="") as f:
         w = csv.writer(f, lineterminator="\n"); w.writerow(["key", "image"])
         for k in sorted(new_manifest): w.writerow([k, f"assets/photos/photo-{k}.jpg"])
-    print(f"photos: {len(new_manifest)} on the site ({kept} no longer in Dropbox, kept), {done} new/updated")
+    print(f"photos: {len(new_manifest)} on the site ({kept} no longer in Dropbox, kept; {replaced} renamed, old copy deleted), {done} new/updated")
     if skipped: print("skipped (not a photo):", ", ".join(skipped[:10]))
     if bad: print("could not use:", "; ".join(bad[:10]))
 
