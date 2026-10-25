@@ -97,6 +97,15 @@ ABBR = {"vrg": "variegated", "vrgt": "variegated", "var": "variegated", "vari": 
 def tokens(label):
     return [ABBR.get(t, t) for t in re.findall(r"[a-z]+|\d+", str(label or "").lower())]
 
+def load_aliases():
+    """data/photo_aliases.csv: 'photo' (file name) -> 'plant' (exact name in the sheet), for photos whose name can't be matched automatically."""
+    f = ROOT / "data/photo_aliases.csv"; out = {}
+    if f.exists():
+        with open(f, newline="", encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                if r.get("photo") and r.get("plant"): out[_nk(r["photo"])] = _nk(r["plant"])
+    return out
+
 def load_labels():
     f = ROOT / "data/photos_labels.json"
     try: return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
@@ -115,7 +124,15 @@ def assign_photos(photos, plants, labels=None):
             c2, s2, v2 = canon(name + " " + genus); forms.add(c2); size = size or s2; var = var or v2
         info.append((forms, size, var, {frozenset(tokens(name)), frozenset(tokens(name) + tokens(genus))}))
     out = {}
+    aliases = load_aliases()
     for fk, path in photos.items():
+        al = aliases.get(fk) or (aliases.get(re.sub(r"\d{1,2}$", "", fk)) if re.search(r"\d{1,2}$", fk) else None)
+        if al:   # you told us which plant this photo is for
+            order = int(re.search(r"(\d{1,2})$", fk).group(1)) if (not aliases.get(fk) and re.search(r"\d{1,2}$", fk)) else 1
+            hit = [pi for pi, (n, _g) in enumerate(plants) if _nk(n) == al]
+            if hit:
+                for pi in hit: out.setdefault(pi, []).append((order, path, fk))
+                continue
         bases = [(fk, 1)]
         m = re.fullmatch(r"(.+?)(\d{1,2})", fk)
         if m: bases.append((m.group(1), int(m.group(2))))
