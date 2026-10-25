@@ -933,3 +933,5 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 @media(max-width:760px){.plant-index{display:none}}   /* phones keep the shop page exactly as it was */
 /* home page shop (desktop): plant names in the clean Jost font, easier to read */
 @media(min-width:761px){body:not([data-page]) .shop .card .name{font-family:var(--sans);font-weight:500;font-size:1.3rem;line-height:1.25;letter-spacing:.005em;color:var(--ink)}}
+/* home page shop (phones): plant names in Jost, a bit larger, easy to read */
+@media(max-width:760px){body:not([data-page]) .shop .card .name,body:not([data-page]) .shop .product-grid[data-preview] .name{font-family:var(--sans);font-weight:600;font-size:1rem;line-height:1.25;color:var(--ink)}}
