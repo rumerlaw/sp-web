@@ -214,6 +214,23 @@ function showPicked() {
   box.hidden = !sel.value;
 }
 document.addEventListener("change", (e) => { if (e.target && e.target.id === "marketSelect") showPicked(); });
+// Search engines can show dated events (like the Sonoran market) in results: describe them in structured data.
+function renderEventLd(list) {
+  const old = document.getElementById("eventld"); if (old) old.remove();
+  const evs = list.filter((e) => /^\d{4}-\d{2}-\d{2}$/.test(e.date || "")).map((e) => {
+    const t = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i.exec(e.when || ""); let start = e.date;
+    if (t) { let h = +t[1] % 12 + (/pm/i.test(t[3]) ? 12 : 0); start = `${e.date}T${String(h).padStart(2, "0")}:${t[2] || "00"}:00-07:00`; }   // Arizona stays on MST all year
+    const o = { "@type": "Event", name: e.name, startDate: start, eventStatus: "https://schema.org/EventScheduled", eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: { "@type": "Place", name: String(e.where || e.name).split(",")[0], address: { "@type": "PostalAddress", streetAddress: e.where || "", addressLocality: "Phoenix", addressRegion: "AZ", addressCountry: "US" } },
+      organizer: { "@type": "Organization", name: "Spina & Spiritus", url: "https://spinanspiritus.com/" }, description: `${e.name}. Find Spina & Spiritus (AZ Cactus Doctor) here with rare cacti and succulents.` };
+    if (safeUrl(e.url)) o.offers = { "@type": "Offer", url: safeUrl(e.url), price: "0", priceCurrency: "USD", availability: "https://schema.org/InStock" };
+    return o;
+  });
+  if (!evs.length) return;
+  const sc = document.createElement("script"); sc.type = "application/ld+json"; sc.id = "eventld";
+  sc.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": evs });
+  document.head.appendChild(sc);
+}
 function renderContactArea() {
   renderMarketSelect();
   if (!$("#contactEmail")) return;
@@ -223,6 +240,7 @@ function renderContactArea() {
   $("#contactInsta").href = CONFIG.instagramUrl;
   const it = $("#contactInstaText"); if (it) { it.textContent = CONFIG.instagram; it.setAttribute("data-path", "contact.instagram"); }
   const ev = upcomingEvents();
+  renderEventLd(ev);
   if (SP.editing) {
     $("#marketList").setAttribute("data-sort", "events");
     $("#marketList").innerHTML = ev.map((e, i) => `<li class="ev-edit" data-i="${i}" draggable="true">${dragHandle}<b${editAttrs("events." + i + ".name")}>${esc(e.name)}</b><span${editAttrs("events." + i + ".where")}>${esc(e.where || "")}</span><span class="when"${editAttrs("events." + i + ".when")}>${esc(e.when)}</span><span class="evx"${editAttrs("events." + i + ".except")} data-ph="Not on dates (2026-11-07, …)">${esc(e.except || "")}</span><span class="evx"${editAttrs("events." + i + ".url")} data-ph="Ticket link (https://…)">${esc(e.url || "")}</span><label class="evdate">Hide after <input type="date" data-date="${i}" value="${esc(e.date || "")}"></label><button class="x" data-act="del-event" data-i="${i}" aria-label="Remove event">✕</button></li>`).join("") + `<li class="add-row"><button class="addbtn" data-act="add-event">+ Add an event</button></li>`;
@@ -424,7 +442,9 @@ function renderProducts() {
   }
   grid.innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="empty">No plants match your selection.</p>`;
 }
-const pageUrl = (p) => `plant.html?id=${encodeURIComponent(p.id)}`;
+const plantSlug = (id) => String(id).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+// In-stock plants have their own real page (plants/<name>.html, built by scripts/build_plants.py); anything else uses the generic page.
+const pageUrl = (p) => (isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
 function cardHtml(p) {
   const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
   const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
@@ -615,7 +635,7 @@ function initSlider(root, n, pad) {
 /* ---------- EVENTS ---------- */
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-qv-close]")) return closeQuickView();
-  const planta = e.target.closest('a[href^="plant.html"]');
+  const planta = e.target.closest('a[href^="plant.html"], a[href^="plants/"]');
   if (planta && onHome) saveReturn();
   const t = e.target.closest("button, a");
   if (!t) return;
@@ -696,7 +716,7 @@ const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if
 const backHref = () => { try { const r = JSON.parse(sessionStorage.getItem(RET_KEY) || "null"); if (r && r.from === "home") return "index.html#shop"; } catch (e) {} return "shop.html"; };
 function renderPlantPage() {
   const root = $("#plantPage");
-  const id = new URLSearchParams(location.search).get("id");
+  const id = document.body.dataset.plantId || new URLSearchParams(location.search).get("id");
   const p = products.find((x) => x.id === id);
   if (!p) {
     setMeta('meta[name="robots"]', "content", "noindex");
@@ -704,14 +724,17 @@ function renderPlantPage() {
     return;
   }
   plantCurrent = p;
-  const url = `https://spinanspiritus.com/plant.html?id=${encodeURIComponent(p.id)}`;
+  const url = `https://spinanspiritus.com/plants/${plantSlug(p.id)}.html`;
   const desc = (p.description && !/^placeholder/i.test(p.description) ? p.description : `${p.name} — ${p.category}. Reserve online and we'll bring it to your next Arizona farmers market.`).slice(0, 300);
-  document.title = `${p.name} · Spina & Spiritus`;
-  setMeta('meta[name="description"]', "content", desc);
-  setMeta('link[rel="canonical"]', "href", url);
-  setMeta('meta[property="og:url"]', "content", url);
-  setMeta('meta[property="og:title"]', "content", `${p.name} · Spina & Spiritus`);
-  setMeta('meta[property="og:description"]', "content", desc);
+  if (!document.body.dataset.static) {   // the generic page (plant.html?id=…): point search engines at the real page
+    document.title = `${p.name} for Sale in Phoenix, AZ | Spina & Spiritus`;
+    setMeta('meta[name="description"]', "content", desc);
+    setMeta('link[rel="canonical"]', "href", url);
+    setMeta('meta[property="og:url"]', "content", url);
+    setMeta('meta[property="og:title"]', "content", `${p.name} · Spina & Spiritus`);
+    setMeta('meta[property="og:description"]', "content", desc);
+    setMeta('meta[name="robots"]', "content", "noindex, follow");
+  }
   const pics = p.images, bn = banner(p);
   const related = [...products.filter((x) => listed(x) && x.id !== p.id && x.category === p.category), ...products.filter((x) => listed(x) && x.id !== p.id && x.category !== p.category)].slice(0, 4);
   root.innerHTML = `<div class="wrap-wide">

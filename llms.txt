@@ -1,0 +1,14 @@
+# Spina & Spiritus (AZ Cactus Doctor)
+
+> Rare and curated cacti, succulents, euphorbia, agave and caudex plants (Adenium / desert rose) grown in Arizona by AzCactusDoctor. Sold at Phoenix, AZ farmers markets and events. Customers browse the inventory online and reserve plants for pickup. No shipping.
+
+## Pages
+- [Home](https://spinanspiritus.com/): hero, about, personal collection photos, shop preview, upcoming events, FAQ
+- [Shop](https://spinanspiritus.com/shop.html): full catalog of plants in stock; each plant has its own page
+- [About](https://spinanspiritus.com/about.html): about AzCactusDoctor (15 years growing, 2,300+ plants)
+- [FAQ](https://spinanspiritus.com/faq.html): reservations, pickup, payment, cactus care
+- [Sitemap](https://spinanspiritus.com/sitemap.xml): every plant page
+
+## Key facts
+- Pickup only at Arizona farmers market events (Roadrunner Park Farmers Market, 3502 E Cactus Rd, Phoenix, AZ 85032, Saturdays 8am to 12pm) and special events; payment in person.
+- Contact: spinanspiritus@gmail.com, Instagram @azcactusdoctor

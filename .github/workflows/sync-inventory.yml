@@ -33,14 +33,16 @@ jobs:
           SHEET_NAME: ${{ vars.SHEET_NAME }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/sync_inventory.py
+      - name: Build a real page for every plant in stock (and delete pages of plants that are gone)
+        run: python scripts/build_plants.py ${{ vars.SITE_URL }}
       - name: Refresh sitemap
         run: python scripts/build_sitemap.py ${{ vars.SITE_URL }}
       - name: Commit if changed
         run: |
-          if [ -n "$(git status --porcelain data assets sitemap.xml)" ]; then
+          if [ -n "$(git status --porcelain data assets plants sitemap.xml)" ]; then
             git config user.name "inventory-sync"
             git config user.email "inventory-sync@users.noreply.github.com"
-            git add data assets sitemap.xml
+            git add -A data assets plants sitemap.xml
             git commit -m "Sync inventory from Dropbox"
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push

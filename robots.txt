@@ -3,4 +3,5 @@ Allow: /
 Disallow: /incoming/
 Disallow: /scripts/
 Disallow: /edit.html
+Disallow: /edit.js
 Sitemap: https://spinanspiritus.com/sitemap.xml

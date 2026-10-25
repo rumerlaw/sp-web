@@ -922,3 +922,12 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
   body:not([data-page]) #about #aboutStats span{white-space:nowrap;letter-spacing:.14em;font-size:.72rem}
   body:not([data-page]) #about #aboutStats strong{font-size:2.2rem}
 }
+
+/* shop page: A-Z list of every plant page */
+.plant-index{padding:48px 0 56px;border-top:1px solid var(--line)}
+.plant-index h2{font-size:1.5rem;margin-bottom:1.2rem}
+.plant-index ul{list-style:none;columns:4 200px;column-gap:28px;padding:0;margin:0}
+.plant-index li{break-inside:avoid;padding:3px 0}
+.plant-index a{border-bottom:1px solid transparent}
+.plant-index a:hover{border-bottom-color:var(--gold)}
+@media(max-width:760px){.plant-index{display:none}}   /* phones keep the shop page exactly as it was */
