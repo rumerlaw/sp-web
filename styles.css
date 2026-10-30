@@ -962,3 +962,7 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 .order-done .btn{margin-top:auto}
 .od-copy{font-weight:600;margin:0 0 10px;color:var(--sage-deep)}
 .od-copy.bad{color:#8a3b2a}.od-copy small{display:block;font-weight:500;color:var(--muted);font-size:.78rem;margin-top:4px;word-break:break-word}
+
+/* an event in the next 7 days: highlighted and first */
+.events li.this-week{background:#f3ede0;border:2px solid var(--sage-deep);padding:20px 14px;margin-bottom:10px}
+.ev-week{display:inline-block;background:var(--sage-deep);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;margin-bottom:10px}
