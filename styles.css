@@ -960,3 +960,4 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 .od-event{margin:0;font-weight:600;line-height:1.4}.od-event span{font-weight:500;color:var(--muted)}
 .od-fine{font-size:.85rem;color:var(--muted);margin-bottom:20px;max-width:36ch}
 .order-done .btn{margin-top:auto}
+.od-copy{font-weight:600;margin:0 0 10px;color:var(--sage-deep)}

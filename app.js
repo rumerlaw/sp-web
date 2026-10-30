@@ -18,6 +18,11 @@ const CONFIG = {
   // If blank, signups go to the orderEndpoint above (or open an email draft).
   signupEndpoint: "https://formspree.io/f/xjyyeelo",
   web3formsKey: "",
+  // CONFIRMATION EMAIL TO THE CUSTOMER (optional, free): create an account at https://www.emailjs.com, connect the Gmail account,
+  // make one email template, then paste the three values here. Leave blank to skip.
+  emailjsServiceId: "",
+  emailjsTemplateId: "",
+  emailjsPublicKey: "",
 
   // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
   // `date` (YYYY-MM-DD) is optional: once that day has passed the event disappears automatically.
@@ -524,6 +529,19 @@ function lockPage(on) {
     document.body.classList.remove("lock"); document.body.style.top = ""; window.scrollTo(0, lockY);
   }
 }
+// Optional: email the customer a copy of their reservation (EmailJS, sent from your Gmail). Skipped unless it is set up in CONFIG.
+async function sendCustomerCopy(d, lines, notes) {
+  if (!CONFIG.emailjsServiceId || !CONFIG.emailjsTemplateId || !CONFIG.emailjsPublicKey || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contact)) return;
+  try {
+    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ service_id: CONFIG.emailjsServiceId, template_id: CONFIG.emailjsTemplateId, user_id: CONFIG.emailjsPublicKey,
+        template_params: { to_email: d.contact, customer_name: d.name, plants: lines, pickup_event: d.market, total: d.total, notes: notes || "-", shop_email: CONFIG.email } }),
+    });
+    if (!res.ok) throw new Error(res.status);
+    const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy">We've also emailed a copy to ${esc(d.contact)}.</p>`);
+  } catch (err) { /* the order itself was already sent; the copy is a bonus */ }
+}
 // Confirmation screen shown right inside the checkout after a reservation is sent.
 function showOrderDone(d) {
   const cartEl = $("#cart"); if (!cartEl) return;
@@ -576,7 +594,7 @@ async function submitOrder(e) {
   if (Date.now() - last < 30000) return say("Please wait a moment before sending again.", true);
 
   const total = money(items.reduce((t, c) => t + now(c.p) * c.qty, 0));
-  const lines = items.map((c) => `${c.qty} x ${c.p.name} (${c.p.id}) - ${money(now(c.p) * c.qty)}`).join("\n");
+  const lines = items.map((c) => `${c.qty} x ${c.p.name} - ${money(now(c.p) * c.qty)}`).join("\n");
   const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nPICKUP EVENT: ${market}\n\nPlease bring these to the event:\n${lines}\n\nTotal: ${total} (pay in person at pickup)\n\nNotes: ${notes || "-"}`;
 
   if (!CONFIG.orderEndpoint) {                        // fallback until an endpoint is configured
@@ -596,11 +614,15 @@ async function submitOrder(e) {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
-        access_key: CONFIG.web3formsKey || undefined,
-        _subject: `Plant reservation: ${name} (${total})`, subject: `Plant reservation: ${name} (${total})`,
-        from_name: "Spina & Spiritus website",
-        name, contact, email: /@/.test(contact) ? contact : undefined, market, notes, total,
-        order: lines, message: summary,
+        // Field order = the order they appear in your email: plants, pickup event, then the customer's details.
+        _subject: `Plant reservation: ${name} (${total})`,
+        "1. Plants": lines,
+        "2. Pickup event": market,
+        "3. Name": name,
+        "4. Phone or email": contact,
+        "5. Total (pay at pickup)": total,
+        "6. Notes": notes || "-",
+        email: /@/.test(contact) ? contact : undefined,
       }),
     });
     if (!res.ok) throw new Error(res.status);
@@ -608,6 +630,7 @@ async function submitOrder(e) {
     const done = { items: items.map((c) => ({ name: c.p.name, qty: c.qty, price: now(c.p) * c.qty })), total, market, name, contact };
     cart = []; saveCart(); form.reset(); say("");
     showOrderDone(done);
+    sendCustomerCopy(done, lines, notes);
   } catch (err) {
     say("Couldn't send that. Please try again or email us directly.", true);
   }
