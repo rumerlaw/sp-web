@@ -935,3 +935,12 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 @media(min-width:761px){body:not([data-page]) .shop .card .name{font-family:var(--sans);font-weight:500;font-size:1.3rem;line-height:1.25;letter-spacing:.005em;color:var(--ink)}}
 /* home page shop (phones): plant names in Jost, a bit larger, easy to read */
 @media(max-width:760px){body:not([data-page]) .shop .card .name,body:not([data-page]) .shop .product-grid[data-preview] .name{font-family:var(--sans);font-weight:600;font-size:1rem;line-height:1.25;color:var(--ink)}}
+/* sidebar (desktop): Sort above Catalog */
+@media(min-width:761px){
+  .filters{display:flex;flex-direction:column}
+  .filters > input[type=search]{order:0}
+  .filters > h3[data-path="text.filtSort"]{order:1;margin-top:26px}
+  .filters > select#sort{order:2}
+  .filters > h3[data-path="text.filtCatalog"]{order:3}
+  .filters > ul.cat-list{order:4}
+}
