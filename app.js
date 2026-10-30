@@ -16,7 +16,7 @@ const CONFIG = {
   orderEndpoint: "https://formspree.io/f/mwllnnyv",
   // Optional: a separate Formspree/Web3Forms form just for the "new arrivals" email signups.
   // If blank, signups go to the orderEndpoint above (or open an email draft).
-  signupEndpoint: "",
+  signupEndpoint: "https://formspree.io/f/xjyyeelo",
   web3formsKey: "",
 
   // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
