@@ -887,14 +887,5 @@ if (onHome) {
   });
 }
 
-// Visual editor: only for the owner. Visit edit.html once (sign in), then every page opens in edit mode until they exit.
-SP.ready.then(() => {
-  try {
-    const q = new URLSearchParams(location.search);
-    if (q.has("edit")) { sessionStorage.setItem("sp-edit", "1"); q.delete("edit"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "")); }
-    if (sessionStorage.getItem("sp-edit") !== "1") return;
-    if (!localStorage.getItem("sp-gh-token")) { sessionStorage.removeItem("sp-edit"); location.href = "edit.html"; return; }
-    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "edit.css"; document.head.appendChild(css);
-    const js = document.createElement("script"); js.src = "edit.js"; document.body.appendChild(js);
-  } catch (e) {}
-});
+// The visual editor was removed. Wipe any leftover editor sign-in from browsers that used it.
+try { localStorage.removeItem("sp-gh-token"); sessionStorage.removeItem("sp-edit"); } catch (e) {}

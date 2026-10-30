@@ -56,17 +56,8 @@ Edit the questions in `scripts/build_faq.py`, then run `python3 scripts/build_fa
 - **Photos:** put them in a Dropbox folder (share link stored as GitHub secret `DROPBOX_PHOTOS_URL`). Name each file after the plant as it's written in the spreadsheet: `Opuntia microdasys.jpg`, extra photos `Opuntia microdasys 2.jpg`, `... 3.jpg`. `scripts/sync_photos.py` strips all hidden data (GPS, camera), fixes rotation, makes fast web versions and attaches them to the matching plant. Photos that match no plant are listed in the job log. Plants listed twice in the sheet share the same photos.
 - **Descriptions:** a plant gets (1) the text in `data/extras.csv` if you wrote one, else (2) the genus text in `data/genus_descriptions.csv` (add genera there any time), else (3) optionally a one-sentence AI description if you add a secret `ANTHROPIC_API_KEY` (cached in `data/descriptions_cache.json`, so each plant is only written once; only the plant name and genus are sent).
 
-## Visual editor (click to edit)
-Open `edit.html` once and sign in with a GitHub fine-grained token (Contents: Read and write on this repo only; the page explains how to make one). Then browse the site normally and it is in edit mode:
-- **Click any text** (headings, About story, numbers, events, contact, FAQ, signup text) and type.
-- **Click a photo** (e.g. the portrait) or **drop a photo file on it** to replace it. In the Collection and on each plant's page, drop photos to add them, drag to reorder, ✕ to remove.
-- **Drag ⠿** to reorder events, FAQ questions and paragraphs; use the + buttons to add more.
-- On a plant's page you can write its description and manage its photos (this overrides the spreadsheet for that plant only).
-- Press **Save changes** (or Ctrl/⌘+S). One commit goes to GitHub and the site redeploys in about a minute. **Exit** leaves edit mode; **Sign out** removes the key from this browser.
-Content lives in `data/site.json`; uploaded photos go to `assets/uploads/` (resized to 1400px and stripped of GPS/camera data in the browser before upload). The editor needs `https://api.github.com` in the page security policy (already added). Keep the token private; revoke it from GitHub if a device is lost.
-
-### Editor: buttons, sections, centering, products
-- **Buttons & headings:** every heading, menu item and button label is editable (click and type). Click a button to also set **where it links** in the bar that appears (type `#shop`, `#about`, a web address, `mailto:you@…`, etc.). **A− / A+** change text size; **⇤ ↔ ⇥** align left / center / right; **↺** undoes size and alignment.
-- **Sections:** every section has a small bar: **▲ ▼** move it, **Hide/Show**. Click **+ Add a section here** between sections to add Text, Photo + text, Photo gallery, or Buttons. Custom sections have layout, alignment, background (white/cream/green), delete, **+ Add a button**, and photo drop areas.
-- **Products:** on a plant's page you get an **Edit this product** box (name, genus, price, sale price, stock, status) plus description and photos. These override the spreadsheet for that plant only. If the price or stock later changes in the spreadsheet, clear the box here so the sheet wins again.
-- **About page:** `about.html` shows the same About content as the home page section; editing either place changes both. The menu's "About" goes to the page; "Meet the Doctor" jumps to the home section.
+## Changing text, photos and products
+The visual editor has been removed (it needed a GitHub sign-in key, which is a security risk). To change something:
+- **Plants, prices, stock:** edit the Dropbox spreadsheet. The site updates itself every 30 minutes.
+- **Plant photos:** put them in the Dropbox photo folder, named after the plant (see above).
+- **Text, About story, FAQ, events, contact details:** these live in `data/site.json`. Edit that file on GitHub (pencil icon) or ask Claude to change it.
