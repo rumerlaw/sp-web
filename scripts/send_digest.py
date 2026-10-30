@@ -63,9 +63,24 @@ def build(today):
     btn = lambda url, label: f'<a href="{esc(url)}" style="display:inline-block;background:#2f4a2c;color:#ffffff;text-decoration:none;padding:12px 22px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:bold">{esc(label)}</a>'
     head = lambda t: f'<h2 style="font-family:Georgia,serif;font-size:22px;margin:30px 0 12px;color:#24231f">{esc(t)}</h2>'
     parts = []
-    if coming:
+    this_week = [t for t in coming if t[1] <= 6]
+    later = [t for t in coming if t[1] > 6]
+    if this_week:   # an event in the next 7 days goes first and is highlighted
+        parts.append('<div style="background:#2f4a2c;color:#ffffff;padding:10px 16px;font-size:13px;font-weight:bold;letter-spacing:.14em;text-transform:uppercase;margin-top:24px">Happening this week</div>')
+        for d, days, is_new, e in this_week:
+            when = "today" if days == 0 else "tomorrow" if days == 1 else f"in {days} days"
+            tag = '<span style="background:#a07d3c;color:#fff;font-size:11px;font-weight:bold;letter-spacing:.1em;padding:2px 7px;margin-right:6px">NEW</span>' if is_new else ""
+            box = f'<div style="border:2px solid #2f4a2c;border-top:0;background:#f3ede0;padding:16px 18px;margin-bottom:12px"><div style="font-size:19px;font-weight:bold">{tag}{esc(e.get("name",""))}</div>'
+            wt = str(e.get("when", ""))
+            when_line = wt if re.search(r"jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec", wt, re.I) else f'{d.strftime("%A, %B %-d")} · {wt}'   # don't repeat the date
+            box += f'<div style="font-size:16px;margin-top:5px"><b>{esc(when_line)}</b> <span style="color:#47443b">({when})</span></div>'
+            if e.get("where"): box += f'<div style="font-size:14px;color:#47443b;margin-top:3px">{esc(e["where"])}</div>'
+            if re.match(r"^https://", str(e.get("url") or "")) and "<" not in e["url"] and '"' not in e["url"]:
+                box += f'<div style="margin-top:12px">{btn(e["url"], "Get your free ticket")}</div>'
+            parts.append(box + "</div>")
+    if later:
         parts.append(head("Coming up"))
-        for d, days, is_new, e in coming:
+        for d, days, is_new, e in later:
             when = "today" if days == 0 else "tomorrow" if days == 1 else f"in {days} days"
             tag = '<span style="background:#a07d3c;color:#fff;font-size:11px;font-weight:bold;letter-spacing:.1em;padding:2px 7px;margin-right:6px">NEW</span>' if is_new else ""
             line = f'<div style="border:1px solid #e6dfd0;padding:14px 16px;margin-bottom:12px"><div style="font-size:16px;font-weight:bold">{tag}{esc(e.get("name",""))}</div>'
@@ -94,7 +109,8 @@ def build(today):
 
     sub = []
     if new_plants: sub.append(f"{len(new_plants)} new plant" + ("s" if len(new_plants) != 1 else ""))
-    if coming: sub.append(coming[0][3].get("name", "an event") + (f" + {len(coming)-1} more" if len(coming) > 1 else ""))
+    if this_week: sub.insert(0, "This week: " + this_week[0][3].get("name", "an event") + (f" + {len(this_week)-1} more" if len(this_week) > 1 else ""))
+    elif coming: sub.append(coming[0][3].get("name", "an event") + (f" + {len(coming)-1} more" if len(coming) > 1 else ""))
     subject = "New at Spina & Spiritus: " + " · ".join(sub)
     body = ('<div style="background:#faf8f3;padding:24px 12px"><div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;padding:28px 26px;color:#24231f">'
             f'<div style="text-align:center;margin-bottom:6px"><img src="{esc(SITE)}/assets/brand/spina-logo-640.png" width="150" alt="Spina &amp; Spiritus" style="border:0"></div>'
