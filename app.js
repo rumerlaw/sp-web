@@ -21,8 +21,8 @@ const CONFIG = {
   // CONFIRMATION EMAIL TO THE CUSTOMER (optional, free): create an account at https://www.emailjs.com, connect the Gmail account,
   // make one email template, then paste the three values here. Leave blank to skip.
   emailjsServiceId: "",
-  emailjsTemplateId: "",
-  emailjsPublicKey: "",
+  emailjsTemplateId: "template_0dvcfsc",
+  emailjsPublicKey: "eGqlr6RqYGhoxZgt0",
 
   // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
   // `date` (YYYY-MM-DD) is optional: once that day has passed the event disappears automatically.
