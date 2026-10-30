@@ -13,7 +13,7 @@ const CONFIG = {
   // the endpoint here, e.g. "https://formspree.io/f/abcdwxyz".
   // Or use https://web3forms.com: endpoint "https://api.web3forms.com/submit" + paste its access key below.
   // Leave blank and the form falls back to opening an email draft.
-  orderEndpoint: "",
+  orderEndpoint: "https://formspree.io/f/mwllnnyv",
   // Optional: a separate Formspree/Web3Forms form just for the "new arrivals" email signups.
   // If blank, signups go to the orderEndpoint above (or open an email draft).
   signupEndpoint: "",
@@ -574,7 +574,7 @@ async function submitOrder(e) {
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         access_key: CONFIG.web3formsKey || undefined,
-        subject: `Plant reservation: ${name} (${total})`,
+        _subject: `Plant reservation: ${name} (${total})`, subject: `Plant reservation: ${name} (${total})`,
         from_name: "Spina & Spiritus website",
         name, contact, email: /@/.test(contact) ? contact : undefined, market, notes, total,
         order: lines, message: summary,
@@ -710,7 +710,7 @@ async function submitSignup(e) {
   try {
     const res = await fetch(endpoint, {
       method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ access_key: CONFIG.web3formsKey || undefined, subject: "Weekly inventory email signup: " + email, from_name: "Spina & Spiritus website", email, type: "new-arrivals-signup", message: "Please add " + email + " to the weekly inventory update list." }),
+      body: JSON.stringify({ access_key: CONFIG.web3formsKey || undefined, _subject: "Weekly inventory email signup: " + email, subject: "Weekly inventory email signup: " + email, from_name: "Spina & Spiritus website", email, type: "new-arrivals-signup", message: "Please add " + email + " to the weekly inventory update list." }),
     });
     if (!res.ok) throw new Error(res.status);
     try { localStorage.setItem("sp-signup", String(Date.now())); } catch (err) {}
