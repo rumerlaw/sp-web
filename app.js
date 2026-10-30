@@ -524,11 +524,34 @@ function lockPage(on) {
     document.body.classList.remove("lock"); document.body.style.top = ""; window.scrollTo(0, lockY);
   }
 }
+// Confirmation screen shown right inside the checkout after a reservation is sent.
+function showOrderDone(d) {
+  const cartEl = $("#cart"); if (!cartEl) return;
+  let box = $("#orderDone");
+  if (!box) { box = document.createElement("div"); box.id = "orderDone"; box.className = "order-done"; box.setAttribute("role", "status"); cartEl.appendChild(box); }
+  const where = String(d.market || "").split(" — ");
+  box.innerHTML = `<div class="od-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h3>Reservation received</h3>
+    <p class="od-lead">Thank you, ${esc(d.name)}! We'll bring your plants to the event below and message you at <b>${esc(d.contact)}</b> to confirm.</p>
+    <div class="od-card">
+      <p class="od-label">Your plants</p>
+      <ul>${d.items.map((i) => `<li><span>${esc(i.qty)} × ${esc(i.name)}</span><span>${money(i.price)}</span></li>`).join("")}</ul>
+      <p class="od-total"><span>Total (pay in person at pickup)</span><b>${esc(d.total)}</b></p>
+      <p class="od-label">Pickup</p>
+      <p class="od-event">${esc(where[0])}${where[1] ? `<br><span>${esc(where.slice(1).join(" — "))}</span>` : ""}</p>
+    </div>
+    <p class="od-fine">No payment is taken online, and nothing ships. If something changes we'll message you.</p>
+    <button type="button" class="btn full" id="orderDoneClose">Continue shopping</button>`;
+  box.hidden = false; box.scrollTop = 0;
+  const btn = $("#orderDoneClose"); btn.onclick = () => toggleCart(false); btn.focus();
+}
+function hideOrderDone() { const b = $("#orderDone"); if (b) b.hidden = true; }
 let cartLocked = false;
 function toggleCart(on) {
   $("#cart").classList.toggle("on", on);
   $("#scrim").classList.toggle("on", on);
   $("#cart").setAttribute("aria-hidden", String(!on));
+  if (!on) setTimeout(hideOrderDone, 450);   // after the drawer has slid away
   if (on !== cartLocked) { cartLocked = !!on; lockPage(!!on); }
 }
 function cartLines() {
@@ -582,8 +605,9 @@ async function submitOrder(e) {
     });
     if (!res.ok) throw new Error(res.status);
     try { localStorage.setItem("sp-last", String(Date.now())); } catch (err) {}
-    cart = []; saveCart(); form.reset();
-    say(`Reserved! We'll bring your plants to ${market.split(" — ")[0]} and message you to confirm.`);
+    const done = { items: items.map((c) => ({ name: c.p.name, qty: c.qty, price: now(c.p) * c.qty })), total, market, name, contact };
+    cart = []; saveCart(); form.reset(); say("");
+    showOrderDone(done);
   } catch (err) {
     say("Couldn't send that. Please try again or email us directly.", true);
   }

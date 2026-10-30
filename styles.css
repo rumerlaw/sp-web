@@ -944,3 +944,19 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
   .filters > h3[data-path="text.filtCatalog"]{order:3}
   .filters > ul.cat-list{order:4}
 }
+
+/* checkout confirmation screen */
+.order-done{position:absolute;inset:0;z-index:6;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:44px 26px 28px;overflow:auto;text-align:center}
+.order-done[hidden]{display:none}
+.od-check{width:68px;height:68px;border-radius:50%;background:var(--sage-deep);display:grid;place-items:center;margin-bottom:18px;box-shadow:0 10px 24px -10px rgba(47,74,44,.7)}
+.od-check svg{width:34px;height:34px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.order-done h3{font-size:1.9rem;margin-bottom:10px}
+.od-lead{max-width:34ch;margin-bottom:20px;line-height:1.55}
+.od-card{width:100%;text-align:left;border:1px solid var(--line);background:#fff;padding:18px 20px;margin-bottom:16px}
+.od-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px}
+.od-card ul{list-style:none;margin:0 0 12px;padding:0}
+.od-card li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.od-total{display:flex;justify-content:space-between;gap:12px;margin:0 0 16px;font-weight:600}
+.od-event{margin:0;font-weight:600;line-height:1.4}.od-event span{font-weight:500;color:var(--muted)}
+.od-fine{font-size:.85rem;color:var(--muted);margin-bottom:20px;max-width:36ch}
+.order-done .btn{margin-top:auto}
