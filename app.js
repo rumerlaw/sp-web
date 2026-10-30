@@ -20,7 +20,7 @@ const CONFIG = {
   web3formsKey: "",
   // CONFIRMATION EMAIL TO THE CUSTOMER (optional, free): create an account at https://www.emailjs.com, connect the Gmail account,
   // make one email template, then paste the three values here. Leave blank to skip.
-  emailjsServiceId: "",
+  emailjsServiceId: "service_oriwt2f",
   emailjsTemplateId: "template_0dvcfsc",
   emailjsPublicKey: "eGqlr6RqYGhoxZgt0",
 
