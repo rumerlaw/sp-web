@@ -579,6 +579,15 @@ function toggleCart(on) {
 function cartLines() {
   return cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
 }
+// Our own mail service (worker.js, /api/...). If it isn't set up yet, or is down, we quietly fall back to the Formspree form.
+async function postApi(path, body) {
+  try {
+    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    if (r.status === 404 || r.status === 405 || r.status >= 500) return { fallback: true };
+    const data = await r.json().catch(() => ({}));
+    return { ok: r.ok, status: r.status, data };
+  } catch (err) { return { fallback: true }; }
+}
 async function submitOrder(e) {
   e.preventDefault();
   const form = e.target, msg = $("#formMsg"), btn = $("#checkout");
@@ -601,6 +610,19 @@ async function submitOrder(e) {
   const lines = items.map((c) => `${c.qty} x ${c.p.name} - ${money(now(c.p) * c.qty)}`).join("\n");
   const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nPICKUP EVENT: ${market}\n\nPlease bring these to the event:\n${lines}\n\nTotal: ${total} (pay in person at pickup)\n\nNotes: ${notes || "-"}`;
 
+  btn.disabled = true; say("Sending…");
+  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "" });
+  if (api.ok) {
+    try { localStorage.setItem("sp-last", String(Date.now())); } catch (err) {}
+    const done = { items: items.map((c) => ({ name: c.p.name, qty: c.qty, price: now(c.p) * c.qty })), total, market, name, contact };
+    cart = []; saveCart(); form.reset(); say("");
+    showOrderDone(done);
+    if (api.data && api.data.copy) { const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy">We've also emailed a copy to ${esc(contact)}.</p>`); }
+    btn.disabled = !cartLines().length;
+    return;
+  }
+  if (!api.fallback) { say((api.data && api.data.error) || "Couldn't send that. Please try again.", true); btn.disabled = false; return; }   // e.g. out of stock, slow down
+  btn.disabled = false;
   if (!CONFIG.orderEndpoint) {                        // fallback until an endpoint is configured
     // No order form is connected yet: open the customer's email app, and ALWAYS show the order text with a copy button,
     // because on some phones the email app never opens.
@@ -755,6 +777,9 @@ async function submitSignup(e) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return say("Please enter a valid email address.", true);
   let last = 0; try { last = +localStorage.getItem("sp-signup") || 0; } catch (err) {}
   if (Date.now() - last < 30000) return say("Please wait a moment before trying again.", true);
+  const apiRes = await postApi("/api/signup", { email, website: "" });
+  if (apiRes.ok) { try { localStorage.setItem("sp-signup", String(Date.now())); } catch (err) {} form.reset(); say("You're on the list. We'll email you each week when we update the inventory."); return; }
+  if (!apiRes.fallback) { say((apiRes.data && apiRes.data.error) || "Couldn't sign you up just now. Please try again.", true); return; }
   const endpoint = CONFIG.signupEndpoint || CONFIG.orderEndpoint;
   if (!endpoint) { location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Add me to the weekly inventory update list")}&body=${encodeURIComponent("Please email me each week when the inventory is updated.\n\n" + email)}`; return; }
   btn.disabled = true; say("Sending…");

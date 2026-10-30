@@ -8,3 +8,4 @@ incoming
 scripts
 README.md
 vercel.json
+worker.js

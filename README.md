@@ -61,3 +61,9 @@ The visual editor has been removed (it needed a GitHub sign-in key, which is a s
 - **Plants, prices, stock:** edit the Dropbox spreadsheet. The site updates itself every 30 minutes.
 - **Plant photos:** put them in the Dropbox photo folder, named after the plant (see above).
 - **Text, About story, FAQ, events, contact details:** these live in `data/site.json`. Edit that file on GitHub (pencil icon) or ask Claude to change it.
+
+## Orders and signup emails (Cloudflare Worker + Resend)
+`worker.js` answers `/api/order` and `/api/signup`. It re-checks every order against `data/inventory.csv` (names, prices, stock come from the site, never the browser), then emails the order to the owner and a copy to the customer through Resend. Weekly-list signups are emailed to the owner and, if `RESEND_AUDIENCE_ID` is set, added to a Resend audience for weekly emails.
+- Setup: Resend account, verify the domain `spinanspiritus.com` (add the records Resend shows to Cloudflare DNS), create an API key, then in Cloudflare (Workers & Pages, sp-web, Settings, Variables and Secrets) add the **secret** `RESEND_API_KEY`. Optional: secret/variable `RESEND_AUDIENCE_ID`.
+- Until the key exists the Worker answers 503 and the site falls back to the Formspree forms, so orders are never lost.
+- `wrangler.jsonc` serves pages at their real file names (`html_handling: none`) and shows `index.html` at `/`.
