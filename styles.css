@@ -961,3 +961,4 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 .od-fine{font-size:.85rem;color:var(--muted);margin-bottom:20px;max-width:36ch}
 .order-done .btn{margin-top:auto}
 .od-copy{font-weight:600;margin:0 0 10px;color:var(--sage-deep)}
+.od-copy.bad{color:#8a3b2a}.od-copy small{display:block;font-weight:500;color:var(--muted);font-size:.78rem;margin-top:4px;word-break:break-word}

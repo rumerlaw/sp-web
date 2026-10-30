@@ -538,9 +538,13 @@ async function sendCustomerCopy(d, lines, notes) {
       body: JSON.stringify({ service_id: CONFIG.emailjsServiceId, template_id: CONFIG.emailjsTemplateId, user_id: CONFIG.emailjsPublicKey,
         template_params: { to_email: d.contact, customer_name: d.name, plants: lines, pickup_event: d.market, total: d.total, notes: notes || "-", shop_email: CONFIG.email } }),
     });
-    if (!res.ok) throw new Error(res.status);
+    if (!res.ok) { const why = (await res.text().catch(() => "")).slice(0, 160); throw new Error(res.status + " " + why); }
     const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy">We've also emailed a copy to ${esc(d.contact)}.</p>`);
-  } catch (err) { /* the order itself was already sent; the copy is a bonus */ }
+  } catch (err) {
+    // The order itself was already sent; the copy is a bonus. Say so, and show the reason (small) so it can be fixed.
+    console.warn("Confirmation email failed:", err);
+    const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy bad">We couldn't email you a copy, but your reservation was received.<br><small>${esc(String(err.message || err).slice(0, 170))}</small></p>`);
+  }
 }
 // Confirmation screen shown right inside the checkout after a reservation is sent.
 function showOrderDone(d) {
