@@ -171,7 +171,25 @@ def sync_faq_ld():
     if t2 != t: f.write_text(t2, encoding="utf-8")
 
 
+def stamp_assets():
+    """Put a version stamp on app.js / styles.css / early.js in every page (app.js?v=<fingerprint>). Whenever one of those files changes the
+    address changes too, so browsers and Cloudflare can never keep serving an old copy next to a new page."""
+    import hashlib
+    def fp(name):
+        f = ROOT / name
+        return hashlib.sha1(f.read_bytes()).hexdigest()[:8] if f.exists() else None
+    stamps = {n: fp(n) for n in ("app.js", "styles.css", "early.js")}
+    for page in ("index.html", "shop.html", "about.html", "faq.html", "plant.html"):
+        f = ROOT / page
+        if not f.exists(): continue
+        t = f.read_text(encoding="utf-8"); t2 = t
+        for name, h in stamps.items():
+            if h: t2 = re.sub(r'((?:src|href)=")' + re.escape(name) + r'(?:\?v=[0-9a-f]+)?(")', lambda m: f"{m.group(1)}{name}?v={h}{m.group(2)}", t2)
+        if t2 != t: f.write_text(t2, encoding="utf-8")
+
+
 def main():
+    stamp_assets()
     today = date.today()
     shell = (ROOT / "plant.html").read_text(encoding="utf-8")
     if 'id="plantPage"' not in shell: sys.exit("plant.html shell not found")
