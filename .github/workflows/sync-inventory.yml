@@ -33,6 +33,8 @@ jobs:
           SHEET_NAME: ${{ vars.SHEET_NAME }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/sync_inventory.py
+      - name: Remember when each plant and event first appeared (for the Monday email)
+        run: python scripts/track_arrivals.py
       - name: Build a real page for every plant in stock (and delete pages of plants that are gone)
         env:
           SITE_URL: ${{ vars.SITE_URL }}

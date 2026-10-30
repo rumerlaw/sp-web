@@ -1,0 +1,52 @@
+name: Weekly subscriber email
+
+# Every Monday 8:00am Arizona time (15:00 UTC). Sends new plants + upcoming events to everyone on the Resend weekly list.
+# To preview without sending to subscribers: Actions tab -> "Weekly subscriber email" -> Run workflow (leave "Only send a test to the owner" ticked).
+on:
+  schedule:
+    - cron: "0 15 * * 1"
+  workflow_dispatch:
+    inputs:
+      test_only:
+        description: "Only send a test to the owner (not the subscribers)"
+        type: boolean
+        default: true
+      force:
+        description: "Send even if this week's email already went out"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-email
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Send the weekly email
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_AUDIENCE_ID: ${{ secrets.RESEND_AUDIENCE_ID }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          TEST_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.test_only || 'false' }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || 'false' }}
+        run: python scripts/send_digest.py
+      - name: Save the "already sent" note
+        run: |
+          if [ -n "$(git status --porcelain data/digest_state.json)" ]; then
+            git config user.name "weekly-email"
+            git config user.email "weekly-email@users.noreply.github.com"
+            git add data/digest_state.json
+            git commit -m "Weekly email sent"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+            git push
+          fi

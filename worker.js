@@ -124,6 +124,10 @@ async function handleSignup(request, env, body) {
   if (env.RESEND_AUDIENCE_ID) stored = await resend(env, `/audiences/${encodeURIComponent(env.RESEND_AUDIENCE_ID)}/contacts`, { email, unsubscribed: false });
   const told = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], subject: "New weekly-list signup: " + email, text: `New weekly inventory email signup:\n\n${email}\n${stored ? "\n(Added to your Resend audience.)" : ""}`, html: shell("New weekly-list signup", `<p style="font-size:16px"><b>${esc(email)}</b></p>${stored ? "<p>Added to your Resend audience.</p>" : ""}`) });
   if (!stored && !told) return json({ error: "send_failed" }, 502);
+  // Welcome email to the new subscriber (a bonus: if it fails the signup still counts).
+  await resend(env, "/emails", { from: env.FROM_EMAIL, to: [email], reply_to: env.OWNER_EMAIL, subject: "You're on the Spina & Spiritus list",
+    text: "Welcome! You're on the Spina & Spiritus list.\n\nEvery Monday we'll email you the new plants and any upcoming markets and events. We never spam, and every email has an unsubscribe link.\n\nSee what's in stock: https://spinanspiritus.com/shop.html\n\n— Spina & Spiritus (AZ Cactus Doctor)",
+    html: shell("You're on the list", `<p style="font-size:15px;line-height:1.5">Welcome! Every <b>Monday</b> we'll email you the new plants and any upcoming markets and events. We never spam, and every email has an unsubscribe link.</p><p style="margin-top:18px"><a href="https://spinanspiritus.com/shop.html" style="display:inline-block;background:#2f4a2c;color:#fff;text-decoration:none;padding:12px 22px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:bold">See what's in stock</a></p><p style="margin-top:18px;font-size:13px;color:#5d594e">— Spina &amp; Spiritus (AZ Cactus Doctor)</p>`) });
   return json({ ok: true });
 }
 
