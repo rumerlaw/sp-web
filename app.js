@@ -75,7 +75,7 @@ const $ = (s) => document.querySelector(s);
 const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 // Only allow same-site relative paths or https URLs for images coming from the spreadsheet.
-const safeUrl = (u) => { u = String(u || "").trim(); return /^(https:\/\/|assets\/|\.\/assets\/)/i.test(u) && !/[<>"']/.test(u) ? u : ""; };
+const safeUrl = (u) => { u = String(u || "").trim(); return /^(https:\/\/|assets\/|\.\/assets\/)/i.test(u) && !/[<>"']/.test(u) && !/(^|\/)\.\.(\/|$)/.test(u) ? u : ""; };
 // Fast-loading variants made by scripts/strip_media.py (assets/photos/web, assets/photos/thumb).
 const variant = (src, kind) => {
   if (SP.pending[src]) return SP.pending[src].url;
@@ -489,7 +489,20 @@ function closeQuickView() {
 
 /* ---------- CART ---------- */
 function saveCart() { try { localStorage.setItem("sp-cart", JSON.stringify(cart)); } catch (e) {} renderCart(); }
+// The cart lives in the visitor's own browser, so treat it as untrusted: keep only real plants, whole numbers, and never more than we have.
+function cleanCart() {
+  if (!products.length) return;
+  const seen = new Set(), clean = [];
+  (Array.isArray(cart) ? cart : []).forEach((c) => {
+    if (!c || typeof c.id !== "string" || seen.has(c.id)) return;
+    const p = products.find((x) => x.id === c.id); if (!p || isOut(p) || noPrice(p)) return;
+    const q = Math.floor(Number(c.qty)); seen.add(c.id);
+    clean.push({ id: c.id, qty: Number.isFinite(q) && q > 0 ? Math.min(q, maxQty(p)) : 1 });
+  });
+  if (JSON.stringify(clean) !== JSON.stringify(cart)) { cart = clean; try { localStorage.setItem("sp-cart", JSON.stringify(cart)); } catch (e) {} }
+}
 function renderCart() {
+  cleanCart();
   const items = cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
   const count = items.reduce((s, c) => s + c.qty, 0);
   $("#cartCount").textContent = count; $("#cartCount").classList.toggle("on", count > 0);

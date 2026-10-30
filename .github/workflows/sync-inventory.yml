@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install openpyxl==3.1.5 Pillow==12.3.0 pillow-heif==1.8.1
+      - run: pip install openpyxl==3.1.5 Pillow==13.0.0 pillow-heif==1.8.1
       - name: Pull and clean plant photos from the Dropbox photo folder
         continue-on-error: true   # if the photo folder is unreachable, still update the inventory
         env:
@@ -34,9 +34,13 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/sync_inventory.py
       - name: Build a real page for every plant in stock (and delete pages of plants that are gone)
-        run: python scripts/build_plants.py ${{ vars.SITE_URL }}
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: python scripts/build_plants.py "$SITE_URL"
       - name: Refresh sitemap
-        run: python scripts/build_sitemap.py ${{ vars.SITE_URL }}
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: python scripts/build_sitemap.py "$SITE_URL"
       - name: Commit if changed
         run: |
           if [ -n "$(git status --porcelain data assets plants sitemap.xml shop.html)" ]; then

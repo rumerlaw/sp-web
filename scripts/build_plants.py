@@ -20,6 +20,11 @@ slug = lambda sku: re.sub(r"[^a-z0-9-]+", "-", str(sku).lower()).strip("-")
 normkey = lambda n: re.sub(r"[^a-z0-9]", "", str(n or "").lower())
 
 
+def safe_path(u):
+    """Only paths inside this site's assets folder (no ../ tricks)."""
+    return bool(re.match(r"^(assets/|\./assets/)", u)) and ".." not in u.split("/") and not re.search(r"[<>\"']", u)
+
+
 def num(v):
     m = re.search(r"-?\d+(?:\.\d+)?", str(v or "").replace(",", ""))
     return float(m.group()) if m else 0.0
@@ -53,7 +58,7 @@ def load_plants():
                  "price": num(r.get("price")), "sale": num(r.get("sale_price")), "status": r.get("status") or "In Stock",
                  "stock": (int(float(r["stock"])) if str(r.get("stock") or "").strip() != "" else None),
                  "desc": (r.get("description") or "").strip(), "size": r.get("size") or "",
-                 "images": [u for u in (r.get("image") or "").split("|") if re.match(r"^(assets/|\./assets/)", u)]}
+                 "images": [u for u in (r.get("image") or "").split("|") if safe_path(u)]}
             ov = ovs.get(normkey(p["name"])) or {}
             if str(ov.get("name") or "").strip(): p["name"] = ov["name"].strip()
             if str(ov.get("genus") or "").strip(): p["genus"] = ov["genus"].strip()
@@ -62,7 +67,7 @@ def load_plants():
             if str(ov.get("stock", "")).strip() != "": p["stock"] = max(0, int(num(ov["stock"])))
             if str(ov.get("status") or "").strip(): p["status"] = ov["status"]
             if str(ov.get("description") or "").strip(): p["desc"] = ov["description"].strip()
-            if isinstance(ov.get("images"), list) and ov["images"]: p["images"] = [u for u in ov["images"] if re.match(r"^(assets/|\./assets/)", str(u))]
+            if isinstance(ov.get("images"), list) and ov["images"]: p["images"] = [u for u in ov["images"] if safe_path(str(u))]
             if p["id"] and p["name"]: out.append(p)
     return out
 
