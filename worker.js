@@ -4,7 +4,7 @@
  * static files. It sends the emails through Resend, so the API key stays on the server (a Cloudflare secret), never in the page.
  *
  * Secrets / settings (Cloudflare dashboard → Workers & Pages → sp-web → Settings → Variables and Secrets):
- *   RESEND_API_KEY       (secret)  required. Resend → API Keys → "Sending access".
+ *   RESEND_API_KEY       (secret)  required for pickup-order and signup emails (online payment works without it). Resend → API Keys → "Sending access".
  *   RESEND_AUDIENCE_ID   (optional) Resend → Audiences. Weekly-list signups are added there so you can email them from Resend.
  * Plain settings live in wrangler.jsonc: OWNER_EMAIL, FROM_EMAIL.
  *
@@ -131,7 +131,7 @@ async function handleOrder(request, env, body) {
   } catch (e) { /* if the file can't be read, skip this check */ }
 
   if (body.pay === "online") {   // pay now with Stripe: nothing is emailed until the payment succeeds (see the webhook)
-    if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET) return json({ error: "Online payment isn't available yet. Please choose pay at pickup." }, 503);
+    if (!env.STRIPE_SECRET_KEY) return json({ error: "Online payment isn't available yet. Please choose pay at pickup." }, 503);
     const origin = request.headers.get("Origin") || "https://spinanspiritus.com";
     const items = {}; lines.forEach((l, i) => { items[i] = { quantity: l.qty, price_data: { currency: "usd", unit_amount: cents(l.sub / l.qty), product_data: { name: l.name } } }; });
     const s = await stripe(env, "POST", "/v1/checkout/sessions", {
@@ -139,7 +139,11 @@ async function handleOrder(request, env, body) {
       success_url: origin + "/thanks.html", cancel_url: origin + "/shop.html",
       ...(email ? { customer_email: email } : {}),
       expires_at: Math.floor(Date.now() / 1000) + 1800,
-      payment_intent_data: { description: "Spina & Spiritus plant reservation" },
+      payment_intent_data: {
+        description: `Plant reservation for ${name} - pickup: ${market} - ${lines.map((l) => `${l.qty} x ${l.name}`).join(", ")}`.slice(0, 900),
+        ...(email ? { receipt_email: email } : {}),
+        metadata: { name, contact, market, notes: notes || "-", plants: lines.map((l) => `${l.qty} x ${l.name}`).join(", ").slice(0, 480) },
+      },
       metadata: { name, contact, market, notes: notes || "-", total: money(total) },
     });
     if (!s.ok || !s.data.url) return json({ error: "Online payment isn't working right now. Please choose pay at pickup." }, 502);
@@ -181,7 +185,8 @@ async function handleSignup(request, env, body) {
 // Stripe tells us (signed) that a payment went through: only then do the order emails go out.
 async function handleStripeWebhook(request, env) {
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY || !env.RESEND_API_KEY) return json({ error: "not_configured" }, 503);
+  if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY) return json({ error: "not_configured" }, 503);
+  if (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL) return json({ received: true });   // no Resend: Stripe's own receipts and dashboard cover it
   const raw = await request.text();
   if (raw.length > 200000 || !(await verifyStripeSignature(raw, request.headers.get("Stripe-Signature"), env.STRIPE_WEBHOOK_SECRET))) return json({ error: "bad_signature" }, 400);
   let ev; try { ev = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
@@ -216,12 +221,10 @@ export default {
     if (url.pathname === "/") return env.ASSETS.fetch(new Request(new URL("/index.html", request.url).toString(), request));
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
     if (url.pathname === "/api/stripe-webhook") return handleStripeWebhook(request, env);
-    if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET && env.RESEND_API_KEY) });
+    if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY) });
     const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : null;
     if (!route) return json({ error: "not_found" }, 404);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-    if (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL) return json({ error: "not_configured" }, 503);
-
     const allowed = (env.ALLOWED_ORIGINS ? String(env.ALLOWED_ORIGINS).split(",").map((s) => s.trim()) : DEFAULT_ORIGINS);
     const origin = request.headers.get("Origin") || "";
     if (!allowed.includes(origin)) return json({ error: "forbidden" }, 403);
@@ -233,6 +236,9 @@ export default {
     if (raw.length > MAX_BODY) return json({ error: "too_large" }, 413);
     let body; try { body = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
     if (!body || typeof body !== "object") return json({ error: "bad_request" }, 400);
+    // Online payments only need Stripe (Stripe emails the receipt); everything else sends mail through Resend.
+    const stripeOnly = url.pathname === "/api/order" && body.pay === "online" && env.STRIPE_SECRET_KEY;
+    if (!stripeOnly && (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL)) return json({ error: "not_configured" }, 503);
     return route(request, env, body);
   },
 };
