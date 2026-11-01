@@ -139,7 +139,6 @@ async function handleOrder(request, env, body) {
       success_url: origin + "/thanks.html", cancel_url: origin + "/shop.html",
       ...(email ? { customer_email: email } : {}),
       expires_at: Math.floor(Date.now() / 1000) + 1800,
-      custom_text: { submit: { message: "Pickup only at your chosen market. Nothing ships." } },
       payment_intent_data: {
         description: `Plant reservation for ${name} - pickup: ${market} - ${lines.map((l) => `${l.qty} x ${l.name}`).join(", ")}`.slice(0, 900),
         ...(email ? { receipt_email: email } : {}),
