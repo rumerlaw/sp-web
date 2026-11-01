@@ -524,7 +524,7 @@ function renderCart() {
         <div class="qty"><button data-dec="${esc(c.id)}">−</button>${c.qty}<button data-inc="${esc(c.id)}">+</button></div>
         <button class="rm" data-rm="${esc(c.id)}">Remove</button></div>`).join("")
     : `<p class="cart-empty">Your selection is empty.</p>`;
-  $("#cartTotal").textContent = money(items.reduce((s, c) => s + now(c.p) * c.qty, 0));
+  updateTotal(items);
   $("#checkout").disabled = !items.length;
 }
 // Freeze the page behind the cart / quick view so scrolling inside them never moves the page underneath (also works on iPhone).
@@ -569,7 +569,7 @@ function showOrderDone(d) {
       <p class="od-label">Pickup</p>
       <p class="od-event">${esc(where[0])}${where[1] ? `<br><span>${esc(where.slice(1).join(" — "))}</span>` : ""}</p>
     </div>
-    <p class="od-fine">No payment is taken online, and nothing ships. If something changes we'll message you.</p>
+    <p class="od-fine">No payment is taken online. If something changes we'll message you.</p>
     <button type="button" class="btn full" id="orderDoneClose">Continue shopping</button>`;
   box.hidden = false; box.scrollTop = 0;
   const btn = $("#orderDoneClose"); btn.onclick = () => toggleCart(false); btn.focus();
@@ -597,15 +597,42 @@ async function postApi(path, body) {
 }
 // Online payment (Stripe) is offered only when the Worker says it's set up.
 let onlinePay = false;
+const STATES = "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ");
+function shipCfg() { const c = SITE.shipping; return c && c.enabled && onlinePay ? c : null; }
+function shipFee(sub) { const c = shipCfg(); if (!c) return 0; const t = (c.tiers || []).find((x) => x.under == null || sub < Number(x.under)); return t ? Number(t.fee) : 0; }
+function payMode() { const r = document.querySelector('input[name="pay"]:checked'); return r ? r.value : "pickup"; }
+function cartSub(items) { return (items || cartLines()).reduce((s, c) => s + now(c.p) * c.qty, 0); }
+function updateTotal(items) {
+  const sub = cartSub(items), mode = payMode(), ship = mode === "ship" && shipCfg();
+  const t = $("#cartTotal"); if (!t) return;
+  t.textContent = money(sub + (ship ? shipFee(sub) : 0));
+  const l = $("#totalLabel"); if (l) l.textContent = ship ? "Total with shipping" : mode === "online" ? "Total (paid online)" : "Total (pay at pickup)";
+  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? `shipping ${money(shipFee(sub))} for this order` : "shipping added at checkout";
+}
+function applyPayMode() {
+  const mode = payMode(), ship = mode === "ship";
+  const sf = $("#shipFields"); if (sf) sf.hidden = !ship;
+  const ms = $("#marketSelect"); if (ms) { ms.closest("label").hidden = ship; const pk = $("#marketPicked"); if (pk) pk.hidden = ship || !ms.value; }
+  const b = $("#checkout"); if (b) b.textContent = mode === "pickup" ? "Check out" : "Pay online";
+  updateTotal();
+}
+function setupShipping() {
+  const so = $("#shipOpt"), sel = $("#shipState");
+  if (so) so.hidden = !shipCfg();
+  if (sel && !sel.options.length) { const ex = ((SITE.shipping || {}).excludedStates || []); sel.innerHTML = `<option value="">State…</option>` + STATES.filter((x) => !ex.includes(x)).map((x) => `<option>${x}</option>`).join(""); }
+  if (!shipCfg()) { const r = document.querySelector('input[name="pay"][value="pickup"]'); if (r && payMode() === "ship") r.checked = true; }
+  applyPayMode();
+}
 async function loadPayConfig() {
   try {
     const r = await fetch("/api/pay-config", { cache: "no-store" });
     if (!r.ok) return;
     onlinePay = !!(await r.json()).online;
     const box = $("#payChoice"); if (box) box.hidden = !onlinePay;
+    setupShipping();
   } catch (e) {}
 }
-document.addEventListener("change", (e) => { if (e.target && e.target.name === "pay") { const b = $("#checkout"); if (b) b.textContent = e.target.value === "online" ? "Pay online" : "Check out"; } });
+document.addEventListener("change", (e) => { if (e.target && e.target.name === "pay") applyPayMode(); });
 async function submitOrder(e) {
   e.preventDefault();
   const form = e.target, msg = $("#formMsg"), btn = $("#checkout");
@@ -616,8 +643,11 @@ async function submitOrder(e) {
   if (f.get("website")) return;                      // honeypot: bots fill this in
   const name = String(f.get("name") || "").trim().slice(0, 80);
   const contact = String(f.get("contact") || "").trim().slice(0, 120);
-  const market = String(f.get("market") || "");
+  const shipping = payMode() === "ship" && shipCfg();
+  const market = shipping ? "Shipping" : String(f.get("market") || "");
   if (!market) return say("Please choose which event you'll pick up at.", true);
+  const address = shipping ? { line1: String(f.get("addr1") || "").trim(), city: String(f.get("city") || "").trim(), state: String(f.get("state") || ""), zip: String(f.get("zip") || "").trim() } : null;
+  if (address && (!address.line1 || !address.city || !address.state || !/^\d{5}(-\d{4})?$/.test(address.zip))) return say("Please fill in your full shipping address.", true);
   const notes = String(f.get("notes") || "").trim().slice(0, 500);
   if (!name || !contact) return say("Please add your name and a phone or email.", true);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) && contact.replace(/\D/g, "").length < 7) return say("That doesn't look like a phone number or email.", true);
@@ -628,9 +658,9 @@ async function submitOrder(e) {
   const lines = items.map((c) => `${c.qty} x ${c.p.name} - ${money(now(c.p) * c.qty)}`).join("\n");
   const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nPICKUP EVENT: ${market}\n\nPlease bring these to the event:\n${lines}\n\nTotal: ${total} (pay in person at pickup)\n\nNotes: ${notes || "-"}`;
 
-  const payOnline = String(f.get("pay") || "pickup") === "online" && onlinePay;
+  const payOnline = (shipping || String(f.get("pay") || "pickup") === "online") && onlinePay;
   btn.disabled = true; say(payOnline ? "Taking you to secure payment…" : "Sending…");
-  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "", pay: payOnline ? "online" : "pickup" });
+  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "", pay: shipping ? "ship" : payOnline ? "online" : "pickup", ...(address ? { address } : {}) });
   if (payOnline) {   // Stripe's own secure page takes the payment; we come back to thanks.html afterwards
     if (api.ok && api.data && /^https:\/\/checkout\.stripe\.com\//.test(api.data.checkoutUrl || "")) { location.href = api.data.checkoutUrl; return; }
     say(api.data && api.data.error ? api.data.error + (api.data.detail ? " (" + api.data.detail + ")" : "") : "Online payment isn't available right now. Please choose pay at pickup.", true); btn.disabled = false; return;

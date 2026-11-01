@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@600;700&display=swap" rel="stylesheet" media="(max-width:760px)">
-<link rel="stylesheet" href="styles.css?v=59239f4d">
+<link rel="stylesheet" href="styles.css?v=e776f6ae">
 <script type="application/ld+json" id="plantld">{"@context": "https://schema.org", "@type": "Product", "name": "Gepeng", "sku": "gepeng", "url": "https://spinanspiritus.com/plants/gepeng.html", "description": "Gepeng — a Plants plant grown in Arizona.", "category": "Plants", "brand": {"@type": "Brand", "name": "Spina & Spiritus"}, "image": ["https://spinanspiritus.com/assets/photos/web/photo-gepeng.webp"], "offers": {"@type": "Offer", "url": "https://spinanspiritus.com/plants/gepeng.html", "price": "30", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "itemCondition": "https://schema.org/NewCondition", "availableDeliveryMethod": "https://schema.org/OnSitePickup", "priceValidUntil": "2026-12-16", "seller": {"@type": "Organization", "name": "Spina & Spiritus", "alternateName": ["Spina and Spiritus", "AZ Cactus Doctor", "AzCactusDoctor"], "url": "https://spinanspiritus.com/"}}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://spinanspiritus.com/"}, {"@type": "ListItem", "position": 2, "name": "Shop", "item": "https://spinanspiritus.com/shop.html"}, {"@type": "ListItem", "position": 3, "name": "Gepeng", "item": "https://spinanspiritus.com/plants/gepeng.html"}]}</script>
 </head>
@@ -61,7 +61,7 @@
     <a href="faq.html" data-path="text.navFaq" data-href-path="links.navFaq">FAQ</a>
   </nav>
 </header>
-<main class="plant" id="plantPage"><div class="wrap-wide"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <a href="shop.html">Shop</a> › <span>Gepeng</span></nav><div class="plant-grid"><div class="plant-media"><div class="plant-main"><img src="assets/photos/web/photo-gepeng.webp" alt="Gepeng  cactus succulent for sale in Phoenix, Arizona" width="900" height="1200" fetchpriority="high"></div></div><div class="plant-info"><h1 class="plant-title">Gepeng</h1><p class="plant-price">$30</p><p class="plant-desc">Gepeng — a Plants plant grown in Arizona.</p><dl class="specs"><div><dt>Availability</dt><dd>In stock — 2 available</dd></div><div><dt>Pickup</dt><dd>Pickup only at Arizona farmers market events (Phoenix, AZ). No shipping.</dd></div></dl><p><a class="btn" href="shop.html">Reserve at checkout — browse the shop</a></p></div></div></div></main>
+<main class="plant" id="plantPage"><div class="wrap-wide"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <a href="shop.html">Shop</a> › <span>Gepeng</span></nav><div class="plant-grid"><div class="plant-media"><div class="plant-main"><img src="assets/photos/web/photo-gepeng.webp" alt="Gepeng  cactus succulent for sale in Phoenix, Arizona" width="900" height="1200" fetchpriority="high"></div></div><div class="plant-info"><h1 class="plant-title">Gepeng</h1><p class="plant-price">$30</p><p class="plant-desc">Gepeng — a Plants plant grown in Arizona.</p><dl class="specs"><div><dt>Availability</dt><dd>In stock — 2 available</dd></div><div><dt>Pickup</dt><dd>Pick up at Arizona farmers market events (Phoenix, AZ), or pay online and have it shipped (US except CA and HI).</dd></div></dl><p><a class="btn" href="shop.html">Reserve at checkout — browse the shop</a></p></div></div></div></main>
 <footer class="footer">
   <div class="signup">
     <h3 data-path="text.signupHeading">Be the first to know</h3>
@@ -89,7 +89,7 @@
   </div>
   <div class="cart-items" id="cartItems"></div>
   <form class="cart-foot" id="orderForm" novalidate autocomplete="on">
-    <div class="cart-total"><span>Total (pay at pickup)</span><strong id="cartTotal">$0</strong></div>
+    <div class="cart-total"><span id="totalLabel">Total (pay at pickup)</span><strong id="cartTotal">$0</strong></div>
     <label>Name<input name="name" required maxlength="80" autocomplete="name"></label>
     <label>Phone or email<input name="contact" required maxlength="120" autocomplete="email"></label>
     <label>Which event will you pick up at?<select name="market" id="marketSelect" required></select></label>
@@ -97,15 +97,21 @@
     <fieldset class="pay-choice" id="payChoice" hidden>
       <legend>How would you like to pay?</legend>
       <label class="pay-opt"><input type="radio" name="pay" value="pickup" checked> <span>Pay at pickup <small>cash or card at the market</small></span></label>
-      <label class="pay-opt"><input type="radio" name="pay" value="online"> <span>Pay online now <small>card, Apple Pay or Google Pay</small></span></label>
+      <label class="pay-opt"><input type="radio" name="pay" value="online"> <span>Pay online, pick up at event <small>card, Apple Pay or Google Pay</small></span></label>
+      <label class="pay-opt" id="shipOpt" hidden><input type="radio" name="pay" value="ship"> <span>Pay online, ship to me <small id="shipNote">shipping added at checkout</small></span></label>
     </fieldset>
+    <div class="ship-fields" id="shipFields" hidden>
+      <label>Street address<input name="addr1" maxlength="100" autocomplete="address-line1"></label>
+      <label>City<input name="city" maxlength="60" autocomplete="address-level2"></label>
+      <div class="ship-row"><label>State<select name="state" id="shipState" autocomplete="address-level1"></select></label><label>ZIP<input name="zip" maxlength="10" inputmode="numeric" autocomplete="postal-code"></label></div>
+    </div>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
     <button type="submit" class="btn full" id="checkout">Check out</button>
-    <p class="fine">Pickup only, no shipping. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm, then you pay in person. We only use your details to arrange your pickup.</p>
+    <p class="fine">Pick up at an Arizona event and pay in person, or pay online and we ship anywhere in the US except CA and HI. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm. We only use your details to arrange your order.</p>
   </form>
 </aside>
 
-<script src="app.js?v=061fd7c4"></script>
+<script src="app.js?v=03def0ab"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     "collectionEyebrow": "Not for sale",
     "collectionHeading": "My Personal Collection",
     "shopHeading": "The Shop",
-    "shopIntro": "We can't bring every plant to every event. Browse everything we have, reserve what you want, choose your event, and we'll bring it. Pay in person, no shipping.",
+    "shopIntro": "Browse everything we have and reserve what you want. Pick it up at one of our Arizona events and pay in person, or pay online and we'll ship it to you.",
     "eventsHeading": "Upcoming events",
     "eventsNote": "Different locations: we will update the site and post on social media a couple of days prior.",
     "contactQ": "Questions about a plant or an event? Reach out.",
@@ -88,7 +88,7 @@
     },
     {
       "q": "Do you ship?",
-      "a": "No. Plants are pickup only, at our farmers market and events. Check the [Upcoming events](index.html#events) section for where we'll be."
+      "a": "Yes! Pay online and choose “Ship to me.” Shipping is a flat fee based on the size of your order ($12 under $50, $18 under $100, $25 under $200, $35 for $200 and up). We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the [Upcoming events](index.html#events) section for where we'll be."
     },
     {
       "q": "Where can I find you?",
@@ -210,5 +210,29 @@
     "shop",
     "events",
     "faq"
-  ]
+  ],
+  "shipping": {
+    "enabled": true,
+    "excludedStates": [
+      "CA",
+      "HI"
+    ],
+    "tiers": [
+      {
+        "under": 50,
+        "fee": 12
+      },
+      {
+        "under": 100,
+        "fee": 18
+      },
+      {
+        "under": 200,
+        "fee": 25
+      },
+      {
+        "fee": 35
+      }
+    ]
+  }
 }

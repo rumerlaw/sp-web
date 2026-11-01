@@ -129,7 +129,7 @@ def build_page(shell, p, today):
     if genus: specs.append(f"<div><dt>Genus</dt><dd>{esc(genus)}</dd></div>")
     if p["size"]: specs.append(f"<div><dt>Size</dt><dd>{esc(p['size'])}</dd></div>")
     specs.append("<div><dt>Availability</dt><dd>In stock" + (f" — {p['stock']} available" if p["stock"] is not None else "") + "</dd></div>")
-    specs.append("<div><dt>Pickup</dt><dd>Pickup only at Arizona farmers market events (Phoenix, AZ). No shipping.</dd></div>")
+    specs.append("<div><dt>Pickup</dt><dd>Pick up at Arizona farmers market events (Phoenix, AZ), or pay online and have it shipped (US except CA and HI).</dd></div>")
     body = (f'<div class="wrap-wide"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <a href="shop.html">Shop</a> › <span>{esc(name)}</span></nav>'
             f'<div class="plant-grid"><div class="plant-media"><div class="plant-main">{img_html}</div></div>'
             f'<div class="plant-info"><h1 class="plant-title">{esc(name)}</h1>'

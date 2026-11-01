@@ -101,11 +101,12 @@ const block = (label, html) => `<p style="margin:16px 0 4px;font-size:12px;lette
 
 async function handleOrder(request, env, body) {
   if (clean(body.website, 50)) return json({ ok: true, copy: false });                 // honeypot: pretend success to bots
-  const name = clean(body.name, 80), contact = clean(body.contact, 120), notes = clean(body.notes, 500), market = clean(body.market, 220);
+  const name = clean(body.name, 80), contact = clean(body.contact, 120), notes = clean(body.notes, 500), market = body.pay === "ship" ? "Shipping" : clean(body.market, 220);
   if (!name || !contact) return json({ error: "Please add your name and a phone or email." }, 400);
   const email = isEmail(contact) ? contact : "";
   if (!email && contact.replace(/\D/g, "").length < 7) return json({ error: "That doesn't look like a phone number or email." }, 400);
-  if (!market) return json({ error: "Please choose which event you'll pick up at." }, 400);
+  const ship = body.pay === "ship";
+  if (!ship && !market) return json({ error: "Please choose which event you'll pick up at." }, 400);
   if (!Array.isArray(body.items) || !body.items.length || body.items.length > 25) return json({ error: "Your selection is empty." }, 400);
 
   // Prices, names and stock come from our own inventory file, not from the visitor.
@@ -127,24 +128,38 @@ async function handleOrder(request, env, body) {
   try {
     const site = await (await readAsset(env, request, "/data/site.json")).json();
     const names = (site.events || []).map((e) => String(e.name || "").toLowerCase()).filter(Boolean);
-    if (names.length && !names.some((n) => market.toLowerCase().includes(n))) return json({ error: "Please choose one of the listed events." }, 400);
+    if (!ship && names.length && !names.some((n) => market.toLowerCase().includes(n))) return json({ error: "Please choose one of the listed events." }, 400);
   } catch (e) { /* if the file can't be read, skip this check */ }
 
-  if (body.pay === "online") {   // pay now with Stripe: nothing is emailed until the payment succeeds (see the webhook)
+  let shipTo = null, shipFee = 0;
+  if (ship) {
+    let cfg = null; try { cfg = (await (await readAsset(env, request, "/data/site.json")).json()).shipping; } catch (e) {}
+    if (!cfg || !cfg.enabled) return json({ error: "Shipping isn't available right now. Please choose pickup." }, 503);
+    const a = body.address || {}, st = clean(a.state, 2).toUpperCase(), zip = clean(a.zip, 10), line1 = clean(a.line1, 100), city = clean(a.city, 60);
+    if (!line1 || !city || !/^[A-Z]{2}$/.test(st) || !/^\d{5}(-\d{4})?$/.test(zip)) return json({ error: "Please fill in your full shipping address." }, 400);
+    if ((cfg.excludedStates || []).map((x) => String(x).toUpperCase()).includes(st)) return json({ error: "Sorry, we can't ship plants to that state. You can pick up at an event instead." }, 400);
+    const tier = (cfg.tiers || []).find((t) => t.under == null || total < Number(t.under));
+    shipFee = tier ? Number(tier.fee) : 0;
+    if (!(shipFee >= 0)) return json({ error: "unavailable" }, 503);
+    shipTo = { line1, city, state: st, zip };
+  }
+  if (body.pay === "online" || ship) {   // pay now with Stripe: nothing is emailed until the payment succeeds (see the webhook)
     if (!env.STRIPE_SECRET_KEY) return json({ error: "Online payment isn't available yet. Please choose pay at pickup." }, 503);
     const origin = request.headers.get("Origin") || "https://spinanspiritus.com";
     const items = {}; lines.forEach((l, i) => { items[i] = { quantity: l.qty, price_data: { currency: "usd", unit_amount: cents(l.sub / l.qty), product_data: { name: l.name } } }; });
+    if (shipFee > 0) items[lines.length] = { quantity: 1, price_data: { currency: "usd", unit_amount: cents(shipFee), product_data: { name: "Shipping" } } };
     const s = await stripe(env, "POST", "/v1/checkout/sessions", {
       mode: "payment", line_items: items,
       success_url: origin + "/thanks.html", cancel_url: origin + "/shop.html",
       ...(email ? { customer_email: email } : {}),
       expires_at: Math.floor(Date.now() / 1000) + 1800,
       payment_intent_data: {
-        description: `Plant reservation for ${name} - pickup: ${market} - ${lines.map((l) => `${l.qty} x ${l.name}`).join(", ")}`.slice(0, 900),
+        description: `Plant order for ${name} - ${shipTo ? "SHIP to " + shipTo.line1 + ", " + shipTo.city + ", " + shipTo.state + " " + shipTo.zip : "pickup: " + market} - ${lines.map((l) => `${l.qty} x ${l.name}`).join(", ")}`.slice(0, 900),
         ...(email ? { receipt_email: email } : {}),
+        ...(shipTo ? { shipping: { name, phone: contact.slice(0, 40), address: { line1: shipTo.line1, city: shipTo.city, state: shipTo.state, postal_code: shipTo.zip, country: "US" } } } : {}),
         metadata: { name, contact, market, notes: notes || "-", plants: lines.map((l) => `${l.qty} x ${l.name}`).join(", ").slice(0, 480) },
       },
-      metadata: { name, contact, market, notes: notes || "-", total: money(total) },
+      metadata: { name, contact, market, notes: notes || "-", total: money(total + shipFee), ...(shipTo ? { ship_to: `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}`, ship_fee: money(shipFee) } : {}) },
     });
     if (!s.ok || !s.data.url) {
       const why = clean(s.data && s.data.error && s.data.error.message || ("Stripe did not answer (status " + s.status + ")"), 200);   // Stripe masks keys in these messages
@@ -164,8 +179,8 @@ async function handleOrder(request, env, body) {
 
   let copy = false;
   if (email) {
-    const text = `Hi ${name},\n\nThanks! We got your plant reservation.\n\nPLANTS\n${plantsText}\n\nPICKUP EVENT\n${market}\n\nTOTAL (pay in person at pickup)\n${totalTxt}\n\nNo payment is taken online and nothing ships. We'll message you to confirm. Questions? Just reply to this email.\n\n— Spina & Spiritus (AZ Cactus Doctor)`;
-    const html = shell("Reservation received", `<p style="font-size:15px;line-height:1.5">Hi ${esc(name)}, thanks! We got your plant reservation and we'll message you to confirm.</p>` + block("Your plants", plantsHtml) + block("Pickup event", esc(market)) + block("Total (pay in person at pickup)", `<b>${esc(totalTxt)}</b>`) + `<p style="margin-top:20px;font-size:13px;color:#5d594e">No payment is taken online and nothing ships. Questions? Just reply to this email.<br>— Spina &amp; Spiritus (AZ Cactus Doctor)</p>`);
+    const text = `Hi ${name},\n\nThanks! We got your plant reservation.\n\nPLANTS\n${plantsText}\n\nPICKUP EVENT\n${market}\n\nTOTAL (pay in person at pickup)\n${totalTxt}\n\nNo payment is taken online. We'll message you to confirm. Questions? Just reply to this email.\n\n— Spina & Spiritus (AZ Cactus Doctor)`;
+    const html = shell("Reservation received", `<p style="font-size:15px;line-height:1.5">Hi ${esc(name)}, thanks! We got your plant reservation and we'll message you to confirm.</p>` + block("Your plants", plantsHtml) + block("Pickup event", esc(market)) + block("Total (pay in person at pickup)", `<b>${esc(totalTxt)}</b>`) + `<p style="margin-top:20px;font-size:13px;color:#5d594e">No payment is taken online. Questions? Just reply to this email.<br>— Spina &amp; Spiritus (AZ Cactus Doctor)</p>`);
     copy = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [email], reply_to: env.OWNER_EMAIL, subject: "We got your plant reservation — Spina & Spiritus", text, html });
   }
   return json({ ok: true, copy });
@@ -205,13 +220,15 @@ async function handleStripeWebhook(request, env) {
   const paid = money((sess.amount_total || 0) / 100);
   const email = clean(sess.customer_details && sess.customer_details.email || sess.customer_email, 120);
   const name = clean(md.name || (sess.customer_details && sess.customer_details.name) || "Customer", 80), contact = clean(md.contact || email, 120), market = clean(md.market, 220), notes = clean(md.notes, 500);
-  const ownerText = `NEW PLANT RESERVATION — PAID ONLINE (${paid})\n\n1. PLANTS\n${plantsText}\n\n2. PICKUP EVENT\n${market}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. PAID\n${paid} (Stripe)\n\n6. NOTES\n${notes || "-"}\n`;
-  const ownerHtml = shell("New reservation — PAID online", `<p style="background:#2f4a2c;color:#fff;padding:8px 12px;font-weight:bold;display:inline-block">PAID ${esc(paid)}</p>` + block("1. Plants", plantsHtml) + block("2. Pickup event", esc(market)) + block("3. Name", esc(name)) + block("4. Phone or email", esc(contact)) + block("5. Paid", `<b>${esc(paid)}</b> (Stripe)`) + block("6. Notes", esc(notes || "-")));
-  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(isEmail(email) ? { reply_to: email } : {}), subject: `PAID — Plant reservation: ${name} (${paid})`, text: ownerText, html: ownerHtml }, `${ev.id}:owner`);
+  const shipTo = clean(md.ship_to, 240);
+  const where = shipTo ? "SHIP TO" : "PICKUP EVENT", whereVal = shipTo || market;
+  const ownerText = `NEW PLANT ORDER — PAID ONLINE (${paid})${shipTo ? " — SHIP" : ""}\n\n1. PLANTS\n${plantsText}\n\n2. ${where}\n${whereVal}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. PAID\n${paid} (Stripe)\n\n6. NOTES\n${notes || "-"}\n`;
+  const ownerHtml = shell("New reservation — PAID online", `<p style="background:#2f4a2c;color:#fff;padding:8px 12px;font-weight:bold;display:inline-block">PAID ${esc(paid)}</p>` + block("1. Plants", plantsHtml) + block("2. " + (shipTo ? "Ship to" : "Pickup event"), esc(whereVal)) + block("3. Name", esc(name)) + block("4. Phone or email", esc(contact)) + block("5. Paid", `<b>${esc(paid)}</b> (Stripe)`) + block("6. Notes", esc(notes || "-")));
+  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(isEmail(email) ? { reply_to: email } : {}), subject: `PAID${shipTo ? " — SHIP" : ""} — Plant order: ${name} (${paid})`, text: ownerText, html: ownerHtml }, `${ev.id}:owner`);
   if (!okOwner) return json({ error: "retry" }, 500);
   if (isEmail(email)) {
-    const text = `Hi ${name},\n\nThanks! We received your payment of ${paid} and your plant reservation.\n\nPLANTS\n${plantsText}\n\nPICKUP EVENT\n${market}\n\nNo shipping: bring this email or just tell us your name at the booth. We'll message you to confirm. Questions? Just reply to this email.\n\n— Spina & Spiritus (AZ Cactus Doctor)`;
-    const html = shell("Payment received", `<p style="font-size:15px;line-height:1.5">Hi ${esc(name)}, thanks! We received your payment of <b>${esc(paid)}</b> and your plant reservation.</p>` + block("Your plants", plantsHtml) + block("Pickup event", esc(market)) + `<p style="margin-top:20px;font-size:13px;color:#5d594e">No shipping: just tell us your name at the booth. We'll message you to confirm. Questions? Just reply to this email.<br>— Spina &amp; Spiritus (AZ Cactus Doctor)</p>`);
+    const text = `Hi ${name},\n\nThanks! We received your payment of ${paid} and your plant order.\n\nPLANTS\n${plantsText}\n\n${shipTo ? "SHIPPING TO" : "PICKUP EVENT"}\n${whereVal}\n\n${shipTo ? "We'll pack your plants and message you with tracking once they ship." : "Just tell us your name at the booth."} We'll message you to confirm. Questions? Just reply to this email.\n\n— Spina & Spiritus (AZ Cactus Doctor)`;
+    const html = shell("Payment received", `<p style="font-size:15px;line-height:1.5">Hi ${esc(name)}, thanks! We received your payment of <b>${esc(paid)}</b> and your plant order.</p>` + block("Your plants", plantsHtml) + block(shipTo ? "Shipping to" : "Pickup event", esc(whereVal)) + `<p style="margin-top:20px;font-size:13px;color:#5d594e">${shipTo ? "We'll pack your plants and message you with tracking once they ship." : "Just tell us your name at the booth."} We'll message you to confirm. Questions? Just reply to this email.<br>— Spina &amp; Spiritus (AZ Cactus Doctor)</p>`);
     await resend(env, "/emails", { from: env.FROM_EMAIL, to: [email], reply_to: env.OWNER_EMAIL, subject: "Payment received — Spina & Spiritus", text, html }, `${ev.id}:customer`);
   }
   return json({ received: true });
@@ -241,7 +258,7 @@ export default {
     let body; try { body = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
     if (!body || typeof body !== "object") return json({ error: "bad_request" }, 400);
     // Online payments only need Stripe (Stripe emails the receipt); everything else sends mail through Resend.
-    const stripeOnly = url.pathname === "/api/order" && body.pay === "online" && env.STRIPE_SECRET_KEY;
+    const stripeOnly = url.pathname === "/api/order" && (body.pay === "online" || body.pay === "ship") && env.STRIPE_SECRET_KEY;
     if (!stripeOnly && (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL)) return json({ error: "not_configured" }, 503);
     return route(request, env, body);
   },

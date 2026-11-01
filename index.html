@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@600;700&display=swap" rel="stylesheet" media="(max-width:760px)">
 <script src="early.js?v=ea5a3baa"></script>
-<link rel="stylesheet" href="styles.css?v=59239f4d">
+<link rel="stylesheet" href="styles.css?v=e776f6ae">
 </head>
 <body>
 <a class="skip" href="#shop">Skip to the shop</a>
@@ -167,7 +167,7 @@
     <div class="faq-list" id="faqList">
 <details class="faq-item"><summary><span>What&#x27;s a genus?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>Every plant has a two-part Latin name, like <i>Opuntia microdasys</i>. The first word is the <b>genus</b>: a group of closely related plants, like a family name. The second word is the <b>species</b>, the specific plant, like a first name. So <i>Opuntia</i> is the genus of all prickly pears, and <i>microdasys</i> is the bunny ears cactus.</p></div></details>
 <details class="faq-item"><summary><span>How do reservations work?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>We can't bring every plant to every event, so browse the whole shop, reserve what you want, and choose the event you'll attend. We bring your plants there and message you to confirm. You pay in person when you pick them up.</p></div></details>
-<details class="faq-item"><summary><span>Do you ship?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>No. Plants are pickup only, at our farmers market and events. Check the <a href="index.html#events">Upcoming events</a> section for where we'll be.</p></div></details>
+<details class="faq-item"><summary><span>Do you ship?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>Yes! Pay online and choose “Ship to me.” Shipping is a flat fee based on the size of your order ($12 under $50, $18 under $100, $25 under $200, $35 for $200 and up). We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the <a href="index.html#events">Upcoming events</a> section for where we'll be.</p></div></details>
 <details class="faq-item"><summary><span>Where can I find you?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, <a href="https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032" rel="noopener" target="_blank">3502 E Cactus Rd, Phoenix, AZ 85032</a> (opens a map). For other locations we update the site and post on social media a couple of days before.</p></div></details>
 <details class="faq-item"><summary><span>How do I pay?</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>You pay when you pick up your plants at the event. There are no online payments.</p></div></details>
 </div>
@@ -211,7 +211,7 @@
       <p class="qv-desc" id="qvDesc"></p>
       <button class="btn full" id="qvAdd">Add to cart</button>
       <a class="qv-link" id="qvPage" href="#">View full details →</a>
-      <p class="fine">Reserve it, pick your event, and we'll bring it. Pay in person, no shipping.</p>
+      <p class="fine">Pick up at an Arizona event and pay in person, or pay online and we ship anywhere in the US except CA and HI. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm. We only use your details to arrange your order.</p>
     </div>
   </div>
 </div>
@@ -225,7 +225,7 @@
   </div>
   <div class="cart-items" id="cartItems"></div>
   <form class="cart-foot" id="orderForm" novalidate autocomplete="on">
-    <div class="cart-total"><span>Total (pay at pickup)</span><strong id="cartTotal">$0</strong></div>
+    <div class="cart-total"><span id="totalLabel">Total (pay at pickup)</span><strong id="cartTotal">$0</strong></div>
     <label>Name<input name="name" required maxlength="80" autocomplete="name"></label>
     <label>Phone or email<input name="contact" required maxlength="120" autocomplete="email"></label>
     <label>Which event will you pick up at?<select name="market" id="marketSelect" required></select></label>
@@ -233,15 +233,21 @@
     <fieldset class="pay-choice" id="payChoice" hidden>
       <legend>How would you like to pay?</legend>
       <label class="pay-opt"><input type="radio" name="pay" value="pickup" checked> <span>Pay at pickup <small>cash or card at the market</small></span></label>
-      <label class="pay-opt"><input type="radio" name="pay" value="online"> <span>Pay online now <small>card, Apple Pay or Google Pay</small></span></label>
+      <label class="pay-opt"><input type="radio" name="pay" value="online"> <span>Pay online, pick up at event <small>card, Apple Pay or Google Pay</small></span></label>
+      <label class="pay-opt" id="shipOpt" hidden><input type="radio" name="pay" value="ship"> <span>Pay online, ship to me <small id="shipNote">shipping added at checkout</small></span></label>
     </fieldset>
+    <div class="ship-fields" id="shipFields" hidden>
+      <label>Street address<input name="addr1" maxlength="100" autocomplete="address-line1"></label>
+      <label>City<input name="city" maxlength="60" autocomplete="address-level2"></label>
+      <div class="ship-row"><label>State<select name="state" id="shipState" autocomplete="address-level1"></select></label><label>ZIP<input name="zip" maxlength="10" inputmode="numeric" autocomplete="postal-code"></label></div>
+    </div>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
     <button type="submit" class="btn full" id="checkout">Check out</button>
-    <p class="fine">Pickup only, no shipping. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm, then you pay in person. We only use your details to arrange your pickup.</p>
+    <p class="fine">Pick up at an Arizona event and pay in person, or pay online and we ship anywhere in the US except CA and HI. We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm. We only use your details to arrange your order.</p>
   </form>
 </aside>
 
-<script src="app.js?v=061fd7c4"></script>
+<script src="app.js?v=03def0ab"></script>
 </body>
 </html>

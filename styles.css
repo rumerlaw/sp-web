@@ -980,3 +980,7 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 .cart-foot .pay-choice .pay-opt small{display:block;text-transform:none;letter-spacing:0;font-weight:500;color:var(--muted);font-size:.85rem;margin-top:2px}
 .thanks-sub{margin:14px auto}
 .od-check{margin-left:auto;margin-right:auto}
+.ship-fields{display:grid;gap:10px;margin:0 0 6px}
+.ship-fields[hidden]{display:none}
+.ship-fields .ship-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay-opt[hidden]{display:none}

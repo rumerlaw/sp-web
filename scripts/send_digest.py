@@ -105,7 +105,7 @@ def build(today):
             ex = [x for x in re.findall(r"\d{4}-\d{2}-\d{2}", str(e.get("except") or "")) if x >= today.isoformat()]
             if ex: note = " — not on " + ", ".join(datetime.strptime(x, "%Y-%m-%d").strftime("%b %-d") for x in sorted(ex))
             parts.append(f'<p style="font-size:15px;margin:0 0 8px"><b>{esc(e.get("name",""))}</b><br>{esc(e.get("when",""))}{esc(note)}<br><span style="color:#47443b;font-size:14px">{esc(e.get("where",""))}</span></p>')
-    parts.append(f'<p style="margin:26px 0 8px">{btn(SITE + "/shop.html", "Shop the plants")}</p><p style="font-size:13px;color:#6b675b">Reserve online, pay in person at pickup. No shipping.</p>')
+    parts.append(f'<p style="margin:26px 0 8px">{btn(SITE + "/shop.html", "Shop the plants")}</p><p style="font-size:13px;color:#6b675b">Reserve online and pick up at a market, or pay online and we ship (US except CA and HI).</p>')
 
     sub = []
     if new_plants: sub.append(f"{len(new_plants)} new plant" + ("s" if len(new_plants) != 1 else ""))
