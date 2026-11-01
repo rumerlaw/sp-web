@@ -146,7 +146,11 @@ async function handleOrder(request, env, body) {
       },
       metadata: { name, contact, market, notes: notes || "-", total: money(total) },
     });
-    if (!s.ok || !s.data.url) return json({ error: "Online payment isn't working right now. Please choose pay at pickup." }, 502);
+    if (!s.ok || !s.data.url) {
+      const why = clean(s.data && s.data.error && s.data.error.message || ("Stripe did not answer (status " + s.status + ")"), 200);   // Stripe masks keys in these messages
+      console.error("Stripe checkout failed:", s.status, why);
+      return json({ error: "Online payment isn't working right now. Please choose pay at pickup.", detail: why }, 422);   // 4xx so the page shows this instead of silently falling back
+    }
     return json({ ok: true, checkoutUrl: s.data.url });
   }
   const plantsText = lines.map((l) => `${l.qty} x ${l.name} - ${money(l.sub)}`).join("\n");

@@ -633,7 +633,7 @@ async function submitOrder(e) {
   const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "", pay: payOnline ? "online" : "pickup" });
   if (payOnline) {   // Stripe's own secure page takes the payment; we come back to thanks.html afterwards
     if (api.ok && api.data && /^https:\/\/checkout\.stripe\.com\//.test(api.data.checkoutUrl || "")) { location.href = api.data.checkoutUrl; return; }
-    say((api.data && api.data.error) || "Online payment isn't available right now. Please choose pay at pickup.", true); btn.disabled = false; return;
+    say(api.data && api.data.error ? api.data.error + (api.data.detail ? " (" + api.data.detail + ")" : "") : "Online payment isn't available right now. Please choose pay at pickup.", true); btn.disabled = false; return;
   }
   if (api.ok) {
     try { localStorage.setItem("sp-last", String(Date.now())); } catch (err) {}
