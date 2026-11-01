@@ -966,3 +966,15 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 /* an event in the next 7 days: highlighted and first */
 .events li.this-week{background:#f3ede0;border:2px solid var(--sage-deep);padding:20px 14px;margin-bottom:10px}
 .ev-week{display:inline-block;background:var(--sage-deep);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;margin-bottom:10px}
+
+/* checkout: pay at pickup / pay online */
+.pay-choice{border:1px solid var(--line);padding:12px 14px;margin:0 0 6px;display:grid;gap:8px}
+.pay-choice[hidden]{display:none}
+.pay-choice legend{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;padding:0 6px;color:var(--ink)}
+.pay-opt{display:flex;gap:10px;align-items:flex-start;font-weight:600;cursor:pointer}
+.pay-opt input{margin-top:5px;accent-color:var(--sage-deep)}
+.pay-opt small{display:block;font-weight:500;color:var(--muted);font-size:.82rem}
+.cart-foot .pay-choice .pay-opt{display:flex;flex-direction:row;align-items:flex-start;gap:12px;text-transform:none;letter-spacing:0;font-size:1rem;font-weight:600;color:var(--ink)}
+.cart-foot .pay-choice .pay-opt input[type=radio]{width:20px;height:20px;min-width:20px;padding:0;margin:3px 0 0;border:0;flex:none;appearance:auto;-webkit-appearance:radio}
+.cart-foot .pay-choice .pay-opt span{display:block;text-transform:none;letter-spacing:0}
+.cart-foot .pay-choice .pay-opt small{display:block;text-transform:none;letter-spacing:0;font-weight:500;color:var(--muted);font-size:.85rem;margin-top:2px}

@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@600;700&display=swap" rel="stylesheet" media="(max-width:760px)">
 <script src="early.js?v=ea5a3baa"></script>
-<link rel="stylesheet" href="styles.css?v=f13c4492">
+<link rel="stylesheet" href="styles.css?v=d2802402">
 </head>
 <body>
 <a class="skip" href="#shop">Skip to the shop</a>
@@ -230,6 +230,11 @@
     <label>Phone or email<input name="contact" required maxlength="120" autocomplete="email"></label>
     <label>Which event will you pick up at?<select name="market" id="marketSelect" required></select></label>
     <label>Notes <small>(optional)</small><textarea name="notes" rows="2" maxlength="500"></textarea></label>
+    <fieldset class="pay-choice" id="payChoice" hidden>
+      <legend>How would you like to pay?</legend>
+      <label class="pay-opt"><input type="radio" name="pay" value="pickup" checked> <span>Pay at pickup <small>cash or card at the market</small></span></label>
+      <label class="pay-opt"><input type="radio" name="pay" value="online"> <span>Pay online now <small>card, Apple Pay or Google Pay</small></span></label>
+    </fieldset>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
     <button type="submit" class="btn full" id="checkout">Check out</button>
@@ -237,6 +242,6 @@
   </form>
 </aside>
 
-<script src="app.js?v=db224eac"></script>
+<script src="app.js?v=17f8d5a6"></script>
 </body>
 </html>

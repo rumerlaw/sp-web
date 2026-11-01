@@ -179,7 +179,7 @@ def stamp_assets():
         f = ROOT / name
         return hashlib.sha1(f.read_bytes()).hexdigest()[:8] if f.exists() else None
     stamps = {n: fp(n) for n in ("app.js", "styles.css", "early.js")}
-    for page in ("index.html", "shop.html", "about.html", "faq.html", "plant.html"):
+    for page in ("index.html", "shop.html", "about.html", "faq.html", "plant.html", "thanks.html"):
         f = ROOT / page
         if not f.exists(): continue
         t = f.read_text(encoding="utf-8"); t2 = t

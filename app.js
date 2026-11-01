@@ -347,6 +347,7 @@ let products = [];
 const state = { cat: "All", q: "", avail: false, sort: "name" };
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem("sp-cart") || "[]"); } catch (e) {}
+if (document.body.dataset.page === "thanks") { cart = []; try { localStorage.removeItem("sp-cart"); } catch (e) {} }   // payment finished: empty the cart
 
 /* ---------- CSV ---------- */
 function parseCSV(text) {
@@ -594,6 +595,17 @@ async function postApi(path, body) {
     return { ok: r.ok, status: r.status, data };
   } catch (err) { return { fallback: true }; }
 }
+// Online payment (Stripe) is offered only when the Worker says it's set up.
+let onlinePay = false;
+async function loadPayConfig() {
+  try {
+    const r = await fetch("/api/pay-config", { cache: "no-store" });
+    if (!r.ok) return;
+    onlinePay = !!(await r.json()).online;
+    const box = $("#payChoice"); if (box) box.hidden = !onlinePay;
+  } catch (e) {}
+}
+document.addEventListener("change", (e) => { if (e.target && e.target.name === "pay") { const b = $("#checkout"); if (b) b.textContent = e.target.value === "online" ? "Pay online" : "Check out"; } });
 async function submitOrder(e) {
   e.preventDefault();
   const form = e.target, msg = $("#formMsg"), btn = $("#checkout");
@@ -616,8 +628,13 @@ async function submitOrder(e) {
   const lines = items.map((c) => `${c.qty} x ${c.p.name} - ${money(now(c.p) * c.qty)}`).join("\n");
   const summary = `NEW PICKUP RESERVATION\n\nCustomer: ${name}\nContact: ${contact}\nPICKUP EVENT: ${market}\n\nPlease bring these to the event:\n${lines}\n\nTotal: ${total} (pay in person at pickup)\n\nNotes: ${notes || "-"}`;
 
-  btn.disabled = true; say("Sending…");
-  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "" });
+  const payOnline = String(f.get("pay") || "pickup") === "online" && onlinePay;
+  btn.disabled = true; say(payOnline ? "Taking you to secure payment…" : "Sending…");
+  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "", pay: payOnline ? "online" : "pickup" });
+  if (payOnline) {   // Stripe's own secure page takes the payment; we come back to thanks.html afterwards
+    if (api.ok && api.data && /^https:\/\/checkout\.stripe\.com\//.test(api.data.checkoutUrl || "")) { location.href = api.data.checkoutUrl; return; }
+    say((api.data && api.data.error) || "Online payment isn't available right now. Please choose pay at pickup.", true); btn.disabled = false; return;
+  }
   if (api.ok) {
     try { localStorage.setItem("sp-last", String(Date.now())); } catch (err) {}
     const done = { items: items.map((c) => ({ name: c.p.name, qty: c.qty, price: now(c.p) * c.qty })), total, market, name, contact };
@@ -895,6 +912,7 @@ const shopLinks = () => {
 matchMedia("(max-width:760px)").addEventListener("change", () => { shopLinks(); if (isHome && $("#productGrid") && products.length) renderProducts(); });
 function initPage() {
   syncConfig();
+  loadPayConfig();
   $("#year").textContent = new Date().getFullYear();
   renderAbout(); renderContactArea(); renderFaq(); renderBlocks();
   if ($("#collectionGrid")) renderCollection();

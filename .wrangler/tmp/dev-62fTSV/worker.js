@@ -62,13 +62,13 @@ async function readAsset(env, request, path) {
   return res;
 }
 __name(readAsset, "readAsset");
-async function resend(env, path, payload) {
+async function resend(env, path, payload, idem) {
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 9e3);
   try {
     const r = await fetch((env.RESEND_API_URL || "https://api.resend.com") + path, {
       method: "POST",
       signal: ctl.signal,
-      headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
+      headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json", ...idem ? { "Idempotency-Key": idem } : {} },
       body: JSON.stringify(payload)
     });
     return r.ok;
@@ -79,6 +79,46 @@ async function resend(env, path, payload) {
   }
 }
 __name(resend, "resend");
+var cents = /* @__PURE__ */ __name((n) => Math.round(n * 100), "cents");
+function formEncode(obj, prefix = "", out = new URLSearchParams()) {
+  for (const [k, v] of Object.entries(obj)) {
+    const key = prefix ? `${prefix}[${k}]` : k;
+    if (v === void 0 || v === null) continue;
+    if (typeof v === "object") formEncode(v, key, out);
+    else out.append(key, String(v));
+  }
+  return out;
+}
+__name(formEncode, "formEncode");
+async function stripe(env, method, path, params) {
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 12e3);
+  try {
+    const r = await fetch((env.STRIPE_API_URL || "https://api.stripe.com") + path, {
+      method,
+      signal: ctl.signal,
+      headers: { Authorization: "Bearer " + env.STRIPE_SECRET_KEY, ...params ? { "Content-Type": "application/x-www-form-urlencoded" } : {} },
+      body: params ? formEncode(params).toString() : void 0
+    });
+    return { ok: r.ok, status: r.status, data: await r.json().catch(() => ({})) };
+  } catch (e) {
+    return { ok: false, status: 0, data: {} };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+__name(stripe, "stripe");
+var hex = /* @__PURE__ */ __name((buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join(""), "hex");
+async function verifyStripeSignature(raw, header, secret) {
+  const parts = Object.fromEntries(String(header || "").split(",").map((p) => p.trim().split("=")).filter((p) => p.length === 2));
+  const t = Number(parts.t);
+  if (!t || Math.abs(Date.now() / 1e3 - t) > 300 || !parts.v1) return false;
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const expected = hex(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${t}.${raw}`)));
+  let diff = expected.length ^ parts.v1.length;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ (parts.v1.charCodeAt(i) || 0);
+  return diff === 0;
+}
+__name(verifyStripeSignature, "verifyStripeSignature");
 var shell = /* @__PURE__ */ __name((title, inner) => `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#24231f"><h2 style="margin:0 0 14px;font-size:20px">${esc(title)}</h2>${inner}</div>`, "shell");
 var block = /* @__PURE__ */ __name((label, html) => `<p style="margin:16px 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#a07d3c;font-weight:bold">${esc(label)}</p><div style="font-size:15px;line-height:1.5">${html}</div>`, "block");
 async function handleOrder(request, env, body) {
@@ -115,6 +155,26 @@ async function handleOrder(request, env, body) {
     const names = (site.events || []).map((e) => String(e.name || "").toLowerCase()).filter(Boolean);
     if (names.length && !names.some((n) => market.toLowerCase().includes(n))) return json({ error: "Please choose one of the listed events." }, 400);
   } catch (e) {
+  }
+  if (body.pay === "online") {
+    if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET) return json({ error: "Online payment isn't available yet. Please choose pay at pickup." }, 503);
+    const origin = request.headers.get("Origin") || "https://spinanspiritus.com";
+    const items = {};
+    lines.forEach((l, i) => {
+      items[i] = { quantity: l.qty, price_data: { currency: "usd", unit_amount: cents(l.sub / l.qty), product_data: { name: l.name } } };
+    });
+    const s = await stripe(env, "POST", "/v1/checkout/sessions", {
+      mode: "payment",
+      line_items: items,
+      success_url: origin + "/thanks.html",
+      cancel_url: origin + "/shop.html",
+      ...email ? { customer_email: email } : {},
+      expires_at: Math.floor(Date.now() / 1e3) + 1800,
+      payment_intent_data: { description: "Spina & Spiritus plant reservation" },
+      metadata: { name, contact, market, notes: notes || "-", total: money(total) }
+    });
+    if (!s.ok || !s.data.url) return json({ error: "Online payment isn't working right now. Please choose pay at pickup." }, 502);
+    return json({ ok: true, checkoutUrl: s.data.url });
   }
   const plantsText = lines.map((l) => `${l.qty} x ${l.name} - ${money(l.sub)}`).join("\n");
   const plantsHtml = lines.map((l) => `<div>${esc(l.qty)} \xD7 <b>${esc(l.name)}</b> \u2014 ${esc(money(l.sub))}</div>`).join("");
@@ -177,14 +237,89 @@ async function handleSignup(request, env, body) {
 ${email}
 ${stored ? "\n(Added to your Resend audience.)" : ""}`, html: shell("New weekly-list signup", `<p style="font-size:16px"><b>${esc(email)}</b></p>${stored ? "<p>Added to your Resend audience.</p>" : ""}`) });
   if (!stored && !told) return json({ error: "send_failed" }, 502);
+  await resend(env, "/emails", {
+    from: env.FROM_EMAIL,
+    to: [email],
+    reply_to: env.OWNER_EMAIL,
+    subject: "You're on the Spina & Spiritus list",
+    text: "Welcome! You're on the Spina & Spiritus list.\n\nEvery Monday we'll email you the new plants and any upcoming markets and events. We never spam, and every email has an unsubscribe link.\n\nSee what's in stock: https://spinanspiritus.com/shop.html\n\n\u2014 Spina & Spiritus (AZ Cactus Doctor)",
+    html: shell("You're on the list", `<p style="font-size:15px;line-height:1.5">Welcome! Every <b>Monday</b> we'll email you the new plants and any upcoming markets and events. We never spam, and every email has an unsubscribe link.</p><p style="margin-top:18px"><a href="https://spinanspiritus.com/shop.html" style="display:inline-block;background:#2f4a2c;color:#fff;text-decoration:none;padding:12px 22px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:bold">See what's in stock</a></p><p style="margin-top:18px;font-size:13px;color:#5d594e">\u2014 Spina &amp; Spiritus (AZ Cactus Doctor)</p>`)
+  });
   return json({ ok: true });
 }
 __name(handleSignup, "handleSignup");
+async function handleStripeWebhook(request, env) {
+  if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+  if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY || !env.RESEND_API_KEY) return json({ error: "not_configured" }, 503);
+  const raw = await request.text();
+  if (raw.length > 2e5 || !await verifyStripeSignature(raw, request.headers.get("Stripe-Signature"), env.STRIPE_WEBHOOK_SECRET)) return json({ error: "bad_signature" }, 400);
+  let ev;
+  try {
+    ev = JSON.parse(raw);
+  } catch (e) {
+    return json({ error: "bad_request" }, 400);
+  }
+  const sess = ev && ev.data && ev.data.object;
+  if (!ev || ev.type !== "checkout.session.completed" || !sess || sess.payment_status !== "paid") return json({ received: true });
+  const li = await stripe(env, "GET", `/v1/checkout/sessions/${encodeURIComponent(sess.id)}/line_items?limit=100`);
+  if (!li.ok) return json({ error: "retry" }, 500);
+  const md = sess.metadata || {};
+  const rows = (li.data.data || []).map((r) => ({ name: clean(r.description, 120), qty: r.quantity, sub: (r.amount_total || 0) / 100 }));
+  const plantsText = rows.map((l) => `${l.qty} x ${l.name} - ${money(l.sub)}`).join("\n");
+  const plantsHtml = rows.map((l) => `<div>${esc(l.qty)} \xD7 <b>${esc(l.name)}</b> \u2014 ${esc(money(l.sub))}</div>`).join("");
+  const paid = money((sess.amount_total || 0) / 100);
+  const email = clean(sess.customer_details && sess.customer_details.email || sess.customer_email, 120);
+  const name = clean(md.name || sess.customer_details && sess.customer_details.name || "Customer", 80), contact = clean(md.contact || email, 120), market = clean(md.market, 220), notes = clean(md.notes, 500);
+  const ownerText = `NEW PLANT RESERVATION \u2014 PAID ONLINE (${paid})
+
+1. PLANTS
+${plantsText}
+
+2. PICKUP EVENT
+${market}
+
+3. NAME
+${name}
+
+4. PHONE OR EMAIL
+${contact}
+
+5. PAID
+${paid} (Stripe)
+
+6. NOTES
+${notes || "-"}
+`;
+  const ownerHtml = shell("New reservation \u2014 PAID online", `<p style="background:#2f4a2c;color:#fff;padding:8px 12px;font-weight:bold;display:inline-block">PAID ${esc(paid)}</p>` + block("1. Plants", plantsHtml) + block("2. Pickup event", esc(market)) + block("3. Name", esc(name)) + block("4. Phone or email", esc(contact)) + block("5. Paid", `<b>${esc(paid)}</b> (Stripe)`) + block("6. Notes", esc(notes || "-")));
+  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...isEmail(email) ? { reply_to: email } : {}, subject: `PAID \u2014 Plant reservation: ${name} (${paid})`, text: ownerText, html: ownerHtml }, `${ev.id}:owner`);
+  if (!okOwner) return json({ error: "retry" }, 500);
+  if (isEmail(email)) {
+    const text = `Hi ${name},
+
+Thanks! We received your payment of ${paid} and your plant reservation.
+
+PLANTS
+${plantsText}
+
+PICKUP EVENT
+${market}
+
+No shipping: bring this email or just tell us your name at the booth. We'll message you to confirm. Questions? Just reply to this email.
+
+\u2014 Spina & Spiritus (AZ Cactus Doctor)`;
+    const html = shell("Payment received", `<p style="font-size:15px;line-height:1.5">Hi ${esc(name)}, thanks! We received your payment of <b>${esc(paid)}</b> and your plant reservation.</p>` + block("Your plants", plantsHtml) + block("Pickup event", esc(market)) + `<p style="margin-top:20px;font-size:13px;color:#5d594e">No shipping: just tell us your name at the booth. We'll message you to confirm. Questions? Just reply to this email.<br>\u2014 Spina &amp; Spiritus (AZ Cactus Doctor)</p>`);
+    await resend(env, "/emails", { from: env.FROM_EMAIL, to: [email], reply_to: env.OWNER_EMAIL, subject: "Payment received \u2014 Spina & Spiritus", text, html }, `${ev.id}:customer`);
+  }
+  return json({ received: true });
+}
+__name(handleStripeWebhook, "handleStripeWebhook");
 var worker_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/") return env.ASSETS.fetch(new Request(new URL("/index.html", request.url).toString(), request));
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
+    if (url.pathname === "/api/stripe-webhook") return handleStripeWebhook(request, env);
+    if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET && env.RESEND_API_KEY) });
     const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : null;
     if (!route) return json({ error: "not_found" }, 404);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -254,7 +389,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-cxCj7j/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-NxBSW4/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -286,7 +421,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-cxCj7j/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-NxBSW4/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
