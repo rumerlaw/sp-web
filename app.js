@@ -606,8 +606,8 @@ function updateTotal(items) {
   const sub = cartSub(items), mode = payMode(), ship = mode === "ship" && shipCfg();
   const t = $("#cartTotal"); if (!t) return;
   t.textContent = money(sub + (ship ? shipFee(sub) : 0));
-  const l = $("#totalLabel"); if (l) l.textContent = ship ? "Total with shipping" : mode === "online" ? "Total (paid online)" : "Total (pay at pickup)";
-  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? `shipping ${money(shipFee(sub))} for this order` : "shipping added at checkout";
+  const l = $("#totalLabel"); if (l) l.textContent = ship ? "Total with shipping" : "Total (pay at pickup)";
+  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? `pay online, shipping ${money(shipFee(sub))}` : "pay online, shipping added at checkout";
 }
 function applyPayMode() {
   const mode = payMode(), ship = mode === "ship";

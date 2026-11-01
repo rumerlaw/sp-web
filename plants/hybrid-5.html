@@ -95,10 +95,9 @@
     <label>Which event will you pick up at?<select name="market" id="marketSelect" required></select></label>
     <label>Notes <small>(optional)</small><textarea name="notes" rows="2" maxlength="500"></textarea></label>
     <fieldset class="pay-choice" id="payChoice" hidden>
-      <legend>How would you like to pay?</legend>
-      <label class="pay-opt"><input type="radio" name="pay" value="pickup" checked> <span>Pay at pickup <small>cash or card at the market</small></span></label>
-      <label class="pay-opt"><input type="radio" name="pay" value="online"> <span>Pay online, pick up at event <small>card, Apple Pay or Google Pay</small></span></label>
-      <label class="pay-opt" id="shipOpt" hidden><input type="radio" name="pay" value="ship"> <span>Pay online, ship to me <small id="shipNote">shipping added at checkout</small></span></label>
+      <legend>How would you like to get your plants?</legend>
+      <label class="pay-opt"><input type="radio" name="pay" value="pickup" checked> <span>Pick up at an event <small>pay in person, cash or card</small></span></label>
+      <label class="pay-opt" id="shipOpt" hidden><input type="radio" name="pay" value="ship"> <span>Ship to me <small id="shipNote">pay online, shipping added at checkout</small></span></label>
     </fieldset>
     <div class="ship-fields" id="shipFields" hidden>
       <label>Street address<input name="addr1" maxlength="100" autocomplete="address-line1"></label>
@@ -112,6 +111,6 @@
   </form>
 </aside>
 
-<script src="app.js?v=03def0ab"></script>
+<script src="app.js?v=1926baec"></script>
 </body>
 </html>
