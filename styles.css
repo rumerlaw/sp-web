@@ -1197,3 +1197,8 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 .don-bio .about-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .don-bio .about-cta .btn{padding:14px 20px;letter-spacing:.16em;white-space:nowrap}
 @media(max-width:900px){.don-bio .about-cta{justify-content:center}}
+/* Don's buttons on the About page use the Spiritus purple */
+.aboutpage .don-bio .btn{background:#4b3a82;border-color:#4b3a82;color:#fff}
+.aboutpage .don-bio .btn:hover{background:#3d2f6b;border-color:#3d2f6b}
+.aboutpage .don-bio .btn.ghost{background:transparent;color:#4b3a82}
+.aboutpage .don-bio .btn.ghost:hover{background:#4b3a82;color:#fff}
