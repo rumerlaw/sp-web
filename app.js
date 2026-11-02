@@ -1073,3 +1073,16 @@ try { localStorage.removeItem("sp-gh-token"); sessionStorage.removeItem("sp-edit
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
+
+// On phones, open Instagram profiles in the Instagram app (where the visitor is already signed in) so there is no login wall;
+// if the app is not installed we fall back to the normal web page after a moment.
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest("a[data-ig]");
+  if (!a || !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+  e.preventDefault();
+  const web = a.href, user = encodeURIComponent(a.getAttribute("data-ig"));
+  let left = false; const onHide = () => { left = true; };
+  document.addEventListener("visibilitychange", onHide, { once: true }); addEventListener("pagehide", onHide, { once: true });
+  location.href = "instagram://user?username=" + user;
+  setTimeout(() => { if (!left && !document.hidden) window.open(web, "_blank", "noopener"); }, 1400);
+});
