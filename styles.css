@@ -1145,3 +1145,24 @@ html[data-realm="spiritus"] #contactInsta{display:none}
 #spiritus .readings-copy{max-width:46ch;margin:0 auto 24px;font-size:1.1rem;line-height:1.7;font-weight:500;color:var(--ink)}
 #spiritus .readings .btn{padding:16px 34px;letter-spacing:.28em}
 @media(max-width:760px){#spiritus .readings{margin-top:56px;padding:34px 18px}}
+
+/* Don's bio (Spiritus) */
+.don-bio{padding:90px 0 80px;text-align:center}
+.aboutpage .don-bio{border-top:1px solid var(--line);margin-top:80px}
+.don-bio h2{font-size:clamp(2.4rem,5.5vw,4rem);font-weight:500;margin:6px 0 8px}
+.don-bio .don-sub{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:30px}
+.don-bio .don-text{text-align:left;max-width:62ch;margin:0 auto}
+.don-bio .don-text p{font-size:1.2rem;line-height:1.8;font-weight:500;color:var(--ink);margin-bottom:1.3rem;max-width:none}
+.don-bio .about-cta{margin-top:30px;text-align:center}
+html[data-realm="spiritus"] .don-bio .eyebrow{color:var(--gold)}
+@media(max-width:520px){.don-bio{padding:60px 0 50px}.don-bio .don-text p{font-size:1.1rem}}
+
+.don-grid{display:grid;grid-template-columns:5fr 6fr;gap:64px;align-items:center;max-width:1100px}
+.don-photo{width:100%;height:auto;display:block;border:1px solid var(--line);aspect-ratio:512/604;object-fit:cover}
+.don-copy{text-align:left}
+.don-bio .don-text{margin:0;max-width:none}
+.don-bio .about-cta{text-align:left}
+html[data-realm="spiritus"] .don-photo{border-color:var(--gold)}
+@media(max-width:900px){.don-grid{grid-template-columns:1fr;gap:34px}.don-photo{max-width:420px;margin:0 auto}.don-copy{text-align:center}.don-bio .don-text{text-align:left}.don-bio .about-cta{text-align:center}}
+.don-grid{align-items:start}
+@media(min-width:901px){.don-photo{position:sticky;top:110px}}
