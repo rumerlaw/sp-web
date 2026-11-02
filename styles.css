@@ -994,8 +994,8 @@ button.realm{font:inherit;cursor:pointer;background:none}
 .realm span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--muted)}
 .realm.on{background:var(--sage-deep);color:#fff}
 .realm.on span{color:#e7efe3}
-.realm.spirit{border-color:#2b2438}
-.realm.spirit:hover,.realm.spirit:focus-visible{background:#2b2438;color:#e8d9a8}
+.realm.spirit{border-color:#3d2f6b}
+.realm.spirit:hover,.realm.spirit:focus-visible{background:#3d2f6b;color:#fff}
 .realm.spirit:hover span,.realm.spirit:focus-visible span{color:#e8d9a8}
 .realm.on:hover,.realm.spirit.on:hover,.realm.spirit.on:focus-visible{background:var(--sage-deep);color:#fff;filter:brightness(.92)}
 .realm.on:hover span,.realm.spirit.on:hover span,.realm.spirit.on:focus-visible span{color:#e7efe3}
@@ -1191,17 +1191,17 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 .realms-one .realm span{color:#e7efe3}
 
 .portrait-side .realms{margin:18px 0 0;padding:0;max-width:none}
-.realms-one .realm[data-realm-btn="spiritus"]{background:#4b3a82;border-color:#4b3a82;color:#fff}
+.realms-one .realm[data-realm-btn="spiritus"]{background:#3d2f6b;border-color:#3d2f6b;color:#fff}
 .realms-one .realm[data-realm-btn="spiritus"] span{color:#e4dcf7}
-.realms-one .realm[data-realm-btn="spiritus"]:hover{background:#3d2f6b;border-color:#3d2f6b;color:#fff}
+.realms-one .realm[data-realm-btn="spiritus"]:hover{filter:brightness(1.18)}
 .don-bio .about-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .don-bio .about-cta .btn{padding:14px 20px;letter-spacing:.16em;white-space:nowrap}
 @media(max-width:900px){.don-bio .about-cta{justify-content:center}}
 /* Don's buttons on the About page use the Spiritus purple */
-.aboutpage .don-bio .btn{background:#4b3a82;border-color:#4b3a82;color:#fff}
-.aboutpage .don-bio .btn:hover{background:#3d2f6b;border-color:#3d2f6b}
-.aboutpage .don-bio .btn.ghost{background:transparent;color:#4b3a82}
-.aboutpage .don-bio .btn.ghost:hover{background:#4b3a82;color:#fff}
+.aboutpage .don-bio .btn{background:#3d2f6b;border-color:#3d2f6b;color:#fff}
+.aboutpage .don-bio .btn:hover{filter:brightness(1.18)}
+.aboutpage .don-bio .btn.ghost{background:transparent;color:#3d2f6b}
+.aboutpage .don-bio .btn.ghost:hover{background:#3d2f6b;color:#fff}
 
 /* About page: jump between the two bios */
 .about-jump{display:flex;justify-content:center;gap:14px;max-width:760px;margin:0 auto;padding:110px 20px 0}
@@ -1210,8 +1210,8 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 .about-jump a span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--muted)}
 .about-jump a:first-child{background:var(--sage-deep);color:#fff}
 .about-jump a:first-child span{color:#e7efe3}
-.about-jump a:last-child{border-color:#4b3a82}
-.about-jump a:last-child:hover{background:#4b3a82;color:#fff}
+.about-jump a:last-child{border-color:#3d2f6b}
+.about-jump a:last-child:hover{background:#3d2f6b;color:#fff}
 .about-jump a:last-child:hover span{color:#e4dcf7}
 .about-jump+.two-col{padding-top:20px}
 html{scroll-behavior:smooth}
