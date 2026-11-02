@@ -8,6 +8,7 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
   function get() { if (!/(^\/$|\/index\.html$)/.test(location.pathname)) return "spina"; try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
   function set(r) {
     root.setAttribute("data-realm", r);
+    root.style.backgroundColor = r === "spiritus" ? "#17122a" : "";   // no white flash while the page loads
     try { localStorage.setItem(KEY, r); } catch (e) {}
     var b = document.querySelectorAll("[data-realm-btn]");
     for (var i = 0; i < b.length; i++) { var on = b[i].getAttribute("data-realm-btn") === r; b[i].classList.toggle("on", on); b[i].setAttribute("aria-pressed", on ? "true" : "false"); }

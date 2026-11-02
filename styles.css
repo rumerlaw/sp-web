@@ -1083,3 +1083,6 @@ html[data-realm="spiritus"] input::placeholder,html[data-realm="spiritus"] texta
 .scent-btn.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 html[data-realm="spiritus"] .scent-btn.on{background:var(--gold);border-color:var(--gold);color:#17122a}
 @media(max-width:420px){.scent-buttons{grid-template-columns:repeat(2,1fr)}}
+
+html{background:var(--bg)}
+html[data-realm="spiritus"]{color-scheme:dark;background:#17122a}
