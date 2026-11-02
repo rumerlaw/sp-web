@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@600;700&display=swap" rel="stylesheet" media="(max-width:760px)">
 <script src="early.js?v=9fd67d98"></script>
-<link rel="stylesheet" href="styles.css?v=7e88c469">
+<link rel="stylesheet" href="styles.css?v=ae848990">
 </head>
 <body>
 <a class="skip" href="#shop">Skip to the shop</a>
@@ -98,20 +98,12 @@
       <div class="candle-info">
         <h3>Sonoran Mystic Tarot Intention Candle</h3>
         <p class="candle-copy">Scent can change a room, and a moment. Each candle is hand-poured into a matte black vessel with a bamboo lid, and scented to support a different kind of energy. Pick the one that fits how you want to feel.</p>
-        <label class="candle-pick">Choose your scent
-          <select id="candleScent">
-            <option value="essence">Essence</option>
-            <option value="awakening">Awakening</option>
-            <option value="abundance">Abundance</option>
-            <option value="meditation">Meditation</option>
-            <option value="frankincense">Frankincense</option>
-            <option value="passion">Passion</option>
-          </select>
-        </label>
+        <p class="candle-pick" id="candlePickLabel">Choose your scent</p>
+        <div class="scent-buttons" id="candleScents" role="radiogroup" aria-labelledby="candlePickLabel"><button type="button" class="scent-btn on" role="radio" aria-checked="true" data-scent="essence">Essence</button><button type="button" class="scent-btn" role="radio" aria-checked="false" data-scent="awakening">Awakening</button><button type="button" class="scent-btn" role="radio" aria-checked="false" data-scent="abundance">Abundance</button><button type="button" class="scent-btn" role="radio" aria-checked="false" data-scent="meditation">Meditation</button><button type="button" class="scent-btn" role="radio" aria-checked="false" data-scent="frankincense">Frankincense</button><button type="button" class="scent-btn" role="radio" aria-checked="false" data-scent="passion">Passion</button></div>
         <p class="candle-scent" id="candleScentText" aria-live="polite"></p>
         <p class="candle-copy">Lovely for meditation spaces, tarot readings, spiritual practice, quiet evenings, or simply because the room deserves it.</p>
         <p class="candle-line">Light your candle. Set your intention. Let the journey unfold.</p>
-        <p class="candle-note">Photos show our candle in its vessel. We are still photographing each scent, so the dropdown describes them for now.</p>
+        <p class="candle-note">Photos show our candle in its vessel. We are still photographing each scent, so each scent is described below for now.</p>
         <p class="candle-price"><b>$20</b> each &middot; free shipping on candles</p>
         <p class="candle-cta"><button type="button" class="btn" id="candleAdd">Add to cart</button></p>
       </div>
@@ -289,6 +281,6 @@
   </form>
 </aside>
 
-<script src="app.js?v=f5c629d3"></script>
+<script src="app.js?v=24813534"></script>
 </body>
 </html>

@@ -1076,3 +1076,10 @@ html[data-realm="spiritus"] input::placeholder,html[data-realm="spiritus"] texta
 /* the Spina button is always green, on both sides */
 .realm[data-realm-btn="spina"],html[data-realm="spiritus"] .realm[data-realm-btn="spina"],html[data-realm="spiritus"] .realm[data-realm-btn="spina"]:hover{background:#2f4a2c;border-color:#2f4a2c;color:#fff;filter:none}
 .realm[data-realm-btn="spina"] span,html[data-realm="spiritus"] .realm[data-realm-btn="spina"] span{color:#e7efe3}
+
+.scent-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
+.scent-btn{font:inherit;font-size:.82rem;letter-spacing:.08em;font-weight:600;padding:12px 6px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:.2s}
+.scent-btn:hover{border-color:var(--gold)}
+.scent-btn.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+html[data-realm="spiritus"] .scent-btn.on{background:var(--gold);border-color:var(--gold);color:#17122a}
+@media(max-width:420px){.scent-buttons{grid-template-columns:repeat(2,1fr)}}

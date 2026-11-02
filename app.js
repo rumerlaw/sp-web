@@ -1054,12 +1054,17 @@ try { localStorage.removeItem("sp-gh-token"); sessionStorage.removeItem("sp-edit
     passion: ["Passion", "Vibrant and captivating. A fragrance for creativity, confidence and heartfelt expression."],
   };
   function init() {
-    const sel = document.getElementById("candleScent"), txt = document.getElementById("candleScentText");
-    if (!sel || !txt) return;
-    const show = () => { const s = SCENTS[sel.value]; if (s) txt.innerHTML = "<b></b> <span></span>", txt.firstChild.textContent = s[0] + ".", txt.lastChild.textContent = s[1]; };
-    sel.addEventListener("change", show); show();
+    const box = document.getElementById("candleScents"), txt = document.getElementById("candleScentText");
+    if (!box || !txt) return;
+    let current = "essence";
+    const show = () => { const s = SCENTS[current]; if (s) { txt.innerHTML = "<b></b> <span></span>"; txt.firstChild.textContent = s[0] + "."; txt.lastChild.textContent = s[1]; } };
+    box.querySelectorAll(".scent-btn").forEach((b) => b.addEventListener("click", () => {
+      current = b.getAttribute("data-scent");
+      box.querySelectorAll(".scent-btn").forEach((x) => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-checked", on ? "true" : "false"); });
+      show();
+    })); show();
     const add = document.getElementById("candleAdd");
-    if (add) add.addEventListener("click", () => { addToCart("candle-" + sel.value, 1); add.textContent = "Added. Add another?"; setTimeout(() => { add.textContent = "Add to cart"; }, 2200); toggleCart(true); });
+    if (add) add.addEventListener("click", () => { addToCart("candle-" + current, 1); add.textContent = "Added. Add another?"; setTimeout(() => { add.textContent = "Add to cart"; }, 2200); toggleCart(true); });
     const main = document.getElementById("candleMain");
     document.querySelectorAll(".candle-thumbs button").forEach((b) => b.addEventListener("click", () => {
       main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");
