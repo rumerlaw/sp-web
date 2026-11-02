@@ -599,15 +599,25 @@ async function postApi(path, body) {
 let onlinePay = false;
 const STATES = "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ");
 function shipCfg() { const c = SITE.shipping; return c && c.enabled && onlinePay ? c : null; }
-function shipFee(sub) { const c = shipCfg(); if (!c) return 0; const t = (c.tiers || []).find((x) => x.under == null || sub < Number(x.under)); return t ? Number(t.fee) : 0; }
+function shipFee() {
+  const c = shipCfg(); if (!c) return 0;
+  const cls = c.classes || { small: 10, medium: 15, large: 20 }, rank = ["small", "medium", "large"];
+  let top = 0, count = 0;
+  for (const l of cartLines()) {
+    const say = String(l.p.size || "").toLowerCase(), unit = now(l.p);
+    const k = /large|big|xl/.test(say) ? "large" : /med/.test(say) ? "medium" : /small|mini/.test(say) ? "small" : ((c.bySize || []).find((t) => t.under == null || unit < Number(t.under)) || { class: "large" }).class;
+    top = Math.max(top, Math.max(0, rank.indexOf(k))); count += l.qty;
+  }
+  return count ? Number(cls[rank[top]] || 0) + Number(c.extraPlant || 0) * (count - 1) : 0;
+}
 function payMode() { const r = document.querySelector('input[name="pay"]:checked'); return r ? r.value : "pickup"; }
 function cartSub(items) { return (items || cartLines()).reduce((s, c) => s + now(c.p) * c.qty, 0); }
 function updateTotal(items) {
   const sub = cartSub(items), mode = payMode(), ship = mode === "ship" && shipCfg();
   const t = $("#cartTotal"); if (!t) return;
-  t.textContent = money(sub + (ship ? shipFee(sub) : 0));
+  t.textContent = money(sub + (ship ? shipFee() : 0));
   const l = $("#totalLabel"); if (l) l.textContent = ship ? "Total with shipping" : "Total (pay at pickup)";
-  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? `pay online, shipping ${money(shipFee(sub))}` : "pay online, shipping added at checkout";
+  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? `pay online, shipping ${money(shipFee())}` : "pay online, shipping added at checkout";
 }
 function applyPayMode() {
   const mode = payMode(), ship = mode === "ship";

@@ -13,7 +13,7 @@ FAQS = [
  ("How do reservations work?",
   "We can't bring every plant to every event, so browse the whole shop, reserve what you want, and choose the event you'll attend. We bring your plants there and message you to confirm. You pay in person when you pick them up."),
  ("Do you ship?",
-  "Yes! Pay online and choose “Ship to me.” Shipping is a flat fee based on the size of your order ($12 under $50, $18 under $100, $25 under $200, $35 for $200 and up). We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the <a href=\"index.html#events\">Upcoming events</a> section for where we'll be."),
+  "Yes! Choose \u201cShip to me\u201d and pay online. Shipping is $10 for a small plant, $15 for a medium plant and $20 for a large plant, plus $5 for each extra plant in the same box. We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the <a href=\"index.html#events\">Upcoming events</a> section for where we'll be."),
  ("Where can I find you?",
   "Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, <a href=\"https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032\" rel=\"noopener\" target=\"_blank\">3502 E Cactus Rd, Phoenix, AZ 85032</a> (opens a map). For other locations we update the site and post on social media a couple of days before."),
  ("How do I pay?",

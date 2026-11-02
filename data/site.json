@@ -88,7 +88,7 @@
     },
     {
       "q": "Do you ship?",
-      "a": "Yes! Pay online and choose “Ship to me.” Shipping is a flat fee based on the size of your order ($12 under $50, $18 under $100, $25 under $200, $35 for $200 and up). We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the [Upcoming events](index.html#events) section for where we'll be."
+      "a": "Yes! Choose “Ship to me” and pay online. Shipping is $10 for a small plant, $15 for a medium plant and $20 for a large plant, plus $5 for each extra plant in the same box. We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the [Upcoming events](index.html#events) section for where we'll be."
     },
     {
       "q": "Where can I find you?",
@@ -217,21 +217,23 @@
       "CA",
       "HI"
     ],
-    "tiers": [
+    "classes": {
+      "small": 10,
+      "medium": 15,
+      "large": 20
+    },
+    "extraPlant": 5,
+    "bySize": [
       {
-        "under": 50,
-        "fee": 12
+        "under": 30,
+        "class": "small"
       },
       {
-        "under": 100,
-        "fee": 18
+        "under": 70,
+        "class": "medium"
       },
       {
-        "under": 200,
-        "fee": 25
-      },
-      {
-        "fee": 35
+        "class": "large"
       }
     ]
   }
