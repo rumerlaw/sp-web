@@ -164,7 +164,7 @@ async function handleOrder(request, env, body) {
     if (shipFee > 0) items[lines.length] = { quantity: 1, price_data: { currency: "usd", unit_amount: cents(shipFee), product_data: { name: "Shipping" } } };
     const s = await stripe(env, "POST", "/v1/checkout/sessions", {
       mode: "payment", line_items: items,
-      success_url: origin + "/thanks.html", cancel_url: origin + "/shop.html",
+      success_url: origin + "/thanks.html", cancel_url: origin + (body.realm === "spiritus" ? "/?realm=spiritus#spiritus" : "/shop.html"),   // "back" returns to the side they were on
       ...(email ? { customer_email: email } : {}),
       expires_at: Math.floor(Date.now() / 1000) + 1800,
       payment_intent_data: {
