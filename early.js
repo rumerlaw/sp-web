@@ -24,7 +24,9 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
   document.addEventListener("click", function (e) {
     var t = e.target && e.target.closest ? e.target.closest("[data-realm-btn]") : null;
     if (!t) return;
-    e.preventDefault(); set(t.getAttribute("data-realm-btn")); document.dispatchEvent(new Event("realmchange"));
+    e.preventDefault();
+    if (!document.querySelector(".hero")) { location.href = "index.html?realm=" + t.getAttribute("data-realm-btn"); return; }   // other pages: go to that side's home page
+    set(t.getAttribute("data-realm-btn")); document.dispatchEvent(new Event("realmchange"));
     if (document.querySelector(".hero")) window.scrollTo({ top: 0, behavior: "smooth" });
   });
 })();
