@@ -211,11 +211,16 @@ function renderPortrait() {
 }
 // The checkout "which event will you pick up at?" list. Lives in the cart drawer, which every page has,
 // so it is filled on every page (not only where the contact block exists).
+// Plants are picked up at the plant markets; once a candle is in the cart every listed event can be used.
+function pickupEvents() {
+  const today = new Date().toISOString().slice(0, 10), hasCandle = cart.some((c) => String(c.id).startsWith("candle-"));
+  return CONFIG.events.filter((e) => (!e.date || e.date >= today) && (hasCandle || (e.realm || "spina") === "spina"));
+}
 function renderMarketSelect() {
   const sel = $("#marketSelect"); if (!sel) return;
   const keep = sel.value;
   // The list shows just the event name (so it fits on a phone); the full name + time is shown under the box once chosen.
-  sel.innerHTML = `<option value="">Choose an event…</option>` + upcomingEvents().map((e) => `<option value="${esc(eventLabel(e))}">${esc(e.name)}</option>`).join("");
+  sel.innerHTML = `<option value="">Choose an event…</option>` + pickupEvents().map((e) => `<option value="${esc(eventLabel(e))}">${esc(e.name)}</option>`).join("");
   if (keep) sel.value = keep;
   showPicked();
 }
@@ -418,8 +423,11 @@ const isPre = (p) => /pre/i.test(p.status);
 const isLow = (p) => /low/i.test(p.status) || (p.stock !== null && p.stock > 0 && p.stock <= 3);
 const maxQty = (p) => (p.stock === null ? 20 : Math.max(1, Math.min(20, p.stock)));
 const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : ` — ${p.stock} available`));
+// The intention candles (Spiritus side) are not in the plant inventory: one product per scent, price from data/site.json.
+const candleProducts = () => { const c = SITE.candles; if (!c || !(Number(c.price) > 0)) return []; return (c.scents || []).map((n) => ({ id: "candle-" + String(n).toLowerCase().replace(/[^a-z]/g, ""), name: n + " Intention Candle", genus: "Candle", category: "Candles", price: Number(c.price), salePrice: 0, stock: null, status: "In Stock", size: "", shipSize: "", description: "", images: [], isCandle: true })); };
+const findProduct = (id) => products.find((x) => x.id === id) || candleProducts().find((x) => x.id === id);
 function addToCart(id, qty) {
-  const p = products.find((x) => x.id === id); if (!p) return;
+  const p = findProduct(id); if (!p) return;
   if (noPrice(p) || isOut(p)) return;
   const row = cart.find((c) => c.id === id);
   if (row) row.qty = Math.min(row.qty + qty, maxQty(p)); else cart.push({ id, qty: Math.min(qty, maxQty(p)) });
@@ -511,7 +519,7 @@ function cleanCart() {
   const seen = new Set(), clean = [];
   (Array.isArray(cart) ? cart : []).forEach((c) => {
     if (!c || typeof c.id !== "string" || seen.has(c.id)) return;
-    const p = products.find((x) => x.id === c.id); if (!p || isOut(p) || noPrice(p)) return;
+    const p = findProduct(c.id); if (!p || isOut(p) || noPrice(p)) return;
     const q = Math.floor(Number(c.qty)); seen.add(c.id);
     clean.push({ id: c.id, qty: Number.isFinite(q) && q > 0 ? Math.min(q, maxQty(p)) : 1 });
   });
@@ -519,7 +527,7 @@ function cleanCart() {
 }
 function renderCart() {
   cleanCart();
-  const items = cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
+  const items = cart.map((c) => ({ ...c, p: findProduct(c.id) })).filter((c) => c.p);
   const count = items.reduce((s, c) => s + c.qty, 0);
   $("#cartCount").textContent = count; $("#cartCount").classList.toggle("on", count > 0);
   $("#cartItems").innerHTML = items.length
@@ -529,6 +537,7 @@ function renderCart() {
         <button class="rm" data-rm="${esc(c.id)}">Remove</button></div>`).join("")
     : `<p class="cart-empty">Your selection is empty.</p>`;
   updateTotal(items);
+  renderMarketSelect();
   $("#checkout").disabled = !items.length;
 }
 // Freeze the page behind the cart / quick view so scrolling inside them never moves the page underneath (also works on iPhone).
@@ -588,7 +597,7 @@ function toggleCart(on) {
   if (on !== cartLocked) { cartLocked = !!on; lockPage(!!on); }
 }
 function cartLines() {
-  return cart.map((c) => ({ ...c, p: products.find((p) => p.id === c.id) })).filter((c) => c.p);
+  return cart.map((c) => ({ ...c, p: findProduct(c.id) })).filter((c) => c.p);
 }
 // Our own mail service (worker.js, /api/...). If it isn't set up yet, or is down, we quietly fall back to the Formspree form.
 async function postApi(path, body) {
@@ -608,6 +617,7 @@ function shipFee() {
   const cls = c.classes || { small: 10, medium: 15, large: 20 }, rank = ["small", "medium", "large"];
   let top = 0, count = 0;
   for (const l of cartLines()) {
+    if (l.p.isCandle) continue;   // candles ship free
     const k = rank.includes(l.p.shipSize) ? l.p.shipSize : (c.defaultClass || "medium");
     top = Math.max(top, Math.max(0, rank.indexOf(k))); count += l.qty;
   }
@@ -620,7 +630,7 @@ function updateTotal(items) {
   const t = $("#cartTotal"); if (!t) return;
   t.textContent = money(sub + (ship ? shipFee() : 0));
   const l = $("#totalLabel"); if (l) l.textContent = ship ? "Total with shipping" : "Total (pay at pickup)";
-  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? `pay online, shipping ${money(shipFee())}` : "pay online, shipping added at checkout";
+  const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? (shipFee() > 0 ? `pay online, shipping ${money(shipFee())}` : "pay online, free shipping") : "pay online, shipping added at checkout";
 }
 function applyPayMode() {
   const mode = payMode(), ship = mode === "ship";
@@ -1048,6 +1058,8 @@ try { localStorage.removeItem("sp-gh-token"); sessionStorage.removeItem("sp-edit
     if (!sel || !txt) return;
     const show = () => { const s = SCENTS[sel.value]; if (s) txt.innerHTML = "<b></b> <span></span>", txt.firstChild.textContent = s[0] + ".", txt.lastChild.textContent = s[1]; };
     sel.addEventListener("change", show); show();
+    const add = document.getElementById("candleAdd");
+    if (add) add.addEventListener("click", () => { addToCart("candle-" + sel.value, 1); add.textContent = "Added. Add another?"; setTimeout(() => { add.textContent = "Add to cart"; }, 2200); toggleCart(true); });
     const main = document.getElementById("candleMain");
     document.querySelectorAll(".candle-thumbs button").forEach((b) => b.addEventListener("click", () => {
       main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");

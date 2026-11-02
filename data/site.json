@@ -227,5 +227,17 @@
     },
     "extraPlant": 5,
     "defaultClass": "medium"
+  },
+  "candles": {
+    "price": 20,
+    "shipsFree": true,
+    "scents": [
+      "Essence",
+      "Awakening",
+      "Abundance",
+      "Meditation",
+      "Frankincense",
+      "Passion"
+    ]
   }
 }

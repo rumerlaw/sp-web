@@ -1043,7 +1043,7 @@ html[data-realm="spiritus"] .spirit-hero{display:block;padding:70px 20px 8px}
 html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3.2rem,12vw,6.5rem);letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--gold);margin:6px 0 12px}
 html[data-realm="spiritus"] .spirit-kicker{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:600}
 html[data-realm="spiritus"] .spirit-lead{max-width:34ch;margin:0 auto;font-size:1.15rem;color:var(--ink)}
-html[data-realm="spiritus"] .spina-only,html[data-realm="spiritus"] .bag-btn,html[data-realm="spiritus"] [data-href-path="links.navAbout"],html[data-realm="spiritus"] [data-href-path="links.navCollection"],html[data-realm="spiritus"] [data-href-path="links.navShop"],html[data-realm="spiritus"] [data-href-path="links.navFaq"]{display:none}
+html[data-realm="spiritus"] .spina-only,html[data-realm="spiritus"] [data-href-path="links.navAbout"],html[data-realm="spiritus"] [data-href-path="links.navCollection"],html[data-realm="spiritus"] [data-href-path="links.navShop"],html[data-realm="spiritus"] [data-href-path="links.navFaq"]{display:none}
 html[data-realm="spiritus"] .spirit-only{display:block}
 .spirit-grid{grid-template-columns:repeat(2,1fr);max-width:720px;margin-left:auto;margin-right:auto}
 @media(max-width:760px){.spirit-grid{grid-template-columns:1fr}}
@@ -1064,3 +1064,5 @@ html[data-realm="spiritus"] .spirit-only{display:block}
 .candle-line{font-family:var(--serif);font-size:1.45rem;font-style:italic;color:var(--gold);margin:6px 0 14px}
 .candle-note{font-size:.82rem;color:var(--muted);margin:0 0 16px}
 @media(max-width:760px){.candle{grid-template-columns:1fr;gap:22px}}
+.candle-price{font-size:1.1rem;color:var(--ink);margin:0 0 14px}.candle-price b{font-family:var(--serif);font-size:1.9rem;color:var(--gold);margin-right:4px}
+.candle-cta .btn{cursor:pointer}
