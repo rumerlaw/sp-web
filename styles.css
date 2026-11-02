@@ -1189,3 +1189,8 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 
 .realms-one .realm{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
 .realms-one .realm span{color:#e7efe3}
+
+.portrait-side .realms{margin:18px 0 0;padding:0;max-width:none}
+.realms-one .realm[data-realm-btn="spiritus"]{background:#4b3a82;border-color:#4b3a82;color:#fff}
+.realms-one .realm[data-realm-btn="spiritus"] span{color:#e4dcf7}
+.realms-one .realm[data-realm-btn="spiritus"]:hover{background:#3d2f6b;border-color:#3d2f6b;color:#fff}
