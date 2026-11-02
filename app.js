@@ -1032,3 +1032,27 @@ if (onHome) {
 
 // The visual editor was removed. Wipe any leftover editor sign-in from browsers that used it.
 try { localStorage.removeItem("sp-gh-token"); sessionStorage.removeItem("sp-edit"); } catch (e) {}
+
+// Spiritus side: the intention candle (photo switcher + scent dropdown).
+(function () {
+  const SCENTS = {
+    essence: ["Essence", "Bright and uplifting. A fragrance for renewal, balance and a clear head."],
+    awakening: ["Awakening", "Fresh and energizing. Notes to spark inspiration, awareness and new beginnings."],
+    abundance: ["Abundance", "Warm and welcoming. A blend for gratitude, prosperity and good flow."],
+    meditation: ["Meditation", "Calm and quiet. An aroma for reflection, mindfulness and spiritual practice."],
+    frankincense: ["Frankincense", "Rich, grounding and timeless. A sacred scent for prayer, meditation and inner connection."],
+    passion: ["Passion", "Vibrant and captivating. A fragrance for creativity, confidence and heartfelt expression."],
+  };
+  function init() {
+    const sel = document.getElementById("candleScent"), txt = document.getElementById("candleScentText");
+    if (!sel || !txt) return;
+    const show = () => { const s = SCENTS[sel.value]; if (s) txt.innerHTML = "<b></b> <span></span>", txt.firstChild.textContent = s[0] + ".", txt.lastChild.textContent = s[1]; };
+    sel.addEventListener("change", show); show();
+    const main = document.getElementById("candleMain");
+    document.querySelectorAll(".candle-thumbs button").forEach((b) => b.addEventListener("click", () => {
+      main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");
+      document.querySelectorAll(".candle-thumbs button").forEach((x) => x.classList.toggle("on", x === b));
+    }));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();

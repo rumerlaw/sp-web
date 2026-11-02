@@ -1047,3 +1047,20 @@ html[data-realm="spiritus"] .spina-only,html[data-realm="spiritus"] .bag-btn,htm
 html[data-realm="spiritus"] .spirit-only{display:block}
 .spirit-grid{grid-template-columns:repeat(2,1fr);max-width:720px;margin-left:auto;margin-right:auto}
 @media(max-width:760px){.spirit-grid{grid-template-columns:1fr}}
+
+/* Spiritus: intention candle */
+.candle{display:grid;grid-template-columns:1.05fr 1fr;gap:36px;align-items:start;max-width:1000px;margin:2rem auto 0}
+.candle-main{width:100%;height:auto;max-height:560px;object-fit:cover;border:1px solid var(--line);display:block;background:var(--card)}
+.candle-thumbs{display:flex;gap:10px;margin-top:10px}
+.candle-thumbs button{flex:1;padding:0;border:2px solid var(--line);background:var(--card);cursor:pointer;aspect-ratio:1;overflow:hidden;opacity:.7;transition:.2s}
+.candle-thumbs button.on,.candle-thumbs button:hover{opacity:1;border-color:var(--gold)}
+.candle-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.candle-info h3{font-size:2rem;color:var(--gold);margin-bottom:12px}
+.candle-copy{color:var(--ink);margin:0 0 14px;line-height:1.6}
+.candle-pick{display:block;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--gold);margin:18px 0 8px}
+.candle-pick select{display:block;width:100%;margin-top:8px;padding:13px 14px;font-size:1rem;letter-spacing:0;text-transform:none;font-weight:500}
+.candle-scent{background:var(--card);border-left:3px solid var(--gold);padding:14px 16px;margin:0 0 18px;line-height:1.55;color:var(--ink)}
+.candle-scent b{color:var(--gold)}
+.candle-line{font-family:var(--serif);font-size:1.45rem;font-style:italic;color:var(--gold);margin:6px 0 14px}
+.candle-note{font-size:.82rem;color:var(--muted);margin:0 0 16px}
+@media(max-width:760px){.candle{grid-template-columns:1fr;gap:22px}}

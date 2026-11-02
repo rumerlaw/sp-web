@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@600;700&display=swap" rel="stylesheet" media="(max-width:760px)">
 <script src="early.js?v=64c910b8"></script>
-<link rel="stylesheet" href="styles.css?v=f17b5d31">
+<link rel="stylesheet" href="styles.css?v=5f04f891">
 </head>
 <body>
 <a class="skip" href="#shop">Skip to the shop</a>
@@ -85,10 +85,35 @@
 <!-- SPIRITUS (shown only in the Spiritus theme) -->
 <section class="section spirit-only" id="spiritus">
   <div class="wrap">
-    <div class="section-head center"><p class="eyebrow">The spirit side</p><h2>Candles &amp; Tarot</h2><p class="sub">Candles and tarot cards are on their way. Join the list below and we'll tell you the moment they arrive.</p></div>
-    <div class="spirit-grid">
-      <div class="spirit-card"><h3>Candles</h3><p>Small-batch candles for ritual, intention and calm.</p><span class="soon">Coming soon</span></div>
-      <div class="spirit-card"><h3>Tarot cards</h3><p>Decks chosen for beauty, clarity and a good shuffle.</p><span class="soon">Coming soon</span></div>
+    <div class="section-head center"><p class="eyebrow">The spirit side</p><h2>Intention Candles</h2><p class="sub">Hand-poured by Sonoran Mystic Tarot. Six scents, each made for a different intention.</p></div>
+    <div class="candle">
+      <div class="candle-gallery">
+        <img class="candle-main" id="candleMain" src="assets/spiritus/candle-table.webp" width="1400" height="1043" alt="Black Sonoran Mystic Tarot candle with a lit flame and a bamboo lid resting beside it">
+        <div class="candle-thumbs" role="group" aria-label="More candle photos">
+          <button type="button" class="on" data-src="assets/spiritus/candle-table.webp" data-alt="Black Sonoran Mystic Tarot candle with a lit flame and a bamboo lid resting beside it" aria-label="Show photo 1"><img src="assets/spiritus/candle-table-thumb.webp" width="700" height="522" alt=""></button>
+          <button type="button" data-src="assets/spiritus/candle-flowers.webp" data-alt="Sonoran Mystic Tarot candle with dried flower petals on top, next to fresh chamomile" aria-label="Show photo 2"><img src="assets/spiritus/candle-flowers-thumb.webp" width="700" height="433" alt=""></button>
+          <button type="button" data-src="assets/spiritus/candle-trio.webp" data-alt="Three black Sonoran Mystic Tarot candles with bamboo lids, burning in the smoke" aria-label="Show photo 3"><img src="assets/spiritus/candle-trio-thumb.webp" width="466" height="700" alt=""></button>
+        </div>
+      </div>
+      <div class="candle-info">
+        <h3>Sonoran Mystic Tarot Intention Candle</h3>
+        <p class="candle-copy">Scent can change a room, and a moment. Each candle is hand-poured into a matte black vessel with a bamboo lid, and scented to support a different kind of energy. Pick the one that fits how you want to feel.</p>
+        <label class="candle-pick">Choose your scent
+          <select id="candleScent">
+            <option value="essence">Essence</option>
+            <option value="awakening">Awakening</option>
+            <option value="abundance">Abundance</option>
+            <option value="meditation">Meditation</option>
+            <option value="frankincense">Frankincense</option>
+            <option value="passion">Passion</option>
+          </select>
+        </label>
+        <p class="candle-scent" id="candleScentText" aria-live="polite"></p>
+        <p class="candle-copy">Lovely for meditation spaces, tarot readings, spiritual practice, quiet evenings, or simply because the room deserves it.</p>
+        <p class="candle-line">Light your candle. Set your intention. Let the journey unfold.</p>
+        <p class="candle-note">Photos show our candle in its vessel. Scents are shown in the dropdown while we finish photographing each one.</p>
+        <p class="candle-cta"><a class="btn" href="#signupForm" id="candleNotify">Tell me when they're available</a></p>
+      </div>
     </div>
   </div>
 </section>
@@ -263,6 +288,6 @@
   </form>
 </aside>
 
-<script src="app.js?v=bcf151ae"></script>
+<script src="app.js?v=a04ca6af"></script>
 </body>
 </html>
