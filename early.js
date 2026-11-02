@@ -14,6 +14,12 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
   }
   set(get());
   document.addEventListener("DOMContentLoaded", function () { set(root.getAttribute("data-realm") || "spina"); });
+  // Menu links to the plant pages / plant sections of the home page switch back to the Spina (plants) theme first.
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (!a || root.getAttribute("data-realm") !== "spiritus") return;
+    if (/(^|\/)(shop|about|faq|plant)\.html|#(about|collection|shop|faq)\b/.test(a.getAttribute("href") || "")) { set("spina"); document.dispatchEvent(new Event("realmchange")); }
+  }, true);
   document.addEventListener("click", function (e) {
     var t = e.target && e.target.closest ? e.target.closest("[data-realm-btn]") : null;
     if (!t) return;
