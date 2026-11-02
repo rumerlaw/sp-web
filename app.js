@@ -68,7 +68,9 @@ const daysUntil = (ev) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ev.date |
 const happeningThisWeek = (ev) => { const d = daysUntil(ev); return d !== null && d >= 0 && d <= 6; };
 const upcomingEvents = () => {
   const all = (typeof SP !== "undefined" && SP.editing) ? CONFIG.events : (() => { const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); })();
-  return [...all.filter(happeningThisWeek), ...all.filter((e) => !happeningThisWeek(e))];
+  const realm = document.documentElement.getAttribute("data-realm") === "spiritus" ? "spiritus" : "spina";
+  const mine = (typeof SP !== "undefined" && SP.editing) ? all : all.filter((e) => (e.realm || "spina") === realm);   // each event belongs to one side
+  return [...mine.filter(happeningThisWeek), ...mine.filter((e) => !happeningThisWeek(e))];
 };
 // Dates a recurring event does NOT happen (e.g. the Doctor is at another market). Shown as "Not on Nov 7".
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -225,6 +227,7 @@ function showPicked() {
   box.hidden = !sel.value;
 }
 document.addEventListener("change", (e) => { if (e.target && e.target.id === "marketSelect") showPicked(); });
+document.addEventListener("realmchange", () => { if ($("#marketList")) renderContactArea(); });
 // Search engines can show dated events (like the Sonoran market) in results: describe them in structured data.
 function renderEventLd(list) {
   const old = document.getElementById("eventld"); if (old) old.remove();
@@ -278,8 +281,8 @@ function renderFaq() {
 }
 
 /* ---------- SECTIONS, LAYOUT & CUSTOM BLOCKS ---------- */
-const SECTION_IDS = ["hero", "about", "collection", "shop", "events", "faq"];
-const builtinEl = (id) => ({ hero: document.querySelector(".hero"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq") })[id];
+const SECTION_IDS = ["hero", "spiritus", "about", "collection", "shop", "events", "faq"];
+const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq") })[id];
 function fullOrder() {
   const blocks = SITE.blocks || [], seen = new Set(), out = [];
   const ok = (id) => (SECTION_IDS.includes(id) ? !!builtinEl(id) : blocks.some((b) => b.id === id));

@@ -5,7 +5,7 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
 // Spina (plants, green) / Spiritus (candles & tarot, dark mystic) theme. Same site; the choice is remembered on this device.
 (function () {
   var root = document.documentElement, KEY = "sp-realm";
-  function get() { try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
+  function get() { if (!/(^\/$|\/index\.html$)/.test(location.pathname)) return "spina"; try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
   function set(r) {
     root.setAttribute("data-realm", r);
     try { localStorage.setItem(KEY, r); } catch (e) {}
@@ -17,7 +17,7 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
   document.addEventListener("click", function (e) {
     var t = e.target && e.target.closest ? e.target.closest("[data-realm-btn]") : null;
     if (!t) return;
-    e.preventDefault(); set(t.getAttribute("data-realm-btn"));
+    e.preventDefault(); set(t.getAttribute("data-realm-btn")); document.dispatchEvent(new Event("realmchange"));
     if (document.querySelector(".hero")) window.scrollTo({ top: 0, behavior: "smooth" });
   });
 })();

@@ -67,14 +67,16 @@
       "where": "3502 E Cactus Rd, Phoenix, AZ 85032",
       "when": "Every Saturday, 8am–12pm",
       "date": "",
-      "except": "2026-11-07"
+      "except": "2026-11-07",
+      "realm": "spina"
     },
     {
       "name": "Sonoran Spiritual and Wellness Market",
       "where": "New Vision Center for Spiritual Living, Phoenix, AZ 85032",
       "when": "Saturday, November 7, 2026 · 9:00 AM",
       "date": "2026-11-07",
-      "url": "https://www.ticketsource.com/sonoranmarket/t-rzjqpvr"
+      "url": "https://www.ticketsource.com/sonoranmarket/t-rzjqpvr",
+      "realm": "spiritus"
     }
   ],
   "faq": [
@@ -205,6 +207,7 @@
   "blocks": [],
   "layout": [
     "hero",
+    "spiritus",
     "about",
     "collection",
     "shop",

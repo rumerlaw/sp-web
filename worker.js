@@ -127,7 +127,7 @@ async function handleOrder(request, env, body) {
   // The pickup event must be one we actually list.
   try {
     const site = await (await readAsset(env, request, "/data/site.json")).json();
-    const names = (site.events || []).map((e) => String(e.name || "").toLowerCase()).filter(Boolean);
+    const names = (site.events || []).filter((e) => (e.realm || "spina") === "spina").map((e) => String(e.name || "").toLowerCase()).filter(Boolean);
     if (!ship && names.length && !names.some((n) => market.toLowerCase().includes(n))) return json({ error: "Please choose one of the listed events." }, 400);
   } catch (e) { /* if the file can't be read, skip this check */ }
 
