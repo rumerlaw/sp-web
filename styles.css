@@ -1202,3 +1202,19 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 .aboutpage .don-bio .btn:hover{background:#3d2f6b;border-color:#3d2f6b}
 .aboutpage .don-bio .btn.ghost{background:transparent;color:#4b3a82}
 .aboutpage .don-bio .btn.ghost:hover{background:#4b3a82;color:#fff}
+
+/* About page: jump between the two bios */
+.about-jump{display:flex;justify-content:center;gap:14px;max-width:760px;margin:0 auto;padding:110px 20px 0}
+.about-jump a{flex:1;text-align:center;padding:14px 12px;border:1px solid var(--sage-deep);color:var(--ink);text-decoration:none;display:flex;flex-direction:column;gap:3px;transition:.2s}
+.about-jump a b{font-family:var(--serif);font-size:1.35rem;font-weight:600}
+.about-jump a span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.about-jump a:first-child{background:var(--sage-deep);color:#fff}
+.about-jump a:first-child span{color:#e7efe3}
+.about-jump a:last-child{border-color:#4b3a82}
+.about-jump a:last-child:hover{background:#4b3a82;color:#fff}
+.about-jump a:last-child:hover span{color:#e4dcf7}
+.about-jump+.two-col{padding-top:20px}
+html{scroll-behavior:smooth}
+@media(max-width:560px){.about-jump{flex-direction:column;padding-top:96px}}
+.about-jump{padding-top:0}
+@media(max-width:560px){.about-jump{padding-top:0}}
