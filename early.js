@@ -28,3 +28,13 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
     if (document.querySelector(".hero")) window.scrollTo({ top: 0, behavior: "smooth" });
   });
 })();
+
+// Refresh / browser back on the home page or shop: keep the page hidden from the very first paint until app.js has put the
+// visitor back where they were (otherwise the page flashes at the top first). app.js reveals it; this is only a safety net.
+try {
+  var nav = (performance.getEntriesByType("navigation")[0] || {}).type;
+  if ((nav === "reload" || nav === "back_forward") && /(^\/$|\/index\.html$|\/shop\.html$)/.test(location.pathname) && parseInt(sessionStorage.getItem("sp-y") || "", 10) > 0) {
+    document.documentElement.style.opacity = "0";
+    setTimeout(function () { document.documentElement.style.opacity = ""; }, 2500);
+  }
+} catch (e) {}
