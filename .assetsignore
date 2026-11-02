@@ -9,3 +9,13 @@ scripts
 README.md
 vercel.json
 worker.js
+data/extras.csv
+data/first_seen.json
+data/genus_descriptions.csv
+data/photo_aliases.csv
+data/photos.csv
+data/photos_labels.json
+data/photos_manifest.json
+data/descriptions_cache.json
+data/digest_state.json
+data/ship_sizes.csv

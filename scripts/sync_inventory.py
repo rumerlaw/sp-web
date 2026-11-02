@@ -3,6 +3,7 @@
 
 Reads: name, genus/type, sell price, in stock  (header text is matched loosely, see ALIASES).
 Descriptions: extras.csv text first, else the genus text in data/genus_descriptions.csv, else (if ANTHROPIC_API_KEY is set) a one-sentence AI description cached in data/descriptions_cache.json.
+Ship size (small/medium/large): the sheet's optional 'Ship size' column, else data/ship_sizes.csv (name,ship_size). Plants with neither ship as medium.
 Merges data/extras.csv (matched by plant name) for things the sheet doesn't have:
 sku, genus (only used when the sheet's Genus/Type is blank), category, size, description, image (photos separated by |), status, sale_price.
 Anything else in the spreadsheet (costs, notes, customers...) is never read or published.
@@ -205,6 +206,10 @@ def main():
     if EXTRAS.exists():
         with open(EXTRAS, newline="", encoding="utf-8") as f:
             for r in csv.DictReader(f): extras[key(r.get("name"))] = r
+    ship_sizes = {}
+    if (EXTRAS.parent / "ship_sizes.csv").exists():
+        with open(EXTRAS.parent / "ship_sizes.csv", newline="", encoding="utf-8") as f:
+            for r in csv.DictReader(f): ship_sizes[key(r.get("name"))] = shipclass(r.get("ship_size"))
     photos, claimed = load_photos(), set()
     plist = []
     for row in rows:
@@ -238,7 +243,7 @@ def main():
         out.append({"sku": sku, "name": name, "genus": genus, "category": ex.get("category") or genus or "Plants",
                     "price": ("%g" % price) if price else "", "sale_price": ex.get("sale_price", ""),
                     "status": ex.get("status") or "In Stock", "stock": stock_val(g("stock")),
-                    "size": ex.get("size", ""), "ship_size": (lambda v: v if v in ("small", "medium", "large") else "")(shipclass(g("ship_size")) or shipclass(ex.get("ship_size"))), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": "|".join(p for _, p, _ in matched.get(pn, [])) or ex.get("image", "")})
+                    "size": ex.get("size", ""), "ship_size": (lambda v: v if v in ("small", "medium", "large") else "")(shipclass(g("ship_size")) or ship_sizes.get(key(name), "")), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": "|".join(p for _, p, _ in matched.get(pn, [])) or ex.get("image", "")})
         for _, _, fk in matched.get(pn, []): claimed.add(fk)
         if len(out) >= MAX_ROWS: break
     if not out: sys.exit("No plants found; leaving inventory.csv unchanged")

@@ -170,7 +170,7 @@ async function handleOrder(request, env, body) {
     if (!s.ok || !s.data.url) {
       const why = clean(s.data && s.data.error && s.data.error.message || ("Stripe did not answer (status " + s.status + ")"), 200);   // Stripe masks keys in these messages
       console.error("Stripe checkout failed:", s.status, why);
-      return json({ error: "Online payment isn't working right now. Please choose pay at pickup.", detail: why }, 422);   // 4xx so the page shows this instead of silently falling back
+      return json({ error: "Online payment isn't working right now. Please choose pay at pickup." }, 422);   // 4xx so the page shows this instead of silently falling back
     }
     return json({ ok: true, checkoutUrl: s.data.url });
   }
@@ -210,7 +210,7 @@ async function handleSignup(request, env, body) {
 // Stripe tells us (signed) that a payment went through: only then do the order emails go out.
 async function handleStripeWebhook(request, env) {
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY) return json({ error: "not_configured" }, 503);
+  if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY) return json({ error: "unavailable" }, 503);
   if (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL) return json({ received: true });   // no Resend: Stripe's own receipts and dashboard cover it
   const raw = await request.text();
   if (raw.length > 200000 || !(await verifyStripeSignature(raw, request.headers.get("Stripe-Signature"), env.STRIPE_WEBHOOK_SECRET))) return json({ error: "bad_signature" }, 400);
@@ -265,7 +265,7 @@ export default {
     if (!body || typeof body !== "object") return json({ error: "bad_request" }, 400);
     // Online payments only need Stripe (Stripe emails the receipt); everything else sends mail through Resend.
     const stripeOnly = url.pathname === "/api/order" && (body.pay === "online" || body.pay === "ship") && env.STRIPE_SECRET_KEY;
-    if (!stripeOnly && (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL)) return json({ error: "not_configured" }, 503);
+    if (!stripeOnly && (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL)) return json({ error: "unavailable" }, 503);
     return route(request, env, body);
   },
 };
