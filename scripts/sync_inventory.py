@@ -26,12 +26,16 @@ ALIASES = {
     "genus": ["genus/type", "genus / type", "genus", "type"],
     "price": ["sell price", "selling price", "price", "sale price", "retail"],
     "stock": ["in stock", "stock", "qty", "quantity", "count"],
+    "ship_size": ["ship size", "shipping size", "shipping", "ship"],   # optional: small / medium / large
 }
-COLS = ["sku", "name", "genus", "category", "price", "sale_price", "status", "stock", "size", "description", "image"]
+COLS = ["sku", "name", "genus", "category", "price", "sale_price", "status", "stock", "size", "ship_size", "description", "image"]
 MAX_ROWS = 3000
 
 norm = lambda s: re.sub(r"[^a-z0-9/ ]+", "", str(s or "").strip().lower())
 key = lambda s: re.sub(r"\s+", " ", str(s or "").strip().lower())
+def shipclass(v):
+    t = str(v or "").strip().lower()
+    return "large" if re.search(r"large|big|xl|^l$", t) else "medium" if re.search(r"med|^m$", t) else "small" if re.search(r"small|mini|^s$", t) else ""
 def slug(s): return re.sub(r"[^a-z0-9]+", "-", str(s).lower()).strip("-")[:60]
 def clean(s): return re.sub(r"[\x00-\x1f\x7f]", " ", str(s if s is not None else "")).strip()
 
@@ -234,7 +238,7 @@ def main():
         out.append({"sku": sku, "name": name, "genus": genus, "category": ex.get("category") or genus or "Plants",
                     "price": ("%g" % price) if price else "", "sale_price": ex.get("sale_price", ""),
                     "status": ex.get("status") or "In Stock", "stock": stock_val(g("stock")),
-                    "size": ex.get("size", ""), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": "|".join(p for _, p, _ in matched.get(pn, [])) or ex.get("image", "")})
+                    "size": ex.get("size", ""), "ship_size": (lambda v: v if v in ("small", "medium", "large") else "")(shipclass(g("ship_size")) or shipclass(ex.get("ship_size"))), "description": ex.get("description") or gdesc.get(key(genus), "") or ai_description(name, genus, cache), "image": "|".join(p for _, p, _ in matched.get(pn, [])) or ex.get("image", "")})
         for _, _, fk in matched.get(pn, []): claimed.add(fk)
         if len(out) >= MAX_ROWS: break
     if not out: sys.exit("No plants found; leaving inventory.csv unchanged")

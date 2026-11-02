@@ -223,18 +223,6 @@
       "large": 20
     },
     "extraPlant": 5,
-    "bySize": [
-      {
-        "under": 30,
-        "class": "small"
-      },
-      {
-        "under": 70,
-        "class": "medium"
-      },
-      {
-        "class": "large"
-      }
-    ]
+    "defaultClass": "medium"
   }
 }

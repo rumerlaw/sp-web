@@ -387,6 +387,7 @@ async function loadInventory() {
       stock: p.stock === undefined || p.stock === "" ? null : Math.max(0, parseInt(p.stock, 10) || 0),
       status: p.status || "In Stock",
       size: p.size || "",
+      shipSize: p.ship_size || "",
       description: p.description || "",
       images: String(p.image || "").split("|").map(safeUrl).filter(Boolean),
     }));
@@ -604,8 +605,7 @@ function shipFee() {
   const cls = c.classes || { small: 10, medium: 15, large: 20 }, rank = ["small", "medium", "large"];
   let top = 0, count = 0;
   for (const l of cartLines()) {
-    const say = String(l.p.size || "").toLowerCase(), unit = now(l.p);
-    const k = /large|big|xl/.test(say) ? "large" : /med/.test(say) ? "medium" : /small|mini/.test(say) ? "small" : ((c.bySize || []).find((t) => t.under == null || unit < Number(t.under)) || { class: "large" }).class;
+    const k = rank.includes(l.p.shipSize) ? l.p.shipSize : (c.defaultClass || "medium");
     top = Math.max(top, Math.max(0, rank.indexOf(k))); count += l.qty;
   }
   return count ? Number(cls[rank[top]] || 0) + Number(c.extraPlant || 0) * (count - 1) : 0;

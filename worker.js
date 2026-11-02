@@ -122,7 +122,7 @@ async function handleOrder(request, env, body) {
     const price = p ? (/sale/i.test(p.status) && Number(p.sale_price) > 0 && Number(p.sale_price) < Number(p.price) ? Number(p.sale_price) : Number(p.price)) : 0;
     if (!p || /sold/i.test(p.status) || stock === 0 || !(price > 0)) return json({ error: `${p ? p.name : "A plant"} isn't available right now. Please refresh the page.` }, 409);
     if (stock !== null && qty > stock) return json({ error: `We only have ${stock} of ${p.name}.` }, 409);
-    lines.push({ name: p.name, qty, sub: price * qty, size: p.size }); total += price * qty;
+    lines.push({ name: p.name, qty, sub: price * qty, size: p.ship_size }); total += price * qty;
   }
   // The pickup event must be one we actually list.
   try {
@@ -138,12 +138,11 @@ async function handleOrder(request, env, body) {
     const a = body.address || {}, st = clean(a.state, 2).toUpperCase(), zip = clean(a.zip, 10), line1 = clean(a.line1, 100), city = clean(a.city, 60);
     if (!line1 || !city || !/^[A-Z]{2}$/.test(st) || !/^\d{5}(-\d{4})?$/.test(zip)) return json({ error: "Please fill in your full shipping address." }, 400);
     if ((cfg.excludedStates || []).map((x) => String(x).toUpperCase()).includes(st)) return json({ error: "Sorry, we can't ship plants to that state. You can pick up at an event instead." }, 400);
-    // Per plant: small / medium / large (from the sheet's Size column if it says so, otherwise by the plant's price). The biggest plant sets the fee, each extra plant adds a little.
+    // Per plant: small / medium / large (from the sheet's Ship size column; plants without one count as the default size). The biggest plant sets the fee, each extra plant adds a little.
     const cls = cfg.classes || { small: 10, medium: 15, large: 20 }, rank = ["small", "medium", "large"];
     let top = 0, count = 0;
     for (const l of lines) {
-      const say = String(l.size || "").toLowerCase(), unit = l.sub / l.qty;
-      const c = /large|big|xl/.test(say) ? "large" : /med/.test(say) ? "medium" : /small|mini/.test(say) ? "small" : ((cfg.bySize || []).find((t) => t.under == null || unit < Number(t.under)) || { class: "large" }).class;
+      const c = rank.includes(l.size) ? l.size : (cfg.defaultClass || "medium");
       top = Math.max(top, Math.max(0, rank.indexOf(c))); count += l.qty;
     }
     shipFee = Number(cls[rank[top]] || 0) + Number(cfg.extraPlant || 0) * (count - 1);
