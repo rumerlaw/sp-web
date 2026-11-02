@@ -1074,3 +1074,4 @@ html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3rem,10vw,6.2rem);ma
 html[data-realm="spiritus"] .spirit-kicker{color:#efe6d2}
 html[data-realm="spiritus"] .spirit-lead{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.5)}
 @media(max-width:640px){html[data-realm="spiritus"] .spirit-hero{height:300px;min-height:0}html[data-realm="spiritus"] .hero{padding-top:64px}}
+.cart-foot label[hidden],.cart-foot [hidden]{display:none!important}
