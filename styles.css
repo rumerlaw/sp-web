@@ -985,3 +985,15 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 .ship-fields .ship-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pay-opt[hidden]{display:none}
 .events li .ev-week{color:#fff}
+
+/* Spina (plants) / Spiritus (candles & tarot) buttons on the home hero */
+.realms{display:flex;justify-content:center;gap:12px;margin:26px auto 0;max-width:520px;padding:0 16px}
+.realm{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 10px;color:var(--ink);text-decoration:none;border:1px solid var(--sage-deep);transition:.25s}
+.realm b{font-family:var(--serif);font-size:1.5rem;font-weight:600;letter-spacing:.05em;line-height:1}
+.realm span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.realm.on{background:var(--sage-deep);color:#fff}
+.realm.on span{color:#e7efe3}
+.realm.spirit{border-color:#2b2438}
+.realm.spirit:hover,.realm.spirit:focus-visible{background:#2b2438;color:#e8d9a8}
+.realm.spirit:hover span,.realm.spirit:focus-visible span{color:#e8d9a8}
+.realm.on:hover{background:#243a22}
