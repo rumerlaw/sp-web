@@ -1139,3 +1139,9 @@ html[data-realm="spiritus"] #spiritus .scent-btn.on{box-shadow:none}
 html[data-realm="spiritus"] .spirit-social{display:block}
 html[data-realm="spiritus"] #contactInsta{display:none}
 .spirit-social .insta{margin:4px 0}
+
+#spiritus .readings{max-width:760px;margin:90px auto 0;padding:48px 28px;text-align:center;border:1px solid var(--gold)}
+#spiritus .readings h3{font-size:clamp(1.8rem,3.6vw,2.4rem);font-weight:500;color:var(--gold);margin:8px 0 14px}
+#spiritus .readings-copy{max-width:46ch;margin:0 auto 24px;font-size:1.1rem;line-height:1.7;font-weight:500;color:var(--ink)}
+#spiritus .readings .btn{padding:16px 34px;letter-spacing:.28em}
+@media(max-width:760px){#spiritus .readings{margin-top:56px;padding:34px 18px}}
