@@ -1040,35 +1040,39 @@ button.realm{font:inherit;cursor:pointer;background:none}
 html[data-realm="spiritus"] .spina-only{display:none}
 html[data-realm="spiritus"] .spirit-only{display:block}
 
-/* ===== Spiritus: the whole page in the same deep purple as the Spiritus button; same banner picture and layout ===== */
-html[data-realm="spiritus"]{--bg:#4b3a82;--bg-alt:#42337a;--card:#5a4898;--ink:#f5eedd;--muted:#d6ccef;--line:#6f5fb0;--gold:#e6cb80;--sage-deep:#e6cb80;--price:#f0d98f}
+/* ===== Spiritus: the whole page in the dark midnight purple; same banner picture and layout ===== */
+html[data-realm="spiritus"]{--bg:#17122a;--bg-alt:#1f1838;--card:#241c3f;--ink:#efe6d2;--muted:#b9afcc;--line:#3a3060;--gold:#d8b868;--sage-deep:#d8b868;--price:#e8d28a}
 html[data-realm="spiritus"] body{background:var(--bg);color:var(--ink)}
-html[data-realm="spiritus"] .nav{background:rgba(63,48,112,.95);border-bottom:1px solid rgba(230,203,128,.3)}
+html[data-realm="spiritus"] .nav{background:rgba(23,18,42,.94);border-bottom:1px solid rgba(216,184,104,.3)}
 html[data-realm="spiritus"] .nav .brand-mark{filter:invert(1) hue-rotate(180deg) brightness(1.15)}
 html[data-realm="spiritus"] .nl,html[data-realm="spiritus"] .mobile-menu a{color:var(--ink)}
-html[data-realm="spiritus"] .mobile-menu{background:#3f3070}
+html[data-realm="spiritus"] .mobile-menu{background:#1f1838}
 html[data-realm="spiritus"] .burger span{background:var(--ink)}
-html[data-realm="spiritus"] .hero{background:#4b3a82}
+html[data-realm="spiritus"] .hero{background:#17122a}
 html[data-realm="spiritus"] .section,html[data-realm="spiritus"] .faqpage{background:transparent;color:var(--ink)}
-html[data-realm="spiritus"] .footer{background:#3f3070;color:var(--ink);border-top:1px solid rgba(230,203,128,.3)}
-html[data-realm="spiritus"] .btn,html[data-realm="spiritus"] .cart-foot .btn.full,html[data-realm="spiritus"] .bag-btn{background:var(--gold);border-color:var(--gold);color:#2b2150}
+html[data-realm="spiritus"] .footer{background:#100c20;color:var(--ink);border-top:1px solid rgba(216,184,104,.3)}
+html[data-realm="spiritus"] .btn,html[data-realm="spiritus"] .cart-foot .btn.full,html[data-realm="spiritus"] .bag-btn{background:var(--gold);border-color:var(--gold);color:#17122a}
 html[data-realm="spiritus"] .btn.ghost{background:transparent;color:var(--gold)}
 html[data-realm="spiritus"] .realm{border-color:var(--gold);color:var(--ink)}
 html[data-realm="spiritus"] .realm span{color:var(--muted)}
-html[data-realm="spiritus"] .realm.on,html[data-realm="spiritus"] .realm.on:hover,html[data-realm="spiritus"] .realm.spirit.on:hover{background:var(--gold);color:#2b2150;filter:none}
-html[data-realm="spiritus"] .realm.on span,html[data-realm="spiritus"] .realm.on:hover span,html[data-realm="spiritus"] .realm.spirit.on:hover span{color:#4b3a82}
-html[data-realm="spiritus"] .realm:not(.on):hover{background:rgba(230,203,128,.15);color:var(--ink)}
-html[data-realm="spiritus"] .bag-count{background:#2b2150;color:#fff}
-html[data-realm="spiritus"] input,html[data-realm="spiritus"] select,html[data-realm="spiritus"] textarea{background:#3f3070;color:var(--ink);border-color:var(--line)}
-html[data-realm="spiritus"] .cart{background:#3f3070;color:var(--ink)}
+html[data-realm="spiritus"] .realm.on,html[data-realm="spiritus"] .realm.on:hover,html[data-realm="spiritus"] .realm.spirit.on:hover{background:var(--gold);color:#17122a;filter:none}
+html[data-realm="spiritus"] .realm.on span,html[data-realm="spiritus"] .realm.on:hover span,html[data-realm="spiritus"] .realm.spirit.on:hover span{color:#3b2f60}
+html[data-realm="spiritus"] .realm:not(.on):hover{background:rgba(216,184,104,.15);color:var(--ink)}
+html[data-realm="spiritus"] .bag-count{background:#17122a;color:#fff}
+html[data-realm="spiritus"] input,html[data-realm="spiritus"] select,html[data-realm="spiritus"] textarea{background:#241c3f;color:var(--ink);border-color:var(--line)}
+html[data-realm="spiritus"] .cart{background:#1f1838;color:var(--ink)}
 html[data-realm="spiritus"] .events li{background:transparent;color:var(--ink)}
 html[data-realm="spiritus"] .events li.this-week{background:var(--card);border-color:var(--gold)}
-html[data-realm="spiritus"] .ev-week,html[data-realm="spiritus"] .events li .ev-week{background:var(--gold);color:#2b2150}
+html[data-realm="spiritus"] .ev-week,html[data-realm="spiritus"] .events li .ev-week{background:var(--gold);color:#17122a}
 html[data-realm="spiritus"] a{color:inherit}
 html[data-realm="spiritus"] .facts strong,html[data-realm="spiritus"] .price,html[data-realm="spiritus"] .handle a,html[data-realm="spiritus"] .maplink,html[data-realm="spiritus"] .faq-a a,html[data-realm="spiritus"] .signup-promise span,html[data-realm="spiritus"] .form-msg.ok,html[data-realm="spiritus"] .candle-scent b{color:var(--gold)}
 html[data-realm="spiritus"] .candle-scent{background:var(--card);color:var(--ink)}
 html[data-realm="spiritus"] .candle-main,html[data-realm="spiritus"] .candle-thumbs button{border-color:var(--line)}
 html[data-realm="spiritus"] .candle-thumbs button.on{border-color:var(--gold)}
 html[data-realm="spiritus"] .events .when,html[data-realm="spiritus"] .events b{color:var(--ink)}
-html[data-realm="spiritus"] .evlink{background:var(--gold);border-color:var(--gold);color:#2b2150}
-html[data-realm="spiritus"] input::placeholder,html[data-realm="spiritus"] textarea::placeholder{color:#c4b9e6;opacity:1}
+html[data-realm="spiritus"] .evlink{background:var(--gold);border-color:var(--gold);color:#17122a}
+html[data-realm="spiritus"] input::placeholder,html[data-realm="spiritus"] textarea::placeholder{color:#8f84ad;opacity:1}
+
+/* the Spina button is always green, on both sides */
+.realm[data-realm-btn="spina"],html[data-realm="spiritus"] .realm[data-realm-btn="spina"],html[data-realm="spiritus"] .realm[data-realm-btn="spina"]:hover{background:#2f4a2c;border-color:#2f4a2c;color:#fff;filter:none}
+.realm[data-realm-btn="spina"] span,html[data-realm="spiritus"] .realm[data-realm-btn="spina"] span{color:#e7efe3}
