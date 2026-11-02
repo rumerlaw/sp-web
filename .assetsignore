@@ -19,3 +19,4 @@ data/photos_manifest.json
 data/descriptions_cache.json
 data/digest_state.json
 data/ship_sizes.csv
+SECURITY.md
