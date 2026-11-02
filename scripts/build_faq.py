@@ -28,6 +28,12 @@ FAQS = [
   "Carry it by the pot. Opuntia pads have spines and tiny hair-like barbs called glochids that irritate skin. Use tongs or thick gloves if you need to touch the plant."),
  ("Who do I contact with questions?",
   "Message <a href=\"https://instagram.com/azcactusdoctor\" rel=\"noopener\" target=\"_blank\">@azcactusdoctor</a> or ask us at the market."),
+ ("How much are the candles, and do they ship?",
+  "Our Sonoran Mystic Tarot intention candles are $20 each in six scents (Essence, Awakening, Abundance, Meditation, Frankincense and Passion). Candle shipping is free anywhere we ship, and you can also pick them up at an event."),
+ ("How do I book a tarot reading?",
+  "Readings are with Don of Sonoran Mystic Tarot. <a href=\"https://sonoranmystictarot.com/#book-personal-tarot-readings\">Book a reading</a> online and pick a time that works for you."),
+ ("Who is Spina and who is Spiritus?",
+  "<b>Spina</b> is the plant side, run by AzCactusDoctor (Ed): rare cacti and succulents grown in Arizona. <b>Spiritus</b> is the spirit side, Sonoran Mystic Tarot (Don): candles, tarot and readings. One site, one cart, one checkout."),
 ]
 def item(q, a): return f'<details class="faq-item"><summary><span>{html.escape(q)}</span><i class="plus" aria-hidden="true"></i></summary><div class="faq-a"><p>{a}</p></div></details>'
 def plain(a): return re.sub(r"<[^>]+>", "", a).replace("&amp;", "&")

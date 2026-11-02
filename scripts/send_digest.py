@@ -60,6 +60,8 @@ def build(today):
     coming.sort(key=lambda t: t[0])
 
     if not new_plants and not coming: return None
+    side = lambda e: {"both": "Spina + Spiritus", "spiritus": "Spiritus · Sonoran Mystic Tarot"}.get(e.get("realm"), "Spina · AZ Cactus Doctor")
+    side_html = lambda e: f'<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;color:#a07d3c;margin-top:3px">{esc(side(e))}</div>'
     btn = lambda url, label: f'<a href="{esc(url)}" style="display:inline-block;background:#2f4a2c;color:#ffffff;text-decoration:none;padding:12px 22px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:bold">{esc(label)}</a>'
     head = lambda t: f'<h2 style="font-family:Georgia,serif;font-size:22px;margin:30px 0 12px;color:#24231f">{esc(t)}</h2>'
     parts = []
@@ -70,7 +72,7 @@ def build(today):
         for d, days, is_new, e in this_week:
             when = "today" if days == 0 else "tomorrow" if days == 1 else f"in {days} days"
             tag = '<span style="background:#a07d3c;color:#fff;font-size:11px;font-weight:bold;letter-spacing:.1em;padding:2px 7px;margin-right:6px">NEW</span>' if is_new else ""
-            box = f'<div style="border:2px solid #2f4a2c;border-top:0;background:#f3ede0;padding:16px 18px;margin-bottom:12px"><div style="font-size:19px;font-weight:bold">{tag}{esc(e.get("name",""))}</div>'
+            box = f'<div style="border:2px solid #2f4a2c;border-top:0;background:#f3ede0;padding:16px 18px;margin-bottom:12px"><div style="font-size:19px;font-weight:bold">{tag}{esc(e.get("name",""))}</div>{side_html(e)}'
             wt = str(e.get("when", ""))
             when_line = wt if re.search(r"jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec", wt, re.I) else f'{d.strftime("%A, %B %-d")} · {wt}'   # don't repeat the date
             box += f'<div style="font-size:16px;margin-top:5px"><b>{esc(when_line)}</b> <span style="color:#47443b">({when})</span></div>'
@@ -83,7 +85,7 @@ def build(today):
         for d, days, is_new, e in later:
             when = "today" if days == 0 else "tomorrow" if days == 1 else f"in {days} days"
             tag = '<span style="background:#a07d3c;color:#fff;font-size:11px;font-weight:bold;letter-spacing:.1em;padding:2px 7px;margin-right:6px">NEW</span>' if is_new else ""
-            line = f'<div style="border:1px solid #e6dfd0;padding:14px 16px;margin-bottom:12px"><div style="font-size:16px;font-weight:bold">{tag}{esc(e.get("name",""))}</div>'
+            line = f'<div style="border:1px solid #e6dfd0;padding:14px 16px;margin-bottom:12px"><div style="font-size:16px;font-weight:bold">{tag}{esc(e.get("name",""))}</div>{side_html(e)}'
             line += f'<div style="font-size:15px;margin-top:4px">{esc(e.get("when",""))} <span style="color:#6b675b">({when})</span></div>'
             if e.get("where"): line += f'<div style="font-size:14px;color:#47443b;margin-top:2px">{esc(e["where"])}</div>'
             if re.match(r"^https://", str(e.get("url") or "")) and "<" not in e["url"] and '"' not in e["url"]:
@@ -104,7 +106,12 @@ def build(today):
             note = ""
             ex = [x for x in re.findall(r"\d{4}-\d{2}-\d{2}", str(e.get("except") or "")) if x >= today.isoformat()]
             if ex: note = " — not on " + ", ".join(datetime.strptime(x, "%Y-%m-%d").strftime("%b %-d") for x in sorted(ex))
-            parts.append(f'<p style="font-size:15px;margin:0 0 8px"><b>{esc(e.get("name",""))}</b><br>{esc(e.get("when",""))}{esc(note)}<br><span style="color:#47443b;font-size:14px">{esc(e.get("where",""))}</span></p>')
+            parts.append(f'<p style="font-size:15px;margin:0 0 8px"><b>{esc(e.get("name",""))}</b><br><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;color:#a07d3c">{esc(side(e))}</span><br>{esc(e.get("when",""))}{esc(note)}<br><span style="color:#47443b;font-size:14px">{esc(e.get("where",""))}</span></p>')
+    c = site.get("candles") or {}
+    if c.get("scents") and float(c.get("price") or 0) > 0:   # the spirit side: always part of the Monday email
+        parts.append(head("Spiritus: Intention Candles"))
+        parts.append(f'<p style="font-size:15px;line-height:1.6;margin:0 0 12px">Hand-poured Sonoran Mystic Tarot candles, <b>{money(c["price"])} each</b>' + (", free shipping" if c.get("shipsFree") else "") + f'. Six scents: {esc(", ".join(c["scents"]))}.</p>'
+                     f'<p style="margin:0 0 6px">{btn(SITE + "/?realm=spiritus#spiritus", "Shop the candles")}</p>')
     parts.append(f'<p style="margin:26px 0 8px">{btn(SITE + "/shop.html", "Shop the plants")}</p><p style="font-size:13px;color:#6b675b">Reserve online and pick up at a market, or pay online and we ship (US except CA and HI).</p>')
 
     sub = []

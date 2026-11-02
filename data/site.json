@@ -76,7 +76,7 @@
       "when": "Saturday, November 7, 2026 · 9:00 AM",
       "date": "2026-11-07",
       "url": "https://www.ticketsource.com/sonoranmarket/t-rzjqpvr",
-      "realm": "spiritus"
+      "realm": "both"
     }
   ],
   "faq": [
@@ -123,6 +123,18 @@
     {
       "q": "Who is AzCactusDoctor, and what is Spina & Spiritus?",
       "a": "**Spina & Spiritus** (also written Spina and Spiritus, spinaandspiritus or spinanspiritus) is the plant shop of **AzCactusDoctor**, also known as AZ Cactus Doctor: rare cacti, succulents, euphorbia, agave and caudex plants grown in Arizona and sold at Phoenix farmers markets and events. Follow [@azcactusdoctor](https://instagram.com/azcactusdoctor) on Instagram."
+    },
+    {
+      "q": "How much are the candles, and do they ship?",
+      "a": "Our Sonoran Mystic Tarot intention candles are $20 each in six scents (Essence, Awakening, Abundance, Meditation, Frankincense and Passion). Candle shipping is free anywhere we ship, and you can also pick them up at an event."
+    },
+    {
+      "q": "How do I book a tarot reading?",
+      "a": "Readings are with Don of Sonoran Mystic Tarot. [Book a reading](https://sonoranmystictarot.com/#book-personal-tarot-readings) online and pick a time that works for you."
+    },
+    {
+      "q": "Who is Spina and who is Spiritus?",
+      "a": "**Spina** is the plant side, run by AzCactusDoctor (Ed): rare cacti and succulents grown in Arizona. **Spiritus** is the spirit side, Sonoran Mystic Tarot (Don): candles, tarot and readings. One site, one cart, one checkout."
     }
   ],
   "collection": [
@@ -239,6 +251,14 @@
       "Meditation",
       "Frankincense",
       "Passion"
-    ]
+    ],
+    "descriptions": {
+      "essence": "Bright and uplifting. A fragrance for renewal, balance and a clear head.",
+      "awakening": "Fresh and energizing. Notes to spark inspiration, awareness and new beginnings.",
+      "abundance": "Warm and welcoming. A blend for gratitude, prosperity and good flow.",
+      "meditation": "Calm and quiet. An aroma for reflection, mindfulness and spiritual practice.",
+      "frankincense": "Rich, grounding and timeless. A sacred scent for prayer, meditation and inner connection.",
+      "passion": "Vibrant and captivating. A fragrance for creativity, confidence and heartfelt expression."
+    }
   }
 }

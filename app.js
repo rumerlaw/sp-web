@@ -69,7 +69,7 @@ const happeningThisWeek = (ev) => { const d = daysUntil(ev); return d !== null &
 const upcomingEvents = () => {
   const all = (typeof SP !== "undefined" && SP.editing) ? CONFIG.events : (() => { const today = new Date().toISOString().slice(0, 10); return CONFIG.events.filter((ev) => !ev.date || ev.date >= today); })();
   const realm = document.documentElement.getAttribute("data-realm") === "spiritus" ? "spiritus" : "spina";
-  const mine = (typeof SP !== "undefined" && SP.editing) ? all : all.filter((e) => (e.realm || "spina") === realm);   // each event belongs to one side
+  const mine = (typeof SP !== "undefined" && SP.editing) ? all : all.filter((e) => (e.realm || "spina") === "both" || (e.realm || "spina") === realm);   // each event belongs to one side, or to both
   return [...mine.filter(happeningThisWeek), ...mine.filter((e) => !happeningThisWeek(e))];
 };
 // Dates a recurring event does NOT happen (e.g. the Doctor is at another market). Shown as "Not on Nov 7".
@@ -213,8 +213,9 @@ function renderPortrait() {
 // so it is filled on every page (not only where the contact block exists).
 // Plants are picked up at the plant markets; once a candle is in the cart every listed event can be used.
 function pickupEvents() {
-  const today = new Date().toISOString().slice(0, 10), hasCandle = cart.some((c) => String(c.id).startsWith("candle-"));
-  return CONFIG.events.filter((e) => (!e.date || e.date >= today) && (hasCandle || (e.realm || "spina") === "spina"));
+  const today = new Date().toISOString().slice(0, 10), hasCandle = cart.some((c) => String(c.id).startsWith("candle-")), hasPlant = cart.some((c) => !String(c.id).startsWith("candle-"));
+  // plants go to plant events, candles to spirit events, a mixed cart only to events both sides attend
+  return CONFIG.events.filter((e) => { const r = e.realm || "spina"; return (!e.date || e.date >= today) && (!hasPlant || r === "spina" || r === "both") && (!hasCandle || r === "spiritus" || r === "both"); });
 }
 function renderMarketSelect() {
   const sel = $("#marketSelect"); if (!sel) return;
@@ -265,7 +266,7 @@ function renderContactArea() {
     $("#marketList").innerHTML = ev.map((e, i) => `<li class="ev-edit" data-i="${i}" draggable="true">${dragHandle}<b${editAttrs("events." + i + ".name")}>${esc(e.name)}</b><span${editAttrs("events." + i + ".where")}>${esc(e.where || "")}</span><span class="when"${editAttrs("events." + i + ".when")}>${esc(e.when)}</span><span class="evx"${editAttrs("events." + i + ".except")} data-ph="Not on dates (2026-11-07, …)">${esc(e.except || "")}</span><span class="evx"${editAttrs("events." + i + ".url")} data-ph="Ticket link (https://…)">${esc(e.url || "")}</span><label class="evdate">Hide after <input type="date" data-date="${i}" value="${esc(e.date || "")}"></label><button class="x" data-act="del-event" data-i="${i}" aria-label="Remove event">✕</button></li>`).join("") + `<li class="add-row"><button class="addbtn" data-act="add-event">+ Add an event</button></li>`;
   } else {
     $("#marketList").removeAttribute("data-sort");
-    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li${happeningThisWeek(e) ? ' class="this-week"' : ""}>${happeningThisWeek(e) ? `<span class="ev-week">Happening this week</span>` : ""}<b>${esc(e.name)}</b>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<span class="exnote">${esc(exceptNote(e))}</span>` : ""}${ticketLink(e)}${e.where ? `<div class="ev-map"><iframe title="Map to ${esc(e.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(e.where)}&output=embed"></iframe></div>` : ""}</li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li${happeningThisWeek(e) ? ' class="this-week"' : ""}>${happeningThisWeek(e) ? `<span class="ev-week">Happening this week</span>` : ""}<b>${esc(e.name)}</b><span class="ev-side">${e.realm === "both" ? "Spina + Spiritus" : e.realm === "spiritus" ? "Spiritus · Sonoran Mystic Tarot" : "Spina · AZ Cactus Doctor"}</span>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<span class="exnote">${esc(exceptNote(e))}</span>` : ""}${ticketLink(e)}${e.where ? `<div class="ev-map"><iframe title="Map to ${esc(e.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(e.where)}&output=embed"></iframe></div>` : ""}</li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
   }
   if ($("#eventMap")) $("#eventMap").innerHTML = "";
 }
@@ -399,6 +400,8 @@ async function loadInventory() {
       description: p.description || "",
       images: String(p.image || "").split("|").map(safeUrl).filter(Boolean),
     }));
+    // Preview of candles in the main shop: only for shop.html?preview=candles until it is approved.
+    if (/[?&]preview=candles\b/.test(location.search)) products = products.concat(candleProducts());
     products.forEach((p) => (p.origKey = normKey(p.name)));
     applyPlantOverrides();
   } catch (e) {
@@ -424,7 +427,7 @@ const isLow = (p) => /low/i.test(p.status) || (p.stock !== null && p.stock > 0 &
 const maxQty = (p) => (p.stock === null ? 20 : Math.max(1, Math.min(20, p.stock)));
 const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : ` — ${p.stock} available`));
 // The intention candles (Spiritus side) are not in the plant inventory: one product per scent, price from data/site.json.
-const candleProducts = () => { const c = SITE.candles; if (!c || !(Number(c.price) > 0)) return []; return (c.scents || []).map((n) => ({ id: "candle-" + String(n).toLowerCase().replace(/[^a-z]/g, ""), name: n + " Intention Candle", genus: "Candle", category: "Candles", price: Number(c.price), salePrice: 0, stock: null, status: "In Stock", size: "", shipSize: "", description: "", images: [], isCandle: true })); };
+const candleProducts = () => { const c = SITE.candles; if (!c || !(Number(c.price) > 0)) return []; return (c.scents || []).map((n) => ({ id: "candle-" + String(n).toLowerCase().replace(/[^a-z]/g, ""), name: n + " Intention Candle", genus: "Candle", category: "Candles", price: Number(c.price), salePrice: 0, stock: null, status: "In Stock", size: "", shipSize: "", description: ((c.descriptions || {})[String(n).toLowerCase().replace(/[^a-z]/g, "")] || ""), images: ["assets/spiritus/candle-table.webp"], isCandle: true })); };
 const findProduct = (id) => products.find((x) => x.id === id) || candleProducts().find((x) => x.id === id);
 function addToCart(id, qty) {
   const p = findProduct(id); if (!p) return;
@@ -468,7 +471,7 @@ function renderProducts() {
 }
 const plantSlug = (id) => String(id).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
 // In-stock plants have their own real page (plants/<name>.html, built by scripts/build_plants.py); anything else uses the generic page.
-const pageUrl = (p) => (isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
+const pageUrl = (p) => (p.isCandle ? "index.html?realm=spiritus#spiritus" : isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
 function cardHtml(p) {
   const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
   const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;

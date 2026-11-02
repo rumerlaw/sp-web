@@ -1172,3 +1172,5 @@ html[data-realm="spiritus"] .don-photo{border-color:var(--gold)}
 
 .don-side .realms{margin:18px 0 0;padding:0;max-width:none}
 @media(max-width:900px){.don-side{max-width:420px;margin:0 auto}.don-side .don-photo{max-width:none}}
+
+.events .ev-side{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold);margin:2px 0 6px}
