@@ -984,3 +984,4 @@ body[data-page="plant"] .plant-title,body[data-page="plant"] h1.plant-title{font
 .ship-fields[hidden]{display:none}
 .ship-fields .ship-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pay-opt[hidden]{display:none}
+.events li .ev-week{color:#fff}
