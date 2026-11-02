@@ -997,7 +997,8 @@ button.realm{font:inherit;cursor:pointer;background:none}
 .realm.spirit{border-color:#2b2438}
 .realm.spirit:hover,.realm.spirit:focus-visible{background:#2b2438;color:#e8d9a8}
 .realm.spirit:hover span,.realm.spirit:focus-visible span{color:#e8d9a8}
-.realm.on:hover{background:#243a22}
+.realm.on:hover,.realm.spirit.on:hover,.realm.spirit.on:focus-visible{background:var(--sage-deep);color:#fff;filter:brightness(.92)}
+.realm.on:hover span,.realm.spirit.on:hover span,.realm.spirit.on:focus-visible span{color:#e7efe3}
 
 .footer .realms{margin:0 auto 26px}
 .spirit-hero,.spirit-only{display:none}
