@@ -1174,3 +1174,15 @@ html[data-realm="spiritus"] .don-photo{border-color:var(--gold)}
 @media(max-width:900px){.don-side{max-width:420px;margin:0 auto}.don-side .don-photo{max-width:none}}
 
 .events .ev-side{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold);margin:2px 0 6px}
+
+/* "Spina + Spiritus" events stand out */
+.events .ev-side{display:inline-block;align-self:center;font-size:.74rem;letter-spacing:.2em;font-weight:700;color:var(--gold);border:1px solid var(--gold);padding:5px 12px;margin:6px 0 10px}
+.events .ev-side.both{background:var(--gold);color:#fff;font-size:.82rem;padding:7px 16px;letter-spacing:.22em;box-shadow:0 6px 16px -8px rgba(0,0,0,.4)}
+html[data-realm="spiritus"] .events .ev-side.both{color:#17122a}
+
+/* FAQ answers easy to read on the Spiritus side */
+html[data-realm="spiritus"] .faq-item summary{color:#fff}
+html[data-realm="spiritus"] .faq-a p,html[data-realm="spiritus"] .faq-a li{color:#fff;font-size:1.2rem;font-weight:500;line-height:1.8}
+html[data-realm="spiritus"] .faq-a b,html[data-realm="spiritus"] .faq-a strong{color:var(--gold)}
+html[data-realm="spiritus"] .faq-a a{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px 18px 22px;margin-bottom:8px;border-left:2px solid var(--gold)}

@@ -266,7 +266,7 @@ function renderContactArea() {
     $("#marketList").innerHTML = ev.map((e, i) => `<li class="ev-edit" data-i="${i}" draggable="true">${dragHandle}<b${editAttrs("events." + i + ".name")}>${esc(e.name)}</b><span${editAttrs("events." + i + ".where")}>${esc(e.where || "")}</span><span class="when"${editAttrs("events." + i + ".when")}>${esc(e.when)}</span><span class="evx"${editAttrs("events." + i + ".except")} data-ph="Not on dates (2026-11-07, …)">${esc(e.except || "")}</span><span class="evx"${editAttrs("events." + i + ".url")} data-ph="Ticket link (https://…)">${esc(e.url || "")}</span><label class="evdate">Hide after <input type="date" data-date="${i}" value="${esc(e.date || "")}"></label><button class="x" data-act="del-event" data-i="${i}" aria-label="Remove event">✕</button></li>`).join("") + `<li class="add-row"><button class="addbtn" data-act="add-event">+ Add an event</button></li>`;
   } else {
     $("#marketList").removeAttribute("data-sort");
-    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li${happeningThisWeek(e) ? ' class="this-week"' : ""}>${happeningThisWeek(e) ? `<span class="ev-week">Happening this week</span>` : ""}<b>${esc(e.name)}</b><span class="ev-side">${e.realm === "both" ? "Spina + Spiritus" : e.realm === "spiritus" ? "Spiritus · Sonoran Mystic Tarot" : "Spina · AZ Cactus Doctor"}</span>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<span class="exnote">${esc(exceptNote(e))}</span>` : ""}${ticketLink(e)}${e.where ? `<div class="ev-map"><iframe title="Map to ${esc(e.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(e.where)}&output=embed"></iframe></div>` : ""}</li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
+    $("#marketList").innerHTML = ev.length ? ev.map((e) => `<li${happeningThisWeek(e) ? ' class="this-week"' : ""}>${happeningThisWeek(e) ? `<span class="ev-week">Happening this week</span>` : ""}<b>${esc(e.name)}</b><span class="ev-side${e.realm === "both" ? " both" : ""}">${e.realm === "both" ? "Spina + Spiritus" : e.realm === "spiritus" ? "Spiritus · Sonoran Mystic Tarot" : "Spina · AZ Cactus Doctor"}</span>${e.where ? `<span>${mapLink(e)}</span>` : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<span class="exnote">${esc(exceptNote(e))}</span>` : ""}${ticketLink(e)}${e.where ? `<div class="ev-map"><iframe title="Map to ${esc(e.name)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(e.where)}&output=embed"></iframe></div>` : ""}</li>`).join("") : `<li><span>New dates will be posted soon.</span></li>`;
   }
   if ($("#eventMap")) $("#eventMap").innerHTML = "";
 }
@@ -400,8 +400,6 @@ async function loadInventory() {
       description: p.description || "",
       images: String(p.image || "").split("|").map(safeUrl).filter(Boolean),
     }));
-    // Preview of candles in the main shop: only for shop.html?preview=candles until it is approved.
-    if (/[?&]preview=candles\b/.test(location.search)) products = products.concat(candleProducts());
     products.forEach((p) => (p.origKey = normKey(p.name)));
     applyPlantOverrides();
   } catch (e) {
