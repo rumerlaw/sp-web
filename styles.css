@@ -1194,3 +1194,6 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 .realms-one .realm[data-realm-btn="spiritus"]{background:#4b3a82;border-color:#4b3a82;color:#fff}
 .realms-one .realm[data-realm-btn="spiritus"] span{color:#e4dcf7}
 .realms-one .realm[data-realm-btn="spiritus"]:hover{background:#3d2f6b;border-color:#3d2f6b;color:#fff}
+.don-bio .about-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.don-bio .about-cta .btn{padding:14px 20px;letter-spacing:.16em;white-space:nowrap}
+@media(max-width:900px){.don-bio .about-cta{justify-content:center}}
