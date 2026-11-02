@@ -683,9 +683,9 @@ async function submitOrder(e) {
 
   const payOnline = (shipping || String(f.get("pay") || "pickup") === "online") && onlinePay;
   btn.disabled = true; say(payOnline ? "Taking you to secure payment…" : "Sending…");
-  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "", realm: document.documentElement.getAttribute("data-realm") === "spiritus" ? "spiritus" : "spina", pay: shipping ? "ship" : payOnline ? "online" : "pickup", ...(address ? { address } : {}) });
+  const api = await postApi("/api/order", { items: items.map((c) => ({ id: c.id, qty: c.qty })), name, contact, market, notes, website: "", back: location.pathname + location.search, realm: document.documentElement.getAttribute("data-realm") === "spiritus" ? "spiritus" : "spina", pay: shipping ? "ship" : payOnline ? "online" : "pickup", ...(address ? { address } : {}) });
   if (payOnline) {   // Stripe's own secure page takes the payment; we come back to thanks.html afterwards
-    if (api.ok && api.data && /^https:\/\/checkout\.stripe\.com\//.test(api.data.checkoutUrl || "")) { location.href = api.data.checkoutUrl; return; }
+    if (api.ok && api.data && /^https:\/\/checkout\.stripe\.com\//.test(api.data.checkoutUrl || "")) { try { if (onHome) saveReturn(); sessionStorage.setItem("sp-restore", "1"); } catch (e) {} location.href = api.data.checkoutUrl; return; }   // Back from Stripe lands exactly where they were
     say(api.data && api.data.error ? api.data.error : "Online payment isn't available right now. Please choose pay at pickup.", true); btn.disabled = false; return;
   }
   if (api.ok) {

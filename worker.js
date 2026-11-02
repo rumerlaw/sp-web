@@ -99,6 +99,12 @@ async function verifyStripeSignature(raw, header, secret) {
 const shell = (title, inner) => `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#24231f"><h2 style="margin:0 0 14px;font-size:20px">${esc(title)}</h2>${inner}</div>`;
 const block = (label, html) => `<p style="margin:16px 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#a07d3c;font-weight:bold">${esc(label)}</p><div style="font-size:15px;line-height:1.5">${html}</div>`;
 
+// Where Stripe's Back link goes: the page the customer was on (our own paths only), else the side they were on.
+function backPath(body) {
+  const p = typeof body.back === "string" ? body.back : "";
+  if (p.length > 0 && p.length <= 200 && /^\/[A-Za-z0-9._\-\/?=&%]*$/.test(p) && !p.startsWith("//") && !p.startsWith("/api") && !p.includes("..")) return p;
+  return body.realm === "spiritus" ? "/?realm=spiritus" : "/shop.html";
+}
 async function handleOrder(request, env, body) {
   if (clean(body.website, 50)) return json({ ok: true, copy: false });                 // honeypot: pretend success to bots
   const name = clean(body.name, 80), contact = clean(body.contact, 120), notes = clean(body.notes, 500), market = body.pay === "ship" ? "Shipping" : clean(body.market, 220);
@@ -164,7 +170,7 @@ async function handleOrder(request, env, body) {
     if (shipFee > 0) items[lines.length] = { quantity: 1, price_data: { currency: "usd", unit_amount: cents(shipFee), product_data: { name: "Shipping" } } };
     const s = await stripe(env, "POST", "/v1/checkout/sessions", {
       mode: "payment", line_items: items,
-      success_url: origin + "/thanks.html", cancel_url: origin + (body.realm === "spiritus" ? "/?realm=spiritus#spiritus" : "/shop.html"),   // "back" returns to the side they were on
+      success_url: origin + "/thanks.html", cancel_url: origin + backPath(body),   // "back" returns to the page they were on
       ...(email ? { customer_email: email } : {}),
       expires_at: Math.floor(Date.now() / 1000) + 1800,
       payment_intent_data: {
