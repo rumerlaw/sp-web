@@ -1134,3 +1134,8 @@ html[data-realm="spiritus"] #spiritus .scent-btn.on{box-shadow:none}
 #spiritus .candle-scent{font-family:var(--sans);font-size:1.12rem;font-weight:500;line-height:1.65}
 #spiritus .candle-scent span{font-weight:500}
 #spiritus .candle-scent b{font-weight:700}
+
+.spirit-social{display:none}
+html[data-realm="spiritus"] .spirit-social{display:block}
+html[data-realm="spiritus"] #contactInsta{display:none}
+.spirit-social .insta{margin:4px 0}
