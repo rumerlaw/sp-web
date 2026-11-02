@@ -1087,3 +1087,13 @@ document.addEventListener("click", (e) => {
   location.href = "instagram://user?username=" + user;
   setTimeout(() => { if (!left && !document.hidden) window.open(web, "_blank", "noopener"); }, 1400);
 });
+
+// The Spina & Spiritus logo in the header: on the home page it scrolls to the very top; from other pages it opens the home page at the top.
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest("a.brand");
+  if (!a || !document.querySelector(".hero")) return;
+  e.preventDefault();
+  try { sessionStorage.setItem("sp-y", "0"); } catch (err) {}
+  history.replaceState(null, "", location.pathname + location.search);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
