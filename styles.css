@@ -1011,13 +1011,6 @@ html[data-realm="spiritus"] .nl,html[data-realm="spiritus"] .mobile-menu a{color
 html[data-realm="spiritus"] .mobile-menu{background:#1f1838}
 html[data-realm="spiritus"] .burger span{background:var(--ink)}
 html[data-realm="spiritus"] .hero{background:radial-gradient(ellipse at 50% 0%,#33265e 0%,#17122a 70%)}
-html[data-realm="spiritus"] .hero-brand{display:none}
-html[data-realm="spiritus"] .spirit-hero{display:block;padding:70px 20px 8px}
-html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3.2rem,12vw,6.5rem);letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--gold);margin:6px 0 12px}
-html[data-realm="spiritus"] .spirit-kicker{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:600}
-html[data-realm="spiritus"] .spirit-lead{max-width:34ch;margin:0 auto;font-size:1.15rem;color:var(--ink)}
-html[data-realm="spiritus"] .spina-only{display:none}
-html[data-realm="spiritus"] .spirit-only{display:block}
 html[data-realm="spiritus"] .section,html[data-realm="spiritus"] .faqpage,html[data-realm="spiritus"] main{background:transparent;color:var(--ink)}
 html[data-realm="spiritus"] .footer{background:#100c20;color:var(--ink);border-top:1px solid rgba(216,184,104,.28)}
 html[data-realm="spiritus"] .btn{background:var(--gold);border-color:var(--gold);color:#17122a}
@@ -1041,3 +1034,6 @@ html[data-realm="spiritus"] a{color:inherit}
 .spirit-card p{color:var(--muted);max-width:28ch}
 .spirit-card .soon{margin-top:auto;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink);border:1px solid var(--line);padding:6px 12px}
 @media(max-width:760px){.spirit-grid{grid-template-columns:1fr}}
+html[data-realm="spiritus"] .hero{background:#17122a}
+html[data-realm="spiritus"] .facts strong,html[data-realm="spiritus"] .price,html[data-realm="spiritus"] .qv-price,html[data-realm="spiritus"] .cat-list li button.active,html[data-realm="spiritus"] .handle a,html[data-realm="spiritus"] .faq-a a,html[data-realm="spiritus"] .maplink,html[data-realm="spiritus"] .form-msg.ok,html[data-realm="spiritus"] .signup-promise span,html[data-realm="spiritus"] .qv-link:hover,html[data-realm="spiritus"] .crumbs a:hover,html[data-realm="spiritus"] .back:hover,html[data-realm="spiritus"] .faq-item summary:hover{color:var(--gold)}
+html[data-realm="spiritus"] .cat-list li button.active{background:#17122a}
