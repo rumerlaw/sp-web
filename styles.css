@@ -1036,11 +1036,5 @@ button.realm{font:inherit;cursor:pointer;background:none}
 .cart-foot label[hidden],.cart-foot [hidden]{display:none!important}
 
 /* ===== Spiritus: looks exactly like the plant side; only the content differs ===== */
-html[data-realm="spiritus"] .hero-brand{display:none}
-html[data-realm="spiritus"] .hero{padding:68px 0 36px;display:block;min-height:0;text-align:center}
-html[data-realm="spiritus"] .spirit-hero{display:block;padding:80px 20px 22px}
-html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3.2rem,12vw,6.5rem);letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--ink);margin:6px 0 12px}
-html[data-realm="spiritus"] .spirit-kicker{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:600}
-html[data-realm="spiritus"] .spirit-lead{max-width:34ch;margin:0 auto;font-size:1.15rem;color:var(--ink)}
 html[data-realm="spiritus"] .spina-only{display:none}
 html[data-realm="spiritus"] .spirit-only{display:block}
