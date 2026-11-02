@@ -1066,3 +1066,11 @@ html[data-realm="spiritus"] .spirit-only{display:block}
 .candle-cta .btn{cursor:pointer}
 html[data-realm="spiritus"] .hero{background:#17122a}
 html[data-realm="spiritus"] .bag-btn{display:inline-flex}
+
+/* Spiritus home: same banner layout as the plant home page, with a candle photo behind the title */
+html[data-realm="spiritus"] .hero{padding:68px 0 36px;display:block;min-height:0;text-align:center}
+html[data-realm="spiritus"] .spirit-hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;height:min(40vw,500px);min-height:300px;background:linear-gradient(rgba(23,18,42,.74),rgba(23,18,42,.84)),url(assets/spiritus/candle-table.webp) center 62%/cover no-repeat}
+html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3rem,10vw,6.2rem);margin:6px 0 10px;text-shadow:0 2px 18px rgba(0,0,0,.45)}
+html[data-realm="spiritus"] .spirit-kicker{color:#efe6d2}
+html[data-realm="spiritus"] .spirit-lead{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+@media(max-width:640px){html[data-realm="spiritus"] .spirit-hero{height:300px;min-height:0}html[data-realm="spiritus"] .hero{padding-top:64px}}
