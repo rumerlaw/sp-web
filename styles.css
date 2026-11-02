@@ -1038,3 +1038,4 @@ button.realm{font:inherit;cursor:pointer;background:none}
 /* ===== Spiritus: looks exactly like the plant side; only the content differs ===== */
 html[data-realm="spiritus"] .spina-only{display:none}
 html[data-realm="spiritus"] .spirit-only{display:block}
+html[data-realm="spiritus"]{--sage-deep:#4b3a82;--price:#4b3a82}
