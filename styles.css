@@ -1120,3 +1120,17 @@ html[data-realm="spiritus"] #spiritus .scent-btn.on{background:var(--gold);color
 @media(prefers-reduced-motion:reduce){#spiritus .candle{animation:none}#spiritus .candle-main{transition:none}}
 @media(max-width:760px){#spiritus{padding-top:70px;padding-bottom:70px}#spiritus .candle{gap:30px}#spiritus .candle-price b{font-size:2.1rem}}
 @media(min-width:761px){#spiritus .candle-gallery{position:sticky;top:110px}}
+
+/* easier to read candle text, and no glow */
+#spiritus .candle-copy{font-size:1.12rem;line-height:1.75;font-weight:500;opacity:1;color:var(--ink)}
+#spiritus .candle-scent{font-size:1.4rem;line-height:1.6;color:var(--ink)}
+#spiritus .candle-scent span{font-style:normal;font-weight:600;color:var(--ink)}
+#spiritus .candle-scent b{font-weight:700}
+#spiritus .candle-line{font-size:1.75rem;font-weight:600;font-style:normal;color:var(--gold);line-height:1.35}
+html[data-realm="spiritus"] #spiritus .scent-btn.on{box-shadow:none}
+#spiritus .candle-cta .btn:hover{box-shadow:none;filter:brightness(1.06)}
+#spiritus .candle-main{box-shadow:none}
+@media(max-width:760px){#spiritus .candle-copy{font-size:1.08rem}#spiritus .candle-scent{font-size:1.3rem}#spiritus .candle-line{font-size:1.55rem}}
+#spiritus .candle-scent{font-family:var(--sans);font-size:1.12rem;font-weight:500;line-height:1.65}
+#spiritus .candle-scent span{font-weight:500}
+#spiritus .candle-scent b{font-weight:700}
