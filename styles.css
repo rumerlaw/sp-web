@@ -1166,3 +1166,6 @@ html[data-realm="spiritus"] .don-photo{border-color:var(--gold)}
 @media(max-width:900px){.don-grid{grid-template-columns:1fr;gap:34px}.don-photo{max-width:420px;margin:0 auto}.don-copy{text-align:center}.don-bio .don-text{text-align:left}.don-bio .about-cta{text-align:center}}
 .don-grid{align-items:start}
 @media(min-width:901px){.don-photo{position:sticky;top:110px}}
+
+#spiritus .candle-price{border-top:0;padding-top:0;margin:4px 0 6px}
+#spiritus .candle-pick{margin-top:14px}
