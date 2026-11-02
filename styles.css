@@ -1002,47 +1002,14 @@ button.realm{font:inherit;cursor:pointer;background:none}
 .footer .realms{margin:0 auto 26px}
 .spirit-hero,.spirit-only{display:none}
 
-/* ===== Spiritus theme: same site, mystic look ===== */
-html[data-realm="spiritus"]{--bg:#17122a;--bg-alt:#1f1838;--card:#241c3f;--ink:#efe6d2;--muted:#b9afcc;--line:#3a3060;--sage:#9a8cc4;--sage-deep:#6a4fa8;--gold:#d8b868;--price:#e8d28a}
-html[data-realm="spiritus"] body{background:var(--bg);color:var(--ink)}
-html[data-realm="spiritus"] .nav{background:rgba(23,18,42,.94);border-bottom:1px solid rgba(216,184,104,.28)}
-html[data-realm="spiritus"] .nav .brand-mark{filter:invert(1) hue-rotate(180deg) brightness(1.15)}
-html[data-realm="spiritus"] .nl,html[data-realm="spiritus"] .mobile-menu a{color:var(--ink)}
-html[data-realm="spiritus"] .mobile-menu{background:#1f1838}
-html[data-realm="spiritus"] .burger span{background:var(--ink)}
-html[data-realm="spiritus"] .section,html[data-realm="spiritus"] .faqpage,html[data-realm="spiritus"] main{background:transparent;color:var(--ink)}
-html[data-realm="spiritus"] .footer{background:#100c20;color:var(--ink);border-top:1px solid rgba(216,184,104,.28)}
-html[data-realm="spiritus"] .btn{background:var(--gold);border-color:var(--gold);color:#17122a}
-html[data-realm="spiritus"] .btn.ghost{background:transparent;color:var(--gold)}
-html[data-realm="spiritus"] .realm{border-color:var(--gold);color:var(--ink)}
-html[data-realm="spiritus"] .realm.on{background:var(--gold);color:#17122a}
-html[data-realm="spiritus"] .realm.on span{color:#3b2f60}
-html[data-realm="spiritus"] .realm.spirit:hover{background:var(--gold);color:#17122a}
-html[data-realm="spiritus"] .bag-btn{background:var(--gold);color:#17122a}
-html[data-realm="spiritus"] input,html[data-realm="spiritus"] select,html[data-realm="spiritus"] textarea{background:#241c3f;color:var(--ink);border-color:var(--line)}
-html[data-realm="spiritus"] .cart{background:#1f1838;color:var(--ink)}
-html[data-realm="spiritus"] .cart-foot .btn.full{background:var(--gold);color:#17122a}
-html[data-realm="spiritus"] .faq-item,html[data-realm="spiritus"] .events li{background:transparent;color:var(--ink)}
-html[data-realm="spiritus"] .events li.this-week{background:#241c3f;border-color:var(--gold)}
-html[data-realm="spiritus"] .ev-week{background:var(--gold);color:#17122a}
-html[data-realm="spiritus"] .events li .ev-week{color:#17122a}
-html[data-realm="spiritus"] a{color:inherit}
+
 .spirit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:2rem}
 .spirit-card{background:var(--card);border:1px solid var(--line);padding:28px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
 .spirit-card h3{font-size:1.7rem;color:var(--gold)}
 .spirit-card p{color:var(--muted);max-width:28ch}
 .spirit-card .soon{margin-top:auto;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink);border:1px solid var(--line);padding:6px 12px}
 @media(max-width:760px){.spirit-grid{grid-template-columns:1fr}}
-html[data-realm="spiritus"] .facts strong,html[data-realm="spiritus"] .price,html[data-realm="spiritus"] .qv-price,html[data-realm="spiritus"] .cat-list li button.active,html[data-realm="spiritus"] .handle a,html[data-realm="spiritus"] .faq-a a,html[data-realm="spiritus"] .maplink,html[data-realm="spiritus"] .form-msg.ok,html[data-realm="spiritus"] .signup-promise span,html[data-realm="spiritus"] .qv-link:hover,html[data-realm="spiritus"] .crumbs a:hover,html[data-realm="spiritus"] .back:hover,html[data-realm="spiritus"] .faq-item summary:hover{color:var(--gold)}
-html[data-realm="spiritus"] .cat-list li button.active{background:#17122a}
 
-html[data-realm="spiritus"] .hero-brand{display:none}
-html[data-realm="spiritus"] .spirit-hero{display:block;padding:70px 20px 8px}
-html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3.2rem,12vw,6.5rem);letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--gold);margin:6px 0 12px}
-html[data-realm="spiritus"] .spirit-kicker{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:600}
-html[data-realm="spiritus"] .spirit-lead{max-width:34ch;margin:0 auto;font-size:1.15rem;color:var(--ink)}
-html[data-realm="spiritus"] .spina-only{display:none}
-html[data-realm="spiritus"] .spirit-only{display:block}
 .spirit-grid{grid-template-columns:repeat(2,1fr);max-width:720px;margin-left:auto;margin-right:auto}
 @media(max-width:760px){.spirit-grid{grid-template-columns:1fr}}
 
@@ -1064,14 +1031,17 @@ html[data-realm="spiritus"] .spirit-only{display:block}
 @media(max-width:760px){.candle{grid-template-columns:1fr;gap:22px}}
 .candle-price{font-size:1.1rem;color:var(--ink);margin:0 0 14px}.candle-price b{font-family:var(--serif);font-size:1.9rem;color:var(--gold);margin-right:4px}
 .candle-cta .btn{cursor:pointer}
-html[data-realm="spiritus"] .hero{background:#17122a}
-html[data-realm="spiritus"] .bag-btn{display:inline-flex}
 
-/* Spiritus home: same banner layout as the plant home page, with a candle photo behind the title */
-html[data-realm="spiritus"] .hero{padding:68px 0 36px;display:block;min-height:0;text-align:center}
-html[data-realm="spiritus"] .spirit-hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;height:min(40vw,500px);min-height:300px;background:linear-gradient(rgba(23,18,42,.74),rgba(23,18,42,.84)),url(assets/spiritus/candle-table.webp) center 62%/cover no-repeat}
-html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3rem,10vw,6.2rem);margin:6px 0 10px;text-shadow:0 2px 18px rgba(0,0,0,.45)}
-html[data-realm="spiritus"] .spirit-kicker{color:#efe6d2}
-html[data-realm="spiritus"] .spirit-lead{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.5)}
-@media(max-width:640px){html[data-realm="spiritus"] .spirit-hero{height:300px;min-height:0}html[data-realm="spiritus"] .hero{padding-top:64px}}
+
 .cart-foot label[hidden],.cart-foot [hidden]{display:none!important}
+
+/* ===== Spiritus: same background and layout as the plant side, purple accents instead of green ===== */
+html[data-realm="spiritus"]{--sage-deep:#4b3a82;--price:#4b3a82}
+html[data-realm="spiritus"] .hero-brand{display:none}
+html[data-realm="spiritus"] .hero{padding:68px 0 36px;display:block;min-height:0;text-align:center}
+html[data-realm="spiritus"] .spirit-hero{display:block;padding:80px 20px 22px}
+html[data-realm="spiritus"] .spirit-hero h2{font-size:clamp(3.2rem,12vw,6.5rem);letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--sage-deep);margin:6px 0 12px}
+html[data-realm="spiritus"] .spirit-kicker{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:600}
+html[data-realm="spiritus"] .spirit-lead{max-width:34ch;margin:0 auto;font-size:1.15rem;color:var(--ink)}
+html[data-realm="spiritus"] .spina-only{display:none}
+html[data-realm="spiritus"] .spirit-only{display:block}
