@@ -16,7 +16,7 @@ const DEFAULT_ORIGINS = ["https://spinanspiritus.com", "https://www.spinanspirit
 const MAX_BODY = 10000;
 const hits = new Map();   // per-visitor counters (per Worker instance; Cloudflare's own rate-limit rule is the backstop)
 
-const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff", "content-security-policy": "default-src 'none'; frame-ancestors 'none'", "referrer-policy": "no-referrer", "cross-origin-resource-policy": "same-origin" } });
 const clean = (v, max) => String(v ?? "").replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const money = (n) => "$" + (Math.round(n * 100) / 100).toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
@@ -31,6 +31,16 @@ function limited(ip, kind, max, windowMs) {
   return false;
 }
 
+async function sha256hex(s) { return hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s))); }
+async function limitedShared(env, ip, kind, max, secs) {
+  if (!env.DB) return false;
+  try {
+    const t = now(), bucket = Math.floor(t / secs), k = (await sha256hex("sp:" + ip)).slice(0, 24) + ":" + kind + ":" + bucket;
+    const r = await env.DB.prepare("INSERT INTO rate (k, n, exp) VALUES (?1, 1, ?2) ON CONFLICT(k) DO UPDATE SET n = n + 1 RETURNING n").bind(k, t + secs * 2).first();
+    if (Math.random() < 0.02) await env.DB.prepare("DELETE FROM rate WHERE exp < ?1").bind(t).run();
+    return !!r && r.n > max;
+  } catch (e) { return false; }   // if the counter is unavailable, the in-memory limit still applies
+}
 function parseCsv(text) {
   const rows = []; let row = [], cur = "", q = false;
   for (let i = 0; i < text.length; i++) {
@@ -109,7 +119,10 @@ async function finalizePaid(env, sess) {
   if (!env.DB || !sess || sess.payment_status !== "paid") return;
   const id = clean(sess.metadata && sess.metadata.hold_id, 60); if (!id) return;
   const t = now(), pi = clean(typeof sess.payment_intent === "string" ? sess.payment_intent : "", 80);
-  const up = await env.DB.prepare("UPDATE orders SET status = 'paid', paid_at = ?2, payment_intent = ?3, stripe_session = COALESCE(stripe_session, ?4) WHERE id = ?1 AND status != 'paid'").bind(id, t, pi, clean(sess.id, 100)).run();
+  const exp = await env.DB.prepare("SELECT total_cents FROM orders WHERE id = ?1").bind(id).first();
+  const mismatch = exp && Number.isFinite(sess.amount_total) && exp.total_cents !== sess.amount_total;
+  if (mismatch) console.error("Order total differs from what Stripe collected (needs a look):", id);
+  const up = await env.DB.prepare(`UPDATE orders SET status = '${mismatch ? "review" : "paid"}', paid_at = ?2, payment_intent = ?3, stripe_session = COALESCE(stripe_session, ?4) WHERE id = ?1 AND status NOT IN ('paid', 'review')`).bind(id, t, pi, clean(sess.id, 100)).run();
   if (up.meta && up.meta.changes) {
     // Keep the plants held until the Dropbox sheet shows the sale (or 7 days). If the 30-minute hold had already lapsed, we still honour the payment.
     await env.DB.prepare("UPDATE reservations SET state = 'paid', expires_at = ?2 WHERE order_id = ?1").bind(id, t + PAID_HOLD_SECS).run();
@@ -210,7 +223,19 @@ async function handleOrder(request, env, body) {
   if (body.pay === "online" || ship) {   // pay now with Stripe: nothing is emailed until the payment succeeds (see the webhook)
     if (!env.STRIPE_SECRET_KEY) return json({ error: "Online payment isn't available yet. Please choose pay at pickup." }, 503);
     const origin = request.headers.get("Origin") || "https://spinanspiritus.com";
+    const grand = total + shipFee;
+    if (!(grand > 0) || grand > 5000) return json({ error: "That order is too large to pay online. Please message us and we'll arrange it." }, 400);
     const holdId = crypto.randomUUID();
+    const reqHash = await sha256hex(JSON.stringify([contact.toLowerCase(), ship ? "ship" : "online", market, shipTo, lines.map((l) => [l.sku || l.name, l.qty])]));
+    if (env.DB) {
+      try {   // the same person pressing the button twice must get the same checkout, not a second hold
+        const dup = await env.DB.prepare("SELECT stripe_session FROM orders WHERE req_hash = ?1 AND status = 'pending' AND created_at > ?2 AND stripe_session IS NOT NULL ORDER BY created_at DESC LIMIT 1").bind(reqHash, now() - 300).first();
+        if (dup && dup.stripe_session) {
+          const old = await stripe(env, "GET", `/v1/checkout/sessions/${encodeURIComponent(dup.stripe_session)}`);
+          if (old.ok && old.data.status === "open" && /^https:\/\/checkout\.stripe\.com\//.test(old.data.url || "")) return json({ ok: true, checkoutUrl: old.data.url });
+        }
+      } catch (e) {}
+    }
     if (env.DB) {
       try {
         const taken = [];
@@ -223,8 +248,8 @@ async function handleOrder(request, env, body) {
           }
           taken.push(l.sku);
         }
-        await env.DB.prepare("INSERT INTO orders (id, status, pay_mode, name, contact, market, ship_to, notes, items_json, total_cents, ship_cents, created_at) VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)")
-          .bind(holdId, ship ? "ship" : "online", name, contact, market, shipTo ? `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}` : "", notes || "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total + shipFee), cents(shipFee), now()).run();
+        await env.DB.prepare("INSERT INTO orders (id, status, pay_mode, name, contact, market, ship_to, notes, items_json, total_cents, ship_cents, created_at, req_hash) VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)")
+          .bind(holdId, ship ? "ship" : "online", name, contact, market, shipTo ? `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}` : "", notes || "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total + shipFee), cents(shipFee), now(), reqHash).run();
       } catch (e) { console.error("order record failed:", e && e.message); /* never block a sale because the record failed */ }
     }
     const items = {}; lines.forEach((l, i) => { items[i] = { quantity: l.qty, price_data: { currency: "usd", unit_amount: cents(l.sub / l.qty), product_data: { name: l.name } } }; });
@@ -302,6 +327,10 @@ async function handleStripeWebhook(request, env) {
   if (raw.length > 200000 || !(await verifyStripeSignature(raw, request.headers.get("Stripe-Signature"), env.STRIPE_WEBHOOK_SECRET))) return json({ error: "bad_signature" }, 400);
   let ev; try { ev = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
   const sess = ev && ev.data && ev.data.object;
+  if (ev && ev.type === "charge.refunded" && sess && env.DB && typeof sess.payment_intent === "string" && sess.refunded) {
+    try { const o = await env.DB.prepare("SELECT id FROM orders WHERE payment_intent = ?1").bind(sess.payment_intent.slice(0, 80)).first(); if (o) await env.DB.batch([env.DB.prepare("UPDATE orders SET status = 'refunded' WHERE id = ?1").bind(o.id), env.DB.prepare("DELETE FROM reservations WHERE order_id = ?1").bind(o.id)]); } catch (e) {}
+    return json({ received: true });
+  }
   if (ev && ev.type === "checkout.session.expired" && sess && env.DB) {   // the customer never paid: give the plants back
     try { const id = clean(sess.metadata && sess.metadata.hold_id, 60); if (id) await releaseHold(env, id, "expired"); } catch (e) {}
     return json({ received: true });
@@ -349,7 +378,8 @@ export default {
     if (!allowed.includes(origin)) return json({ error: "forbidden" }, 403);
 
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-    if (limited(ip, url.pathname, url.pathname === "/api/order" ? 8 : 6, 10 * 60 * 1000)) return json({ error: "Please wait a few minutes before sending again." }, 429);
+    const cap = url.pathname === "/api/order" ? 8 : url.pathname === "/api/confirm" ? 30 : 6;
+    if (limited(ip, url.pathname, cap, 10 * 60 * 1000) || await limitedShared(env, ip, url.pathname, cap, 600)) return json({ error: "Please wait a few minutes before sending again." }, 429);
 
     const raw = await request.text();
     if (raw.length > MAX_BODY) return json({ error: "too_large" }, 413);
