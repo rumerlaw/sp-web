@@ -1385,3 +1385,12 @@ html[data-realm="spiritus"] .follow-spina{display:none}
 section#book .wrap{max-width:1400px}
 section#book .bcards{gap:30px}
 @media(min-width:1001px){section#book .wrap{padding-left:40px;padding-right:40px}}
+/* banner shows the WHOLE picture (nothing cut at the top or bottom); the two side buttons sit over the empty ground at its bottom */
+@media(min-width:641px){
+  .hero-copy{position:relative}
+  .hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{height:min(calc(100vh - 78px),50vw);min-height:300px;object-fit:cover;object-position:center 40%}
+  .hero .realms{position:absolute;left:0;right:0;bottom:clamp(14px,3vw,34px);margin:0;padding:0 16px;width:100%;max-width:none;justify-content:center;gap:12px;z-index:2}
+  .hero .realm{flex:0 0 min(230px,42vw);box-shadow:0 10px 26px -12px rgba(0,0,0,.6)}
+}
+@media(min-width:641px){.hero{padding-top:78px}}
+@media(min-width:641px){.hero .realms{bottom:clamp(6px,1.2vw,16px)}.hero .realm{padding:8px 10px}.hero .realm b{font-size:1.25rem}}
