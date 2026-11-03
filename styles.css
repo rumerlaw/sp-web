@@ -1394,3 +1394,5 @@ section#book .bcards{gap:30px}
 }
 @media(min-width:641px){.hero{padding-top:78px}}
 @media(min-width:641px){.hero .realms{bottom:clamp(6px,1.2vw,16px)}.hero .realm{padding:8px 10px}.hero .realm b{font-size:1.25rem}}
+/* less zoom: the banner is never cropped by more than ~8% (it used to crop up to 20% on wide screens) */
+@media(min-width:641px){.hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{height:max(min(calc(100vh - 78px),50vw),46vw);min-height:300px;object-fit:cover;object-position:center 45%}}
