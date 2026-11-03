@@ -357,6 +357,12 @@ const state = { cat: "All", q: "", avail: false, sort: "name" };
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem("sp-cart") || "[]"); } catch (e) {}
 if (document.body.dataset.page === "thanks") { cart = []; try { localStorage.removeItem("sp-cart"); } catch (e) {} }   // payment finished: empty the cart
+// Back from Stripe: let our server confirm the payment with Stripe so the plants stay reserved (the server asks Stripe itself; it does not trust this page).
+if (document.body.dataset.page === "thanks") {
+  const sid = new URLSearchParams(location.search).get("s");
+  if (sid && /^cs_(live|test)_[A-Za-z0-9]+$/.test(sid)) fetch("/api/confirm", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sid }) }).catch(() => {});
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}   // keep the payment reference out of the address bar and history
+}
 
 /* ---------- CSV ---------- */
 function parseCSV(text) {

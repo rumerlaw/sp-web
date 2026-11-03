@@ -85,6 +85,39 @@ async function stripe(env, method, path, params) {
     return { ok: r.ok, status: r.status, data: await r.json().catch(() => ({})) };
   } catch (e) { return { ok: false, status: 0, data: {} }; } finally { clearTimeout(timer); }
 }
+// ---- Orders and stock holds (Cloudflare D1, binding "DB"). If the database isn't connected the shop works exactly as before. ----
+const HOLD_SECS = 31 * 60, PAID_HOLD_SECS = 7 * 24 * 3600;
+const now = () => Math.floor(Date.now() / 1000);
+async function reserveLine(env, orderId, sku, qty, sheetStock) {
+  // One atomic statement: take the units only if enough are left after other people's holds and not-yet-synced paid orders.
+  const t = now();
+  const r = await env.DB.prepare(
+    "INSERT INTO reservations (order_id, sku, qty, sheet_stock, state, expires_at) SELECT ?1, ?2, ?3, ?4, 'hold', ?5 WHERE ?4 - (SELECT COALESCE(SUM(qty), 0) FROM reservations WHERE sku = ?2 AND ((state = 'hold' AND expires_at > ?6) OR (state = 'paid' AND expires_at > ?6 AND sheet_stock <= ?4))) >= ?3"
+  ).bind(orderId, sku, qty, sheetStock, t + HOLD_SECS, t).run();
+  return r.meta && r.meta.changes === 1;
+}
+async function leftFor(env, sku, sheetStock) {
+  const t = now();
+  const row = await env.DB.prepare("SELECT COALESCE(SUM(qty), 0) AS n FROM reservations WHERE sku = ?1 AND ((state = 'hold' AND expires_at > ?2) OR (state = 'paid' AND expires_at > ?2 AND sheet_stock <= ?3))").bind(sku, t, sheetStock).first();
+  return Math.max(0, sheetStock - (row ? row.n : 0));
+}
+async function releaseHold(env, orderId, status) {
+  await env.DB.batch([env.DB.prepare("DELETE FROM reservations WHERE order_id = ?1 AND state = 'hold'").bind(orderId), env.DB.prepare("UPDATE orders SET status = ?2 WHERE id = ?1 AND status = 'pending'").bind(orderId, status)]);
+}
+// A payment is confirmed (by Stripe's signed webhook, or by the thank-you page asking Stripe directly). Safe to run twice.
+async function finalizePaid(env, sess) {
+  if (!env.DB || !sess || sess.payment_status !== "paid") return;
+  const id = clean(sess.metadata && sess.metadata.hold_id, 60); if (!id) return;
+  const t = now(), pi = clean(typeof sess.payment_intent === "string" ? sess.payment_intent : "", 80);
+  const up = await env.DB.prepare("UPDATE orders SET status = 'paid', paid_at = ?2, payment_intent = ?3, stripe_session = COALESCE(stripe_session, ?4) WHERE id = ?1 AND status != 'paid'").bind(id, t, pi, clean(sess.id, 100)).run();
+  if (up.meta && up.meta.changes) {
+    // Keep the plants held until the Dropbox sheet shows the sale (or 7 days). If the 30-minute hold had already lapsed, we still honour the payment.
+    await env.DB.prepare("UPDATE reservations SET state = 'paid', expires_at = ?2 WHERE order_id = ?1").bind(id, t + PAID_HOLD_SECS).run();
+    const o = await env.DB.prepare("SELECT items_json FROM orders WHERE id = ?1").bind(id).first();
+    try { for (const l of JSON.parse((o && o.items_json) || "[]")) if (l.sku && l.sheet_stock != null) await env.DB.prepare("INSERT OR IGNORE INTO reservations (order_id, sku, qty, sheet_stock, state, expires_at) VALUES (?1, ?2, ?3, ?4, 'paid', ?5)").bind(id, l.sku, l.qty, l.sheet_stock, t + PAID_HOLD_SECS).run(); } catch (e) {}
+  }
+  await env.DB.prepare("DELETE FROM reservations WHERE state = 'hold' AND expires_at < ?1").bind(t - 86400).run();   // tidy old holds
+}
 const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 async function verifyStripeSignature(raw, header, secret) {
   const parts = Object.fromEntries(String(header || "").split(",").map((p) => p.trim().split("=")).filter((p) => p.length === 2));
@@ -140,7 +173,7 @@ async function handleOrder(request, env, body) {
     const price = p ? (/sale/i.test(p.status) && Number(p.sale_price) > 0 && Number(p.sale_price) < Number(p.price) ? Number(p.sale_price) : Number(p.price)) : 0;
     if (!p || /sold/i.test(p.status) || stock === 0 || !(price > 0)) return json({ error: `${p ? p.name : "A plant"} isn't available right now. Please refresh the page.` }, 409);
     if (stock !== null && qty > stock) return json({ error: `We only have ${stock} of ${p.name}.` }, 409);
-    lines.push({ name: p.name, qty, sub: price * qty, size: p.ship_size }); total += price * qty;
+    lines.push({ name: p.name, qty, sub: price * qty, size: p.ship_size, sku: id, sheet_stock: stock }); total += price * qty;
   }
   // The pickup event must be one we actually list.
   try {
@@ -177,11 +210,28 @@ async function handleOrder(request, env, body) {
   if (body.pay === "online" || ship) {   // pay now with Stripe: nothing is emailed until the payment succeeds (see the webhook)
     if (!env.STRIPE_SECRET_KEY) return json({ error: "Online payment isn't available yet. Please choose pay at pickup." }, 503);
     const origin = request.headers.get("Origin") || "https://spinanspiritus.com";
+    const holdId = crypto.randomUUID();
+    if (env.DB) {
+      try {
+        const taken = [];
+        for (const l of lines) {
+          if (!l.sku || l.sheet_stock == null) continue;   // candles, books and plants with no stock number are not limited
+          if (!(await reserveLine(env, holdId, l.sku, l.qty, l.sheet_stock))) {
+            await env.DB.prepare("DELETE FROM reservations WHERE order_id = ?1").bind(holdId).run();
+            const left = await leftFor(env, l.sku, l.sheet_stock);
+            return json({ error: left > 0 ? `Only ${left} of ${l.name} left right now. Please lower the quantity.` : `${l.name} was just taken by another customer. It may come back in a few minutes if their payment isn't completed.` }, 409);
+          }
+          taken.push(l.sku);
+        }
+        await env.DB.prepare("INSERT INTO orders (id, status, pay_mode, name, contact, market, ship_to, notes, items_json, total_cents, ship_cents, created_at) VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)")
+          .bind(holdId, ship ? "ship" : "online", name, contact, market, shipTo ? `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}` : "", notes || "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total + shipFee), cents(shipFee), now()).run();
+      } catch (e) { console.error("order record failed:", e && e.message); /* never block a sale because the record failed */ }
+    }
     const items = {}; lines.forEach((l, i) => { items[i] = { quantity: l.qty, price_data: { currency: "usd", unit_amount: cents(l.sub / l.qty), product_data: { name: l.name } } }; });
     if (shipFee > 0) items[lines.length] = { quantity: 1, price_data: { currency: "usd", unit_amount: cents(shipFee), product_data: { name: "Shipping" } } };
     const s = await stripe(env, "POST", "/v1/checkout/sessions", {
       mode: "payment", line_items: items,
-      success_url: origin + "/thanks.html", cancel_url: origin + backPath(body),   // "back" returns to the page they were on
+      success_url: origin + "/thanks.html?s={CHECKOUT_SESSION_ID}", cancel_url: origin + backPath(body),   // "back" returns to the page they were on
       ...(email ? { customer_email: email } : {}),
       expires_at: Math.floor(Date.now() / 1000) + 1800,
       payment_intent_data: {
@@ -190,13 +240,15 @@ async function handleOrder(request, env, body) {
         ...(shipTo ? { shipping: { name, phone: contact.slice(0, 40), address: { line1: shipTo.line1, city: shipTo.city, state: shipTo.state, postal_code: shipTo.zip, country: "US" } } } : {}),
         metadata: { name, contact, market, notes: notes || "-", plants: lines.map((l) => `${l.qty} x ${l.name}`).join(", ").slice(0, 480) },
       },
-      metadata: { name, contact, market, notes: notes || "-", total: money(total + shipFee), ...(shipTo ? { ship_to: `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}`, ship_fee: money(shipFee) } : {}) },
+      metadata: { hold_id: holdId, name, contact, market, notes: notes || "-", total: money(total + shipFee), ...(shipTo ? { ship_to: `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}`, ship_fee: money(shipFee) } : {}) },
     });
     if (!s.ok || !s.data.url) {
       const why = clean(s.data && s.data.error && s.data.error.message || ("Stripe did not answer (status " + s.status + ")"), 200);   // Stripe masks keys in these messages
       console.error("Stripe checkout failed:", s.status, why);
+      if (env.DB) { try { await releaseHold(env, holdId, "failed"); } catch (e) {} }
       return json({ error: "Online payment isn't working right now. Please choose pay at pickup." }, 422);   // 4xx so the page shows this instead of silently falling back
     }
+    if (env.DB) { try { await env.DB.prepare("UPDATE orders SET stripe_session = ?2 WHERE id = ?1").bind(holdId, clean(s.data.id, 100)).run(); } catch (e) {} }
     return json({ ok: true, checkoutUrl: s.data.url });
   }
   const plantsText = lines.map((l) => `${l.qty} x ${l.name} - ${money(l.sub)}`).join("\n");
@@ -233,15 +285,30 @@ async function handleSignup(request, env, body) {
 }
 
 // Stripe tells us (signed) that a payment went through: only then do the order emails go out.
+// The thank-you page asks us to check the payment with Stripe (we never trust the browser's word that it paid).
+async function handleConfirm(request, env, body) {
+  const sid = clean(body && body.sid, 120);
+  if (!/^cs_(live|test)_[A-Za-z0-9]{10,100}$/.test(sid)) return json({ error: "bad_request" }, 400);
+  if (!env.DB) return json({ ok: true });
+  const s = await stripe(env, "GET", `/v1/checkout/sessions/${encodeURIComponent(sid)}`);
+  if (!s.ok) return json({ ok: true });
+  try { await finalizePaid(env, s.data); } catch (e) { console.error("confirm failed:", e && e.message); }
+  return json({ ok: true });
+}
 async function handleStripeWebhook(request, env) {
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY) return json({ error: "unavailable" }, 503);
-  if (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL) return json({ received: true });   // no Resend: Stripe's own receipts and dashboard cover it
   const raw = await request.text();
   if (raw.length > 200000 || !(await verifyStripeSignature(raw, request.headers.get("Stripe-Signature"), env.STRIPE_WEBHOOK_SECRET))) return json({ error: "bad_signature" }, 400);
   let ev; try { ev = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
   const sess = ev && ev.data && ev.data.object;
+  if (ev && ev.type === "checkout.session.expired" && sess && env.DB) {   // the customer never paid: give the plants back
+    try { const id = clean(sess.metadata && sess.metadata.hold_id, 60); if (id) await releaseHold(env, id, "expired"); } catch (e) {}
+    return json({ received: true });
+  }
   if (!ev || ev.type !== "checkout.session.completed" || !sess || sess.payment_status !== "paid") return json({ received: true });
+  try { await finalizePaid(env, sess); } catch (e) { console.error("finalizePaid failed:", e && e.message); return json({ error: "retry" }, 500); }
+  if (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL) return json({ received: true });   // no Resend: Stripe's own receipts and dashboard cover the emails
   const li = await stripe(env, "GET", `/v1/checkout/sessions/${encodeURIComponent(sess.id)}/line_items?limit=100`);
   if (!li.ok) return json({ error: "retry" }, 500);                      // Stripe will try again
   const md = sess.metadata || {};
@@ -274,7 +341,7 @@ export default {
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
     if (url.pathname === "/api/stripe-webhook") return handleStripeWebhook(request, env);
     if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY) });
-    const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : null;
+    const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : url.pathname === "/api/confirm" ? handleConfirm : null;
     if (!route) return json({ error: "not_found" }, 404);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
     const allowed = (env.ALLOWED_ORIGINS ? String(env.ALLOWED_ORIGINS).split(",").map((s) => s.trim()) : DEFAULT_ORIGINS);
@@ -289,7 +356,7 @@ export default {
     let body; try { body = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
     if (!body || typeof body !== "object") return json({ error: "bad_request" }, 400);
     // Online payments only need Stripe (Stripe emails the receipt); everything else sends mail through Resend.
-    const stripeOnly = url.pathname === "/api/order" && (body.pay === "online" || body.pay === "ship") && env.STRIPE_SECRET_KEY;
+    const stripeOnly = (url.pathname === "/api/order" && (body.pay === "online" || body.pay === "ship") && env.STRIPE_SECRET_KEY) || (url.pathname === "/api/confirm" && env.STRIPE_SECRET_KEY);
     if (!stripeOnly && (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL)) return json({ error: "unavailable" }, 503);
     return route(request, env, body);
   },

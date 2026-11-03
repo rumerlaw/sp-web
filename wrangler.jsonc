@@ -10,6 +10,7 @@
     "html_handling": "none",
     "run_worker_first": ["/", "/api/*"]
   },
+  "d1_databases": [{ "binding": "DB", "database_name": "sp-orders", "database_id": "8b5bcbde-5313-4f99-8150-4970ec674c2c" }],
   "vars": {
     "OWNER_EMAIL": "spinanspiritus@gmail.com",
     "FROM_EMAIL": "Spina & Spiritus <orders@spinanspiritus.com>"
