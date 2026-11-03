@@ -1229,3 +1229,30 @@ html[data-realm="spiritus"] .hero{background:#17122a}
 @media(min-width:641px){html[data-realm="spiritus"] .hero{padding-top:78px}}
 /* desktop banner: show the whole picture (it used to be cropped a little at the bottom) */
 @media(min-width:641px){.hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{width:100%;height:auto;max-height:820px;min-height:0;object-fit:contain;aspect-ratio:1774/887}}
+
+/* The book (Spiritus) */
+#book{padding-top:90px;padding-bottom:90px}
+#book .section-head h2{font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:500}
+#book .section-head::after{content:"";display:block;width:64px;height:1px;margin:24px auto 0;background:var(--gold)}
+.book{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:56px;max-width:1000px;margin:3rem auto 0;align-items:start}
+.book-gallery{position:sticky;top:110px}
+.book-main{width:100%;height:auto;display:block;border:1px solid var(--gold);box-shadow:0 24px 50px -26px rgba(0,0,0,.7)}
+.book-thumbs{display:flex;gap:10px;margin-top:12px}
+.book-thumbs button{width:64px;padding:0;border:1px solid var(--line);background:var(--card);cursor:pointer;opacity:.65;transition:.25s}
+.book-thumbs button.on,.book-thumbs button:hover{opacity:1;border-color:var(--gold)}
+.book-thumbs img{width:100%;height:auto;display:block}
+.book-award{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);border:1px solid var(--gold);padding:8px 14px;margin:0 0 18px}
+.book-award span{background:var(--gold);color:#17122a;padding:3px 10px}
+.book-lead{font-size:1.3rem;line-height:1.65;font-weight:500;color:var(--ink);margin:0 0 22px}
+.book-lead b{color:var(--gold)}
+.book-info h3{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;font-family:var(--sans);font-weight:700;color:var(--gold);margin:0 0 12px}
+.book-list{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px}
+.book-list li{font-size:1.1rem;line-height:1.55;font-weight:500;color:var(--ink);padding-left:22px;position:relative}
+.book-list li::before{content:"";position:absolute;left:0;top:.62em;width:9px;height:9px;background:var(--gold);transform:rotate(45deg)}
+.book-list b{color:var(--gold)}
+.book-for{font-size:1.1rem;line-height:1.6;font-weight:500;color:var(--ink);margin:0 0 20px;padding-left:16px;border-left:2px solid var(--gold)}
+.book-for b{color:var(--gold)}
+.book-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+.book-meta span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);border:1px solid var(--line);padding:6px 12px}
+.book-cta .btn{padding:16px 30px;letter-spacing:.24em}
+@media(max-width:820px){.book{grid-template-columns:1fr;gap:30px}.book-gallery{position:static;max-width:300px;margin:0 auto}#book{padding-top:60px;padding-bottom:60px}}

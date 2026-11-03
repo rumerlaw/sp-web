@@ -287,8 +287,8 @@ function renderFaq() {
 }
 
 /* ---------- SECTIONS, LAYOUT & CUSTOM BLOCKS ---------- */
-const SECTION_IDS = ["hero", "spiritus", "spiritBio", "about", "collection", "shop", "events", "faq"];
-const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), spiritBio: $("#spiritBio"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq") })[id];
+const SECTION_IDS = ["hero", "spiritus", "book", "spiritBio", "about", "collection", "shop", "events", "faq"];
+const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), book: $("#book"), spiritBio: $("#spiritBio"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq") })[id];
 function fullOrder() {
   const blocks = SITE.blocks || [], seen = new Set(), out = [];
   const ok = (id) => (SECTION_IDS.includes(id) ? !!builtinEl(id) : blocks.some((b) => b.id === id));
@@ -1096,4 +1096,13 @@ document.addEventListener("click", (e) => {
   try { sessionStorage.setItem("sp-y", "0"); } catch (err) {}
   history.replaceState(null, "", location.pathname + location.search);
   window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// Spiritus side: front / back cover switcher for the book.
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest(".book-thumbs button");
+  if (!b) return;
+  const main = document.getElementById("bookMain"); if (!main) return;
+  main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");
+  document.querySelectorAll(".book-thumbs button").forEach((x) => x.classList.toggle("on", x === b));
 });
