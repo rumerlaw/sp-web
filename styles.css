@@ -1218,3 +1218,12 @@ html{scroll-behavior:smooth}
 @media(max-width:560px){.about-jump{flex-direction:column;padding-top:96px}}
 .about-jump{padding-top:0}
 @media(max-width:560px){.about-jump{padding-top:0}}
+
+/* Spiritus banner: the night-desert picture replaces the cream one */
+.hero-brand-spirit{display:none}
+html[data-realm="spiritus"] .hero-brand{display:none}
+html[data-realm="spiritus"] .hero-brand-spirit{display:block}
+html[data-realm="spiritus"] .hero-brand-spirit picture{display:block}
+html[data-realm="spiritus"] .hero{background:#17122a}
+@media(min-width:641px){html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{width:100%;height:auto;max-height:640px;object-fit:cover;object-position:center top;min-height:0}}
+@media(min-width:641px){html[data-realm="spiritus"] .hero{padding-top:78px}}
