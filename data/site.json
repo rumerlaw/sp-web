@@ -226,6 +226,7 @@
     "collection",
     "shop",
     "events",
+    "reviews",
     "follow",
     "faq"
   ],
@@ -290,5 +291,28 @@
       "name": "A Space Between Breaths",
       "price": 12.99
     }
-  ]
+  ],
+  "reviews": {
+    "spiritus": [
+      {
+        "quote": "This is a must have book for anyone wishing to bring about the changes in their life to manifest what they want, so that their life is more positive and successful.",
+        "who": "Susan Grayson",
+        "what": "Author of Love Your Spiritual Gifts",
+        "about": "The Ultimate Power Within"
+      },
+      {
+        "quote": "I loved the unfolding of the step by step guidance, the history of affirmations, and learning to take accountability for creating my best life.",
+        "who": "Anjanetta \"Angie\" Lewis",
+        "what": "Author of Broken Sword Stuck and Soaked in the Blood",
+        "about": "The Ultimate Power Within"
+      },
+      {
+        "quote": "Don skillfully articulates the influence of thoughts and beliefs on personal development, making a compelling case for the efficacy of affirmations.",
+        "who": "Shawna Sellars",
+        "what": "Author of AstroGod 2024 Planner",
+        "about": "The Ultimate Power Within"
+      }
+    ],
+    "spina": []
+  }
 }

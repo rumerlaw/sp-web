@@ -287,8 +287,8 @@ function renderFaq() {
 }
 
 /* ---------- SECTIONS, LAYOUT & CUSTOM BLOCKS ---------- */
-const SECTION_IDS = ["hero", "spiritus", "book", "spiritBio", "about", "collection", "shop", "events", "faq", "follow"];
-const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), book: $("#book"), spiritBio: $("#spiritBio"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq"), follow: $("#follow") })[id];
+const SECTION_IDS = ["hero", "spiritus", "book", "spiritBio", "about", "collection", "shop", "events", "faq", "follow", "reviews"];
+const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), book: $("#book"), spiritBio: $("#spiritBio"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq"), follow: $("#follow"), reviews: $("#reviews") })[id];
 function fullOrder() {
   const blocks = SITE.blocks || [], seen = new Set(), out = [];
   const ok = (id) => (SECTION_IDS.includes(id) ? !!builtinEl(id) : blocks.some((b) => b.id === id));

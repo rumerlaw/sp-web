@@ -1396,3 +1396,44 @@ section#book .bcards{gap:30px}
 @media(min-width:641px){.hero .realms{bottom:clamp(6px,1.2vw,16px)}.hero .realm{padding:8px 10px}.hero .realm b{font-size:1.25rem}}
 /* less zoom: the banner is never cropped by more than ~8% (it used to crop up to 20% on wide screens) */
 @media(min-width:641px){.hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{height:max(min(calc(100vh - 78px),50vw),46vw);min-height:300px;object-fit:cover;object-position:center 45%}}
+
+/* Reviews row (Spiritus only until Spina has its own quotes) */
+.reviews{padding:80px 0}
+.reviews .wrap{max-width:1200px}
+.reviews h2{text-align:center;font-size:clamp(1.9rem,4vw,2.8rem);font-weight:500;margin:6px 0 34px}
+.reviews .eyebrow{text-align:center}
+.reviews-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.rcard{margin:0;padding:26px 24px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:14px}
+.rcard blockquote{margin:0;font-family:var(--serif);font-size:1.28rem;line-height:1.55;font-style:italic;color:var(--ink)}
+.rcard figcaption{display:flex;flex-direction:column;gap:3px;margin-top:auto;font-size:.82rem}
+.rcard figcaption b{letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.rcard figcaption span,.rcard figcaption em{color:var(--muted);font-style:normal;line-height:1.4}
+.reviews-spirit{display:none}.reviews-spina{display:none}
+html[data-realm="spiritus"] .reviews-spirit{display:grid}
+html:not([data-realm="spiritus"]) .reviews-spina{display:grid}
+html:not([data-realm="spiritus"]) #reviews:not(:has(.reviews-spina)){display:none}
+@media(max-width:900px){.reviews-row{grid-template-columns:1fr}.reviews{padding:56px 0}}
+
+/* ===== One type scale for section headings, labels, prices and buttons (both sides) ===== */
+.section-head h2,.faq h2,.follow h2,.reviews h2,.contact h2,.about h2,#spiritus .section-head h2,#book .section-head h2{font-family:var(--serif);font-size:clamp(2rem,4.2vw,3rem);font-weight:500;line-height:1.12;letter-spacing:.01em}
+.eyebrow{font-size:.74rem;letter-spacing:.32em;text-transform:uppercase;font-weight:600}
+.btn{font-size:.78rem;letter-spacing:.2em;font-weight:600}
+.price,.bcard-price,.book-price b,.qv-price{font-family:var(--serif);font-weight:600}
+.sub,.section-head .sub{font-size:1.08rem;line-height:1.65}
+.section{padding-top:clamp(64px,8vw,110px);padding-bottom:clamp(64px,8vw,110px)}
+
+/* ===== Phone pass: comfortable tap targets, no tiny controls ===== */
+@media(max-width:760px){
+  .burger{min-width:44px;min-height:44px}
+  #cartClose{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .cart-item .rm{min-height:44px;padding:0 6px}
+  .qty button{min-width:44px;min-height:44px}
+  .cart-empty-links a{display:inline-flex;align-items:center;min-height:44px}
+  .bcard-more,.bcard-es a{display:inline-flex;align-items:center;min-height:44px}
+  .scent-btn{min-height:48px}
+  .realm{min-height:56px}
+  .faq-item summary{min-height:56px}
+  .follow .btn,.book-cta .btn,.bcard-foot .btn{min-height:48px}
+  .mobile-menu a{min-height:48px;display:flex;align-items:center}
+  .crumbs a{display:inline-block;min-height:32px;line-height:32px}
+}

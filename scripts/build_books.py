@@ -148,12 +148,28 @@ def cards():
     return "".join(out)
 
 
+def reviews_section(s):
+    """A row of short real quotes (data/site.json -> reviews.spiritus / reviews.spina). A side with no quotes shows nothing."""
+    rv = site.get("reviews") or {}
+    def block(key, extra):
+        items = rv.get(key) or []
+        if not items: return ""
+        cards = "".join(f'<figure class="rcard"><blockquote>&ldquo;{esc(i["quote"])}&rdquo;</blockquote><figcaption><b>{esc(i["who"])}</b><span>{esc(i.get("what", ""))}</span>' + (f'<em>On {esc(i["about"])}</em>' if i.get("about") else "") + '</figcaption></figure>' for i in items)
+        return f'<div class="reviews-row {extra}">{cards}</div>'
+    inner = block("spiritus", "reviews-spirit") + block("spina", "reviews-spina")
+    sec = ('<!-- REVIEWS:START (built by scripts/build_books.py) -->\n<section class="section reviews" id="reviews">\n  <div class="wrap">\n    <p class="eyebrow center">Kind words</p>\n    <h2 class="center">What readers are saying</h2>\n    ' + inner + '\n  </div>\n</section>\n<!-- REVIEWS:END -->\n\n') if inner else ""
+    s = re.sub(r"<!-- REVIEWS:START.*?<!-- REVIEWS:END -->\s*", "", s, flags=re.S)
+    if sec: s = s.replace("<!-- FOLLOW -->", sec + "<!-- FOLLOW -->", 1)
+    return s
+
+
 def main():
     (ROOT / "books").mkdir(exist_ok=True)
     for b in books:
         (ROOT / "books" / f"{b['slug']}.html").write_text(page(b), encoding="utf-8")
     idx = ROOT / "index.html"
     s = idx.read_text(encoding="utf-8")
+    s = reviews_section(s)
     sec = f'''<section class="section spirit-only" id="book">
   <!-- BOOKS:START (built by scripts/build_books.py from data/books.json) -->
   <div class="wrap">
