@@ -157,7 +157,7 @@ def reviews_section(s):
         cards = "".join(f'<figure class="rcard"><blockquote>&ldquo;{esc(i["quote"])}&rdquo;</blockquote><figcaption><b>{esc(i["who"])}</b><span>{esc(i.get("what", ""))}</span>' + (f'<em>On {esc(i["about"])}</em>' if i.get("about") else "") + '</figcaption></figure>' for i in items)
         return f'<div class="reviews-row {extra}">{cards}</div>'
     inner = block("spiritus", "reviews-spirit") + block("spina", "reviews-spina")
-    sec = ('<!-- REVIEWS:START (built by scripts/build_books.py) -->\n<section class="section reviews" id="reviews">\n  <div class="wrap">\n    <p class="eyebrow center">Kind words</p>\n    <h2 class="center">What readers are saying</h2>\n    ' + inner + '\n  </div>\n</section>\n<!-- REVIEWS:END -->\n\n') if inner else ""
+    sec = ('<!-- REVIEWS:START (built by scripts/build_books.py) -->\n<section class="section reviews" id="reviews">\n  <div class="wrap">\n    \n    <h2 class="center">What readers are saying</h2>\n    ' + inner + '\n  </div>\n</section>\n<!-- REVIEWS:END -->\n\n') if inner else ""
     s = re.sub(r"<!-- REVIEWS:START.*?<!-- REVIEWS:END -->\s*", "", s, flags=re.S)
     if sec: s = s.replace("<!-- FOLLOW -->", sec + "<!-- FOLLOW -->", 1)
     return s
@@ -173,7 +173,7 @@ def main():
     sec = f'''<section class="section spirit-only" id="book">
   <!-- BOOKS:START (built by scripts/build_books.py from data/books.json) -->
   <div class="wrap">
-    <div class="section-head center"><p class="eyebrow">The books</p><h2>Books by Don Rumer-Rivera</h2><p class="sub">Mediumship, affirmations, mindfulness and a paranormal mystery</p></div>
+    <div class="section-head center"><h2>Books by Don Rumer-Rivera</h2><p class="sub">Mediumship, affirmations, mindfulness and a paranormal mystery</p></div>
     <div class="bcards">{cards()}
     </div>
   </div>
