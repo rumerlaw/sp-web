@@ -273,6 +273,11 @@
       "id": "book-power",
       "name": "The Ultimate Power Within",
       "price": 19.95
+    },
+    {
+      "id": "book-silence",
+      "name": "A Silence Too Loud: Whispers at the Jerome Grand",
+      "price": 13.99
     }
   ]
 }
