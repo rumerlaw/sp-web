@@ -941,7 +941,7 @@ function renderPlantPage() {
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
           <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : `<span data-path="text.addToCart">${esc(addLabel())}</span>`}</button>
         </div>
-        <p class="buy-note"><span>Pick it up at an event (free) or have it shipped</span><span>Secure checkout</span></p>        </div>
+        <p class="buy-note"><span>Pick it up at an event (free) or have it shipped bare-root, no pot</span><span>Secure checkout</span></p>        </div>
         <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${p.origKey}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
         <dl class="specs">
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
@@ -949,6 +949,7 @@ function renderPlantPage() {
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
           ${((SITE.care || {}).genus || {})[p.genus] ? `<div><dt>Care</dt><dd>${esc(SITE.care.genus[p.genus])}</dd></div>` : ""}
           <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
+          <div><dt>Shipping</dt><dd>Shipped plants arrive bare-root, with no pot.</dd></div>
         </dl>
 
       </div>
@@ -1172,6 +1173,7 @@ function renderCheckoutHelp() {
   if (!m.n) parts.push("");
   else if (shipping) {
     parts.push("You'll pay on Stripe's secure page with any major card, Apple Pay or Google Pay. We never see your card details.");
+    if (m.plants) parts.push("Plants ship bare-root (no pot).");
     if (m.candles && !m.plants && !m.books) parts.push("Candles ship free.");
     else if (m.books) parts.push("Books ship for one flat fee per order.");
     parts.push("We ship across the US except California and Hawaii. We'll message you when your order ships.");

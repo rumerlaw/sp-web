@@ -1558,3 +1558,16 @@ html[data-realm="spiritus"] .legal-sec a{color:var(--gold)}
 .rv.rv-in{opacity:1;transform:none}
 .bcard.rv:nth-child(2){transition-delay:.08s}.bcard.rv:nth-child(3){transition-delay:.16s}.bcard.rv:nth-child(4){transition-delay:.24s}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ===== Spiritus: gold used sparingly (prices, buttons, small labels) instead of on every border ===== */
+html[data-realm="spiritus"] .bcard,html[data-realm="spiritus"] .rcard,html[data-realm="spiritus"] #book .book,html[data-realm="spiritus"] #spiritus .readings,html[data-realm="spiritus"] .review{border-color:var(--line)}
+html[data-realm="spiritus"] #book .book::before,html[data-realm="spiritus"] #book .book::after{display:none}
+html[data-realm="spiritus"] .bcard-cover img,html[data-realm="spiritus"] .book-main,html[data-realm="spiritus"] #spiritus .candle-main,html[data-realm="spiritus"] .don-photo{border-color:var(--line)}
+html[data-realm="spiritus"] .bcard:hover{border-color:rgba(216,184,104,.6)}
+html[data-realm="spiritus"] .bcard-chip{border-color:var(--line)}
+html[data-realm="spiritus"] .book-award{border-color:var(--line)}
+html[data-realm="spiritus"] .book-price,html[data-realm="spiritus"] #book .book-price{border-color:var(--line)}
+html[data-realm="spiritus"] .nav,html[data-realm="spiritus"] .footer{border-color:var(--line)}
+html[data-realm="spiritus"] .book-for,html[data-realm="spiritus"] .book-quote,html[data-realm="spiritus"] #book .book-quote,html[data-realm="spiritus"] #book .book-for{border-left-color:rgba(216,184,104,.55)}
+html[data-realm="spiritus"] .bcard-foot .bcard-more{border-color:var(--line);color:var(--ink)}
+html[data-realm="spiritus"] .candle-scent{border-left-color:rgba(216,184,104,.55)}

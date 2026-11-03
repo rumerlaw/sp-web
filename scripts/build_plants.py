@@ -131,12 +131,12 @@ def build_page(shell, p, today):
     specs.append("<div><dt>Availability</dt><dd>In stock" + (f" — {p['stock']} available" if p["stock"] is not None else "") + "</dd></div>")
     care = ((json.loads((ROOT / "data/site.json").read_text(encoding="utf-8")).get("care") or {}).get("genus") or {}).get(genus, "")
     if care: specs.append(f"<div><dt>Care</dt><dd>{esc(care)}</dd></div>")
-    specs.append("<div><dt>Pickup</dt><dd>Pick up at Arizona farmers market events (Phoenix, AZ), or pay online and have it shipped (US except CA and HI).</dd></div>")
+    specs.append("<div><dt>Pickup</dt><dd>Pick up at Arizona farmers market events (Phoenix, AZ), or pay online and have it shipped (US except CA and HI). Shipped plants arrive bare-root, with no pot.</dd></div>")
     body = (f'<div class="wrap-wide"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <a href="shop.html">Shop</a> › <span>{esc(name)}</span></nav>'
             f'<div class="plant-grid"><div class="plant-media"><div class="plant-main">{img_html}</div></div>'
             f'<div class="plant-info"><h1 class="plant-title">{esc(name)}</h1>'
             + (f'<p class="plant-price">${price:g}</p>' if price > 0 else "")
-            + '<p class="buy-note static"><span>Pick it up at an event (free) or have it shipped</span><span>Secure checkout</span></p>'
+            + '<p class="buy-note static"><span>Pick it up at an event (free) or have it shipped bare-root, no pot</span><span>Secure checkout</span></p>'
             + f'<p class="plant-desc">{esc(base_desc)}</p><dl class="specs">{"".join(specs)}</dl>'
             f'<p><a class="btn" href="shop.html">Reserve at checkout — browse the shop</a></p></div></div></div>')
 

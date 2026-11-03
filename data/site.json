@@ -89,7 +89,11 @@
     },
     {
       "q": "Do you ship?",
-      "a": "Yes, anywhere in the US except California and Hawaii, when you choose **Ship to me** and pay online. **Plants** ship for a flat fee by size: $10 small, $15 medium, $20 large, plus $5 for each extra plant in the same box. **Candles** ship free. **Books** can be picked up at an event, and shipping for books is coming soon. Pickup at an event is always free. See [Upcoming events](index.html#events) for where we'll be."
+      "a": "Yes, anywhere in the US except California and Hawaii, when you choose **Ship to me** and pay online. **Plants** ship bare-root (no pot) for a flat fee by size: $10 small, $15 medium, $20 large, plus $5 for each extra plant in the same box. **Candles** ship free. **Books** can be picked up at an event, and shipping for books is coming soon. Pickup at an event is always free. See [Upcoming events](index.html#events) for where we'll be."
+    },
+    {
+      "q": "How do shipped plants arrive?",
+      "a": "Every plant we ship is **bare-root: no pot**. Our photos often show plants in pots for display. When your plant arrives, pot it in dry, gritty cactus mix and wait about a week before the first watering so the roots can settle. Plants picked up at an event are handed to you in person."
     },
     {
       "q": "Where can I find you?",
