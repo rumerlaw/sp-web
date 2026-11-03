@@ -287,8 +287,8 @@ function renderFaq() {
 }
 
 /* ---------- SECTIONS, LAYOUT & CUSTOM BLOCKS ---------- */
-const SECTION_IDS = ["hero", "spiritus", "book", "spiritBio", "about", "collection", "shop", "events", "faq"];
-const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), book: $("#book"), spiritBio: $("#spiritBio"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq") })[id];
+const SECTION_IDS = ["hero", "spiritus", "book", "spiritBio", "about", "collection", "shop", "events", "faq", "follow"];
+const builtinEl = (id) => ({ hero: document.querySelector(".hero"), spiritus: $("#spiritus"), book: $("#book"), spiritBio: $("#spiritBio"), about: $("#about"), collection: $("#collection"), shop: $("#shop"), events: $("#events"), faq: $("#faq"), follow: $("#follow") })[id];
 function fullOrder() {
   const blocks = SITE.blocks || [], seen = new Set(), out = [];
   const ok = (id) => (SECTION_IDS.includes(id) ? !!builtinEl(id) : blocks.some((b) => b.id === id));
@@ -537,7 +537,7 @@ function renderCart() {
         <h5>${esc(c.p.name)}</h5><span>${money(now(c.p) * c.qty)}</span>
         <div class="qty"><button data-dec="${esc(c.id)}">−</button>${c.qty}<button data-inc="${esc(c.id)}">+</button></div>
         <button class="rm" data-rm="${esc(c.id)}">Remove</button></div>`).join("")
-    : `<p class="cart-empty">Your selection is empty.</p>`;
+    : `<div class="cart-empty"><p>Your selection is empty.</p><p class="cart-empty-links"><a href="shop.html">Browse the plants</a><a href="index.html?realm=spiritus#spiritus">Candles &amp; books</a></p></div>`;
   updateTotal(items);
   renderMarketSelect();
   $("#checkout").disabled = !items.length;
@@ -575,16 +575,16 @@ function showOrderDone(d) {
   if (!box) { box = document.createElement("div"); box.id = "orderDone"; box.className = "order-done"; box.setAttribute("role", "status"); cartEl.appendChild(box); }
   const where = String(d.market || "").split(" — ");
   box.innerHTML = `<div class="od-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <h3>Reservation received</h3>
-    <p class="od-lead">Thank you, ${esc(d.name)}! We'll bring your plants to the event below and message you at <b>${esc(d.contact)}</b> to confirm.</p>
+    <h3>Order received</h3>
+    <p class="od-lead">Thank you, ${esc(d.name)}! We'll have your order ready at the event below and message you at <b>${esc(d.contact)}</b> to confirm.</p>
     <div class="od-card">
-      <p class="od-label">Your plants</p>
+      <p class="od-label">Your order</p>
       <ul>${d.items.map((i) => `<li><span>${esc(i.qty)} × ${esc(i.name)}</span><span>${money(i.price)}</span></li>`).join("")}</ul>
       <p class="od-total"><span>Total (pay in person at pickup)</span><b>${esc(d.total)}</b></p>
       <p class="od-label">Pickup</p>
       <p class="od-event">${esc(where[0])}${where[1] ? `<br><span>${esc(where.slice(1).join(" — "))}</span>` : ""}</p>
     </div>
-    <p class="od-fine">No payment is taken online. If something changes we'll message you.</p>
+    <p class="od-fine">Nothing was charged. You pay in person at pickup. If anything changes we'll message you.</p>
     <button type="button" class="btn full" id="orderDoneClose">Continue shopping</button>`;
   box.hidden = false; box.scrollTop = 0;
   const btn = $("#orderDoneClose"); btn.onclick = () => toggleCart(false); btn.focus();
@@ -635,13 +635,14 @@ function updateTotal(items) {
   const t = $("#cartTotal"); if (!t) return;
   t.textContent = money(sub + (ship ? shipFee() : 0));
   const l = $("#totalLabel"); if (l) l.textContent = ship ? "Total with shipping" : "Total (pay at pickup)";
+  renderCheckoutHelp();
   const n = $("#shipNote"); if (n) n.textContent = sub > 0 ? (shipFee() > 0 ? `pay online, shipping ${money(shipFee())}` : "pay online, free shipping") : "pay online, shipping added at checkout";
 }
 function applyPayMode() {
   const mode = payMode(), ship = mode === "ship";
   const sf = $("#shipFields"); if (sf) sf.hidden = !ship;
   const ms = $("#marketSelect"); if (ms) { ms.closest("label").hidden = ship; const pk = $("#marketPicked"); if (pk) pk.hidden = ship || !ms.value; }
-  const b = $("#checkout"); if (b) b.textContent = mode === "pickup" ? "Check out" : "Pay online";
+  const b = $("#checkout"); if (b) b.textContent = mode === "pickup" ? "Reserve for pickup" : "Continue to secure payment";
   updateTotal();
 }
 function setupShipping() {
@@ -1130,3 +1131,43 @@ function fillBookPrices() {
   });
 }
 siteReady.then(fillBookPrices);
+
+// ---- Checkout help: breakdown, plain-language notes, and no surprises ----
+function cartMix() { const L = cartLines(); return { plants: L.some((l) => !l.p.isCandle && !l.p.isBook), candles: L.some((l) => l.p.isCandle), books: L.some((l) => l.p.isBook), n: L.length }; }
+function renderCheckoutHelp() {
+  const form = $("#orderForm"); if (!form) return;
+  const m = cartMix(), mode = payMode(), shipping = mode === "ship" && shipCfg(), sub = cartSub();
+  // 1) the legend says what the choice is really about
+  const lg = $("#payChoice legend"); if (lg && lg.textContent !== "How would you like to get your order?") lg.textContent = "How would you like to get your order?";
+  // 2) books can't ship until a flat fee is set: say so, and keep that choice from being picked
+  const radio = document.querySelector('input[name="pay"][value="ship"]'), needFee = booksNeedFee();
+  if (radio) { radio.disabled = needFee; const opt = radio.closest("label"); if (opt) opt.classList.toggle("is-off", needFee); }
+  if (needFee && mode === "ship") { const p = document.querySelector('input[name="pay"][value="pickup"]'); if (p) { p.checked = true; applyPayMode(); return; } }
+  // 3) price breakdown
+  let box = $("#cartLines");
+  if (!box) { box = document.createElement("div"); box.id = "cartLines"; box.className = "cart-lines"; const tot = form.querySelector(".cart-total"); if (tot) tot.before(box); }
+  if (!m.n) { box.innerHTML = ""; } else {
+    const fee = shipping ? shipFee() : 0;
+    box.innerHTML = `<div><span>Subtotal</span><span>${money(sub)}</span></div>` +
+      (shipping ? `<div><span>Shipping</span><span>${fee > 0 ? money(fee) : "Free"}</span></div>` : `<div><span>Pickup</span><span>Free</span></div>`);
+  }
+  // 4) one clear note about what happens next
+  let note = $("#cartNote");
+  if (!note) { note = document.createElement("p"); note.id = "cartNote"; note.className = "cart-note"; const msg = $("#formMsg"); if (msg) msg.before(note); }
+  const parts = [];
+  if (!m.n) parts.push("");
+  else if (shipping) {
+    parts.push("You'll pay on Stripe's secure page with any major card, Apple Pay or Google Pay. We never see your card details.");
+    if (m.candles && !m.plants && !m.books) parts.push("Candles ship free.");
+    else if (m.books) parts.push("Books ship for one flat fee per order.");
+    parts.push("We ship across the US except California and Hawaii. We'll message you when your order ships.");
+  } else {
+    parts.push("Nothing is charged now. You pay in person at the event (cash or card), and we'll message you to confirm.");
+    if (needFee) parts.push("Books can be picked up at an event for now. Shipping for books is coming soon.");
+    else if (document.querySelector('input[name="pay"][value="ship"]') && !(radio && radio.closest("label").hidden)) parts.push("Prefer it delivered? Choose Ship to me above.");
+  }
+  note.textContent = parts.join(" "); note.hidden = !m.n;
+  // 5) the fine print matches the cart (no plant talk for a candle-only order)
+  const fine = form.querySelector(".fine");
+  if (fine) fine.textContent = (shipping ? "We'll pack your order and message you when it ships. " : (m.plants ? "We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm. " : "We'll message you to confirm. ")) + "We only use your details to arrange your order.";
+}

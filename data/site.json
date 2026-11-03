@@ -85,20 +85,20 @@
       "a": "Every plant has a two-part Latin name, like *Opuntia microdasys*. The first word is the **genus**: a group of closely related plants, like a family name. The second word is the **species**, the specific plant, like a first name. So *Opuntia* is the genus of all prickly pears, and *microdasys* is the bunny ears cactus."
     },
     {
-      "q": "How do reservations work?",
-      "a": "We can't bring every plant to every event, so browse the whole shop, reserve what you want, and choose the event you'll attend. We bring your plants there and message you to confirm. You pay in person when you pick them up."
+      "q": "How do orders work?",
+      "a": "Browse the shop and add what you want to your cart, then choose how you'd like to get it. **Pick up at an event**: you reserve online, we message you to confirm, and you pay in person. **Ship to me**: you pay online on Stripe's secure page. Plants are picked up at plant events, candles and books at spirit-side events, and an order with both at events both sides attend. We can't bring every plant to every event, so your reservation tells us what to pack."
     },
     {
       "q": "Do you ship?",
-      "a": "Yes! Choose “Ship to me” and pay online. Shipping is $10 for a small plant, $15 for a medium plant and $20 for a large plant, plus $5 for each extra plant in the same box. We ship across the US except California and Hawaii. You can still reserve plants and pick them up in person at our Arizona events for free. Check the [Upcoming events](index.html#events) section for where we'll be."
+      "a": "Yes, anywhere in the US except California and Hawaii, when you choose **Ship to me** and pay online. **Plants** ship for a flat fee by size: $10 small, $15 medium, $20 large, plus $5 for each extra plant in the same box. **Candles** ship free. **Books** can be picked up at an event, and shipping for books is coming soon. Pickup at an event is always free. See [Upcoming events](index.html#events) for where we'll be."
     },
     {
       "q": "Where can I find you?",
-      "a": "Every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, [3502 E Cactus Rd, Phoenix, AZ 85032](https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032) (opens a map). For other locations we update the site and post on social media a couple of days before."
+      "a": "**Spina (plants):** every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, [3502 E Cactus Rd, Phoenix, AZ 85032](https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032) (opens a map). Some events are for both sides and are tagged **Spina + Spiritus** in [Upcoming events](index.html#events). For other locations we update the site and post on social media a couple of days before."
     },
     {
       "q": "How do I pay?",
-      "a": "You pay when you pick up your plants at the event. There are no online payments."
+      "a": "Two ways. **Pick up at an event** and pay in person with cash or card. Or choose **Ship to me** and pay online by card, Apple Pay or Google Pay on Stripe's secure page. We never see your card details."
     },
     {
       "q": "How often should I water my cactus?",
@@ -106,7 +106,7 @@
     },
     {
       "q": "What if a plant is sold out?",
-      "a": "Sold out plants are taken off the shop until we have more. Join the email list at the bottom of the page and we'll send you a weekly update whenever we update the inventory."
+      "a": "Sold out plants are taken off the shop until we have more. Join the email list at the bottom of the page and we'll send you a weekly update with new plants, candles and events."
     },
     {
       "q": "Can I reserve more than one of a plant?",
@@ -118,23 +118,23 @@
     },
     {
       "q": "Who do I contact with questions?",
-      "a": "Message [@azcactusdoctor](https://instagram.com/azcactusdoctor) or ask us at the market."
+      "a": "Email [spinanspiritus@gmail.com](mailto:spinanspiritus@gmail.com). For plants, message [@azcactusdoctor](https://instagram.com/azcactusdoctor). For readings, candles and books, message [@sonoranmystictarot](https://instagram.com/sonoranmystictarot). At events, just ask us."
     },
     {
-      "q": "Who is AzCactusDoctor, and what is Spina & Spiritus?",
-      "a": "**Spina & Spiritus** (also written Spina and Spiritus, spinaandspiritus or spinanspiritus) is the plant shop of **AzCactusDoctor**, also known as AZ Cactus Doctor: rare cacti, succulents, euphorbia, agave and caudex plants grown in Arizona and sold at Phoenix farmers markets and events. Follow [@azcactusdoctor](https://instagram.com/azcactusdoctor) on Instagram."
+      "q": "What is Spina & Spiritus?",
+      "a": "**Spina & Spiritus** (also written Spina and Spiritus, spinaandspiritus or spinanspiritus) is one shop with two sides. **Spina** is the plant side, run by **AzCactusDoctor** (Ed, also known as AZ Cactus Doctor): rare cacti, succulents, euphorbia, agave and caudex plants grown in Arizona. **Spiritus** is the spirit side, **Sonoran Mystic Tarot** (Don): intention candles, books and tarot readings. One site, one cart, one checkout."
     },
     {
       "q": "How much are the candles, and do they ship?",
       "a": "Our Sonoran Mystic Tarot intention candles are $20 each in six scents (Essence, Awakening, Abundance, Meditation, Frankincense and Passion). Candle shipping is free anywhere we ship, and you can also pick them up at an event."
     },
     {
-      "q": "How do I book a tarot reading?",
-      "a": "Readings are with Don of Sonoran Mystic Tarot. [Book a reading](https://sonoranmystictarot.com/#book-personal-tarot-readings) online and pick a time that works for you."
+      "q": "What books do you sell?",
+      "a": "Books by Don Rumer-Rivera on the Spiritus side: *The Mediums: A Guidebook* (English and Spanish editions), *The Ultimate Power Within*, *A Silence Too Loud* and *A Space Between Breaths*. You can see every title and price in the Books section. Pick them up at an event; shipping for books is coming soon."
     },
     {
-      "q": "Who is Spina and who is Spiritus?",
-      "a": "**Spina** is the plant side, run by AzCactusDoctor (Ed): rare cacti and succulents grown in Arizona. **Spiritus** is the spirit side, Sonoran Mystic Tarot (Don): candles, tarot and readings. One site, one cart, one checkout."
+      "q": "How do I book a tarot reading?",
+      "a": "Readings are with Don of Sonoran Mystic Tarot. [Book a reading](https://sonoranmystictarot.com/#book-personal-tarot-readings) online and pick a time that works for you."
     }
   ],
   "collection": [
@@ -226,7 +226,8 @@
     "collection",
     "shop",
     "events",
-    "faq"
+    "faq",
+    "follow"
   ],
   "shipping": {
     "enabled": true,

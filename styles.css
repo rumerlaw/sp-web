@@ -1315,3 +1315,25 @@ html[data-realm="spiritus"] .hero{background:#17122a}
   .hero .realms{padding:16px 16px 20px}
   .hero .realm{padding:10px 10px}
 }
+
+/* checkout help */
+.cart-lines{display:grid;gap:6px;padding:6px 0 4px;font-size:.95rem;color:var(--muted)}
+.cart-lines>div{display:flex;justify-content:space-between}
+.cart-lines:empty{display:none}
+.cart-note{font-size:.92rem;line-height:1.55;color:var(--ink);background:rgba(120,120,120,.08);border-left:3px solid var(--gold);padding:10px 12px;margin:2px 0 4px}
+.cart-note[hidden]{display:none}
+.pay-opt.is-off{opacity:.45;cursor:not-allowed}
+.cart-empty p{margin:0 0 10px}
+.cart-empty-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.cart-empty-links a{text-decoration:underline;text-underline-offset:4px;font-weight:600}
+
+/* Follow along */
+.follow{padding:80px 0;text-align:center}
+.follow h2{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:500;margin:6px 0 10px}
+.follow .sub{max-width:46ch;margin:0 auto 22px}
+.follow .btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.follow-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.follow-spirit{display:none}
+html[data-realm="spiritus"] .follow-spirit{display:block}
+html[data-realm="spiritus"] .follow-spina{display:none}
+.follow .ig{margin-right:2px}
