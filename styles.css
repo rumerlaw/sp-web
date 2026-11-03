@@ -1334,9 +1334,7 @@ html[data-realm="spiritus"] .hero{background:#17122a}
 .follow .btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 .follow-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .follow-spirit{display:none}
-html[data-realm="spiritus"] .follow-spirit{display:block}
-html[data-realm="spiritus"] .follow-spina{display:none}
-.follow .ig{margin-right:2px}
+html[data-realm="spiritus"] .follow .ig{margin-right:2px}
 /* Checkout drawer: ONE scroll for the whole drawer (the item list used to stay pinned at the top and cover the form) */
 .cart{overflow-y:auto;overflow-x:hidden}
 .cart-head{position:sticky;top:0;z-index:3;background:var(--bg);flex:none}
@@ -1376,5 +1374,9 @@ html[data-realm="spiritus"] .cart-head{background:#1f1838}
 .book-back{text-align:center;margin-top:60px}
 @media(max-width:820px){.bookpage{padding-top:96px}}
 
-.follow-spirit{display:block}
+
+/* each side has its own person to follow */
+.follow-spirit{display:none}
+.follow-spina{display:block}
+html[data-realm="spiritus"] .follow-spirit{display:block}
 html[data-realm="spiritus"] .follow-spina{display:none}
