@@ -1271,3 +1271,39 @@ html[data-realm="spiritus"] .hero{background:#17122a}
 .book-price span{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted)}
 .book-cta{display:flex;flex-wrap:wrap;gap:12px}
 .book-cta .btn{cursor:pointer}
+
+/* ===== Banner fills the whole screen on computers (no side or bottom gaps) ===== */
+@media(min-width:641px){
+  .hero{padding-bottom:0}
+  .hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{width:100%;height:calc(100vh - 78px);min-height:460px;max-height:none;object-fit:cover;object-position:center bottom;aspect-ratio:auto}
+  .hero .realms{margin:0 auto;padding:28px 16px 36px}
+}
+
+/* ===== Books: premium finish ===== */
+#book{padding-top:120px;padding-bottom:120px}
+#book .section-head h2{font-size:clamp(2.4rem,5vw,3.8rem);letter-spacing:.03em}
+#book .section-head .eyebrow{letter-spacing:.4em}
+#book .book{padding:48px;border:1px solid rgba(216,184,104,.45);position:relative;margin-top:3.4rem;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0))}
+#book .book::before,#book .book::after{content:"";position:absolute;width:26px;height:26px;border:1px solid var(--gold)}
+#book .book::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+#book .book::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+#book .book+.book{margin-top:70px;padding-top:48px;border-top:1px solid rgba(216,184,104,.45)}
+#book .book-main{box-shadow:0 34px 60px -30px rgba(0,0,0,.8)}
+#book .book-title{font-size:clamp(2rem,3.6vw,2.9rem);letter-spacing:.01em;margin-bottom:8px}
+#book .book-by{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:24px}
+#book .book-award{border-color:rgba(216,184,104,.6);font-size:.72rem;letter-spacing:.2em;padding:10px 16px;margin-bottom:26px}
+#book .book-lead{font-family:var(--serif);font-size:1.5rem;line-height:1.55;font-weight:500;margin-bottom:28px}
+#book .book-price{border-top:1px solid rgba(216,184,104,.4);border-bottom:1px solid rgba(216,184,104,.4);padding:18px 0;margin-bottom:28px}
+#book .book-price b{font-size:2.8rem;letter-spacing:.02em}
+#book .book-price span{font-size:.7rem;letter-spacing:.24em}
+#book .book-info h4{letter-spacing:.34em;font-size:.72rem;display:flex;align-items:center;gap:14px}
+#book .book-info h4::after{content:"";flex:1;height:1px;background:var(--line)}
+#book .book-list{gap:13px;margin-bottom:28px}
+#book .book-list li{font-size:1.12rem;line-height:1.6}
+#book .book-quote{font-size:1.3rem;line-height:1.6;border-left:1px solid var(--gold);padding-left:20px}
+#book .book-for{border-left:1px solid var(--gold);padding-left:20px;font-size:1.12rem}
+#book .book-meta span{border-color:rgba(216,184,104,.35);letter-spacing:.2em;font-size:.68rem;padding:7px 13px}
+#book .book-cta{display:block}
+#book .book-cta .btn{display:block;width:100%;padding:20px 24px;letter-spacing:.34em;font-size:.8rem;transition:transform .3s,filter .3s}
+#book .book-cta .btn:hover{transform:translateY(-2px);filter:brightness(1.07)}
+@media(max-width:820px){#book{padding-top:70px;padding-bottom:70px}#book .book{padding:22px 18px}#book .book+.book{padding-top:22px;margin-top:44px}#book .book-lead{font-size:1.3rem}}
