@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@600;700&display=swap" rel="stylesheet" media="(max-width:760px)">
 <script src="early.js?v=3f3c5898"></script>
-<link rel="stylesheet" href="styles.css?v=50c04ba7">
+<link rel="stylesheet" href="styles.css?v=23b11ce3">
 </head>
 <body>
 <a class="skip" href="#shop">Skip to the shop</a>
@@ -45,7 +45,7 @@
     <a class="nl" href="about.html" data-path="text.navAbout" data-href-path="links.navAbout">About</a>
     <a class="nl" href="index.html#collection" data-path="text.navCollection" data-href-path="links.navCollection">Collection</a>
     <a href="index.html" class="brand" aria-label="Spina &amp; Spiritus, AZ Cactus Doctor — home">
-      <img class="brand-mark" src="assets/brand/spina-wordmark.png" width="833" height="272" alt="Spina &amp; Spiritus">
+      <img class="brand-mark" src="assets/brand/spina-wordmark.png" width="833" height="272" alt="Spina &amp; Spiritus" loading="lazy" decoding="async">
     </a>
     <a class="nl" href="shop.html" data-path="text.navShop" data-href-path="links.navShop">Shop</a>
     <a class="nl" href="index.html#contact" data-path="text.navContact" data-href-path="links.navContact">Contact</a>
@@ -70,7 +70,7 @@
 <section class="hero">
   <div class="hero-copy">
     <h1 class="hero-brand"><picture><source media="(max-width:640px)" srcset="assets/brand/hero-mobile.webp" width="1122" height="840"><img class="hero-spina" data-img="images.heroBrand" data-img-key="images.heroBrand" src="assets/brand/hero.webp" width="1774" height="887" alt="Spina &amp; Spiritus (Spina and Spiritus) by AzCactusDoctor — cacti, succulents and rare desert plants from Phoenix, Arizona" fetchpriority="high"></picture></h1>
-    <div class="hero-brand-spirit"><picture><source media="(max-width:640px)" srcset="assets/brand/hero-spiritus-mobile.webp" width="1448" height="1086"><img class="hero-spina" src="assets/brand/hero-spiritus.webp" width="1774" height="887" alt="Spina &amp; Spiritus: plants, metaphysical, spirits. A desert night sky with cacti, tarot cards and crystals."></picture></div>
+    <div class="hero-brand-spirit"><picture><source media="(max-width:640px)" srcset="assets/brand/hero-spiritus-mobile.webp" width="1448" height="1086"><img class="hero-spina" src="assets/brand/hero-spiritus.webp" width="1774" height="887" alt="Spina &amp; Spiritus: plants, metaphysical, spirits. A desert night sky with cacti, tarot cards and crystals." loading="lazy" decoding="async"></picture></div>
     <div class="spirit-hero">
       <p class="spirit-kicker">Metaphysical &middot; Candles &middot; Tarot</p>
       <h2>Spiritus</h2>
@@ -89,11 +89,11 @@
     <div class="section-head center"><h2>Intention Candles</h2><p class="sub">Hand-poured by Sonoran Mystic Tarot. Six scents, each made for a different intention.</p></div>
     <div class="candle">
       <div class="candle-gallery">
-        <img class="candle-main" id="candleMain" src="assets/spiritus/candle-table.webp" width="1400" height="1043" alt="Black Sonoran Mystic Tarot candle with a lit flame and a bamboo lid resting beside it">
+        <img class="candle-main" id="candleMain" src="assets/spiritus/candle-table.webp" width="1400" height="1043" alt="Black Sonoran Mystic Tarot candle with a lit flame and a bamboo lid resting beside it" loading="lazy" decoding="async">
         <div class="candle-thumbs" role="group" aria-label="More candle photos">
-          <button type="button" class="on" data-src="assets/spiritus/candle-table.webp" data-alt="Black Sonoran Mystic Tarot candle with a lit flame and a bamboo lid resting beside it" aria-label="Show photo 1"><img src="assets/spiritus/candle-table-thumb.webp" width="700" height="522" alt=""></button>
-          <button type="button" data-src="assets/spiritus/candle-flowers.webp" data-alt="Sonoran Mystic Tarot candle with dried flower petals on top, next to fresh chamomile" aria-label="Show photo 2"><img src="assets/spiritus/candle-flowers-thumb.webp" width="700" height="433" alt=""></button>
-          <button type="button" data-src="assets/spiritus/candle-trio.webp" data-alt="Three black Sonoran Mystic Tarot candles with bamboo lids, burning in the smoke" aria-label="Show photo 3"><img src="assets/spiritus/candle-trio-thumb.webp" width="466" height="700" alt=""></button>
+          <button type="button" class="on" data-src="assets/spiritus/candle-table.webp" data-alt="Black Sonoran Mystic Tarot candle with a lit flame and a bamboo lid resting beside it" aria-label="Show photo 1"><img src="assets/spiritus/candle-table-thumb.webp" width="700" height="522" alt="" loading="lazy" decoding="async"></button>
+          <button type="button" data-src="assets/spiritus/candle-flowers.webp" data-alt="Sonoran Mystic Tarot candle with dried flower petals on top, next to fresh chamomile" aria-label="Show photo 2"><img src="assets/spiritus/candle-flowers-thumb.webp" width="700" height="433" alt="" loading="lazy" decoding="async"></button>
+          <button type="button" data-src="assets/spiritus/candle-trio.webp" data-alt="Three black Sonoran Mystic Tarot candles with bamboo lids, burning in the smoke" aria-label="Show photo 3"><img src="assets/spiritus/candle-trio-thumb.webp" width="466" height="700" alt="" loading="lazy" decoding="async"></button>
         </div>
       </div>
       <div class="candle-info">
@@ -233,7 +233,7 @@
         <ul class="cat-list" id="catList"></ul>
 
         <h3 data-path="text.filtSort">Sort</h3>
-        <select id="sort">
+        <select id="sort" aria-label="Sort plants">
           <option value="name">Name A–Z</option>
           <option value="priceAsc">Price: low to high</option>
           <option value="priceDesc">Price: high to low</option>
@@ -377,6 +377,6 @@
   </form>
 </aside>
 
-<script src="app.js?v=224240fb"></script>
+<script src="app.js?v=c7c56674"></script>
 </body>
 </html>

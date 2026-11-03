@@ -459,6 +459,7 @@ function renderProducts() {
     priceDesc: (a, b) => b.price - a.price,
   };
   list.sort(sorts[state.sort]);
+  if (QUICK) list.sort((x, y) => (y.images.length > 0) - (x.images.length > 0));   // preview: plants with photos first (stable within each group)
   const grid = $("#productGrid");
   const preview = isHome && matchMedia("(max-width:760px)").matches;   // phones: short preview on the home page; desktop: the full shop
   grid.toggleAttribute("data-preview", preview);
@@ -471,6 +472,7 @@ function renderProducts() {
 const plantSlug = (id) => String(id).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
 // In-stock plants have their own real page (plants/<name>.html, built by scripts/build_plants.py); anything else uses the generic page.
 const pageUrl = (p) => (p.isCandle ? "index.html?realm=spiritus#spiritus" : isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
+const QUICK = /[?&]preview=quickadd\b/.test(location.search);   // preview: shop.html?preview=quickadd
 function cardHtml(p) {
   const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
   const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
@@ -478,7 +480,7 @@ function cardHtml(p) {
     <a class="card-hit" href="${esc(pageUrl(p))}" data-view="${esc(p.id)}" aria-label="${esc(p.name)}, ${esc(money(now(p)))}">
       <span class="thumb">${badge}${img}<span class="peek">Quick view</span></span>
       <span class="body"><span class="name">${esc(p.name)}</span><span class="price">${priceHtml(p)}</span></span>
-    </a></article>`;
+    </a>${QUICK && !isOut(p) && !noPrice(p) ? `<button type="button" class="quick-add" data-quick="${esc(p.id)}" aria-label="Add ${esc(p.name)} to your order">+ Add</button>` : ""}</article>`;
 }
 
 /* ---------- QUICK VIEW ---------- */
@@ -649,6 +651,7 @@ function setupShipping() {
   const so = $("#shipOpt"), sel = $("#shipState");
   if (so) so.hidden = !shipCfg();
   if (sel && !sel.options.length) { const ex = ((SITE.shipping || {}).excludedStates || []); sel.innerHTML = `<option value="">State…</option>` + STATES.filter((x) => !ex.includes(x)).map((x) => `<option>${x}</option>`).join(""); }
+  try { const o = JSON.parse(localStorage.getItem("sp-details") || "null"); if (o && sel && o.state && [...sel.options].some((x) => x.value === o.state || x.text === o.state) && !sel.value) sel.value = o.state; } catch (err) {}
   if (!shipCfg()) { const r = document.querySelector('input[name="pay"][value="pickup"]'); if (r && payMode() === "ship") r.checked = true; }
   applyPayMode();
 }
@@ -813,7 +816,7 @@ document.addEventListener("click", (e) => {
   else if (t.dataset.view && $("#qv") && !SP.editing && !matchMedia("(max-width:760px)").matches) { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); openQuickView(t.dataset.view, t); }
   else if (t.id === "plantAdd" && plantCurrent) {
     addToCart(plantCurrent.id, Math.max(1, Math.min(maxQty(plantCurrent), parseInt($("#plantQty").value, 10) || 1)));
-    toggleCart(true);
+    addedToast(plantCurrent.name);
   }
   else if (t.dataset.step && $("#plantQty")) { const q = $("#plantQty"); q.value = Math.max(1, Math.min(plantCurrent ? maxQty(plantCurrent) : 20, (parseInt(q.value, 10) || 1) + +t.dataset.step)); }
   else if (t.dataset.qvpic !== undefined && qvProduct) qvProduct.show(+t.dataset.qvpic);
@@ -827,8 +830,9 @@ document.addEventListener("click", (e) => {
   else if (t.classList.contains("add")) {
     const row = cart.find((c) => c.id === t.dataset.id);
     row ? row.qty++ : cart.push({ id: t.dataset.id, qty: 1 });
-    saveCart(); toggleCart(true);
+    saveCart(); addedToast((findProduct(t.dataset.id) || {}).name);
   }
+  else if (t.dataset.quick) { addToCart(t.dataset.quick, 1); addedToast((findProduct(t.dataset.quick) || {}).name); }
   else if (t.dataset.inc) addToCart(t.dataset.inc, 1);
   else if (t.dataset.dec) { const r = cart.find((c) => c.id === t.dataset.dec); if (--r.qty <= 0) cart = cart.filter((c) => c !== r); saveCart(); }
   else if (t.dataset.rm) { cart = cart.filter((c) => c.id !== t.dataset.rm); saveCart(); }
@@ -932,6 +936,7 @@ function renderPlantPage() {
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
           ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
+          ${((SITE.care || {}).genus || {})[p.genus] ? `<div><dt>Care</dt><dd>${esc(SITE.care.genus[p.genus])}</dd></div>` : ""}
           <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
         </dl>
         <div class="buy">
@@ -1071,7 +1076,7 @@ try { localStorage.removeItem("sp-gh-token"); sessionStorage.removeItem("sp-edit
       show();
     })); show();
     const add = document.getElementById("candleAdd");
-    if (add) add.addEventListener("click", () => { addToCart("candle-" + current, 1); add.textContent = "Added. Add another?"; setTimeout(() => { add.textContent = "Add to cart"; }, 2200); toggleCart(true); });
+    if (add) add.addEventListener("click", () => { addToCart("candle-" + current, 1); add.textContent = "Added. Add another?"; setTimeout(() => { add.textContent = "Add to cart"; }, 2200); addedToast(SCENTS[current][0] + " Intention Candle"); });
     const main = document.getElementById("candleMain");
     document.querySelectorAll(".candle-thumbs button").forEach((b) => b.addEventListener("click", () => {
       main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");
@@ -1120,7 +1125,7 @@ document.addEventListener("click", (e) => {
   if (!findProduct(b.getAttribute("data-add-spirit"))) { const t0 = b.textContent; b.textContent = "Price coming soon"; setTimeout(() => { b.textContent = t0; }, 2200); return; }   // a book without a price yet
   addToCart(b.getAttribute("data-add-spirit"), 1);
   const t = b.textContent; b.textContent = "Added. Add another?"; setTimeout(() => { b.textContent = t; }, 2200);
-  toggleCart(true);
+  addedToast((findProduct(b.getAttribute("data-add-spirit")) || {}).name);
 });
 
 // Book price lines: show the real price from data/site.json (so the page and the cart can never disagree).
@@ -1136,6 +1141,7 @@ siteReady.then(fillBookPrices);
 function cartMix() { const L = cartLines(); return { plants: L.some((l) => !l.p.isCandle && !l.p.isBook), candles: L.some((l) => l.p.isCandle), books: L.some((l) => l.p.isBook), n: L.length }; }
 function renderCheckoutHelp() {
   const form = $("#orderForm"); if (!form) return;
+  restoreDetails(); renderCheckoutSteps();
   const m = cartMix(), mode = payMode(), shipping = mode === "ship" && shipCfg(), sub = cartSub();
   // 1) the legend says what the choice is really about
   const lg = $("#payChoice legend"); if (lg && lg.textContent !== "How would you like to get your order?") lg.textContent = "How would you like to get your order?";
@@ -1148,8 +1154,9 @@ function renderCheckoutHelp() {
   if (!box) { box = document.createElement("div"); box.id = "cartLines"; box.className = "cart-lines"; const tot = form.querySelector(".cart-total"); if (tot) tot.before(box); }
   if (!m.n) { box.innerHTML = ""; } else {
     const fee = shipping ? shipFee() : 0;
+    const est = !shipping && shipCfg() && !needFee ? `<div class="est"><span>If shipped to you</span><span>${shipFee() > 0 ? "+" + money(shipFee()) : "Free shipping"}</span></div>` : "";
     box.innerHTML = `<div><span>Subtotal</span><span>${money(sub)}</span></div>` +
-      (shipping ? `<div><span>Shipping</span><span>${fee > 0 ? money(fee) : "Free"}</span></div>` : `<div><span>Pickup</span><span>Free</span></div>`);
+      (shipping ? `<div><span>Shipping</span><span>${fee > 0 ? money(fee) : "Free"}</span></div>` : `<div><span>Pickup at an event</span><span>Free</span></div>`) + est;
   }
   // 4) one clear note about what happens next
   let note = $("#cartNote");
@@ -1170,4 +1177,58 @@ function renderCheckoutHelp() {
   // 5) the fine print matches the cart (no plant talk for a candle-only order)
   const fine = form.querySelector(".fine");
   if (fine) fine.textContent = (shipping ? "We'll pack your order and message you when it ships. " : (m.plants ? "We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm. " : "We'll message you to confirm. ")) + "We only use your details to arrange your order.";
+}
+
+// ---- "Added to your order" confirmation: small and out of the way, instead of covering the page with the whole drawer ----
+let toastTimer = 0;
+function addedToast(name) {
+  let t = $("#addedToast");
+  if (!t) { t = document.createElement("div"); t.id = "addedToast"; t.className = "added-toast"; t.setAttribute("role", "status"); t.setAttribute("aria-live", "polite"); document.body.appendChild(t); }
+  const n = cart.reduce((s, c) => s + c.qty, 0), sub = money(cartSub());
+  t.innerHTML = `<span class="at-check" aria-hidden="true">✓</span><span class="at-text"><b></b><small>${n} ${n === 1 ? "item" : "items"} · ${sub}</small></span><button type="button" class="at-view" data-toast="cart">View order</button><button type="button" class="at-x" data-toast="close" aria-label="Dismiss">×</button>`;
+  t.querySelector("b").textContent = (name ? name + " " : "") + "added";
+  t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 5000);
+  const bag = $("#cartOpen"); if (bag) { bag.classList.remove("pulse"); void bag.offsetWidth; bag.classList.add("pulse"); }
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-toast]"); if (!b) return;
+  const t = $("#addedToast"); if (t) t.classList.remove("on");
+  if (b.dataset.toast === "cart") toggleCart(true);
+});
+
+// ---- Checkout progress: 1 Order, 2 Your details, 3 Pay ----
+function renderCheckoutSteps() {
+  const form = $("#orderForm"); if (!form) return;
+  let ol = $("#checkoutSteps");
+  if (!ol) { ol = document.createElement("ol"); ol.id = "checkoutSteps"; ol.className = "co-steps"; ol.setAttribute("aria-label", "Checkout steps"); form.prepend(ol); }
+  const has = cartLines().length > 0, f = new FormData(form), mode = payMode();
+  const detailsDone = String(f.get("name") || "").trim() && String(f.get("contact") || "").trim() && (mode === "ship" ? String(f.get("addr1") || "").trim() && String(f.get("city") || "").trim() && f.get("state") && String(f.get("zip") || "").trim() : String(f.get("market") || ""));
+  const cls = (done, now) => (done ? "done" : now ? "now" : "");
+  const s1 = has, s2 = has && detailsDone;
+  ol.innerHTML = `<li class="${cls(s1, !s1)}"><i>${s1 ? "✓" : "1"}</i><span>Order</span></li><li class="${cls(s2, s1 && !s2)}"><i>${s2 ? "✓" : "2"}</i><span>Details</span></li><li class="${cls(false, s2)}"><i>3</i><span>${mode === "pickup" ? "Pickup" : "Pay"}</span></li>`;
+}
+document.addEventListener("input", (e) => { if (e.target.closest && e.target.closest("#orderForm")) { renderCheckoutSteps(); saveDetails(); } });
+document.addEventListener("change", (e) => { if (e.target.closest && e.target.closest("#orderForm")) { renderCheckoutSteps(); saveDetails(); } });
+
+// ---- Remember my details on this device (browser storage only; never sent anywhere until you check out) ----
+const DET_KEY = "sp-details", DET_FIELDS = ["name", "contact", "addr1", "city", "state", "zip"];
+function saveDetails() {
+  const form = $("#orderForm"); if (!form) return;
+  try {
+    const keep = form.querySelector("#rememberMe"); if (keep && !keep.checked) { localStorage.removeItem(DET_KEY); return; }
+    const o = {}; DET_FIELDS.forEach((k) => { const el = form.elements[k]; if (el && el.value) o[k] = String(el.value).slice(0, 120); });
+    localStorage.setItem(DET_KEY, JSON.stringify(o));
+  } catch (err) {}
+}
+function restoreDetails() {
+  const form = $("#orderForm"); if (!form || form.dataset.restored) return;
+  form.dataset.restored = "1";
+  if (!form.querySelector("#rememberMe")) {
+    const lab = document.createElement("label"); lab.className = "remember"; lab.innerHTML = `<input type="checkbox" id="rememberMe" checked> <span>Remember my details on this device</span>`;
+    const msg = $("#formMsg"); (msg || form.lastElementChild).before(lab);
+  }
+  try {
+    const o = JSON.parse(localStorage.getItem(DET_KEY) || "null"); if (!o || typeof o !== "object") return;
+    DET_FIELDS.forEach((k) => { const el = form.elements[k]; if (el && !el.value && typeof o[k] === "string") el.value = o[k]; });
+  } catch (err) {}
 }

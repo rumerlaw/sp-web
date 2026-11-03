@@ -1437,3 +1437,47 @@ html:not([data-realm="spiritus"]) #reviews:not(:has(.reviews-spina)){display:non
   .mobile-menu a{min-height:48px;display:flex;align-items:center}
   .crumbs a{display:inline-block;min-height:32px;line-height:32px}
 }
+
+/* ===== Added-to-order confirmation ===== */
+.added-toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,24px);opacity:0;pointer-events:none;z-index:80;display:flex;align-items:center;gap:12px;max-width:min(520px,calc(100vw - 24px));padding:12px 14px;background:#24231f;color:#fff;border:1px solid var(--gold);box-shadow:0 18px 40px -16px rgba(0,0,0,.6);transition:opacity .3s,transform .3s}
+.added-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.at-check{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#24231f;display:grid;place-items:center;font-weight:700;flex:none}
+.at-text{display:grid;min-width:0}
+.at-text b{font-size:.98rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.at-text small{font-size:.78rem;opacity:.8}
+.at-view{margin-left:auto;background:var(--gold);color:#24231f;border:0;padding:10px 14px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;cursor:pointer;flex:none;min-height:40px}
+.at-x{background:none;border:0;color:#fff;font-size:1.4rem;line-height:1;cursor:pointer;min-width:36px;min-height:40px;flex:none}
+@media(max-width:520px){.added-toast{bottom:12px}}
+@media(prefers-reduced-motion:reduce){.added-toast{transition:none}}
+
+/* ===== Checkout progress ===== */
+.co-steps{list-style:none;display:flex;justify-content:space-between;gap:6px;margin:0 0 14px;padding:0}
+.co-steps li{flex:1;display:flex;align-items:center;gap:8px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted);min-width:0}
+.co-steps li+li::before{content:"";flex:none;width:14px;height:1px;background:var(--line);margin-right:2px}
+.co-steps i{font-style:normal;width:24px;height:24px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.72rem;flex:none}
+.co-steps span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-steps li.now{color:var(--ink)}.co-steps li.now i{border-color:var(--sage-deep);color:var(--sage-deep)}
+.co-steps li.done{color:var(--ink)}.co-steps li.done i{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff}
+html[data-realm="spiritus"] .co-steps li.now i{color:var(--gold);border-color:var(--gold)}
+html[data-realm="spiritus"] .co-steps li.done i{background:var(--gold);border-color:var(--gold);color:#17122a}
+@media(max-width:420px){.co-steps li{font-size:.62rem;letter-spacing:.06em;gap:5px}.co-steps li+li::before{width:8px}.co-steps i{width:22px;height:22px}}
+.cart-lines .est{color:var(--muted);font-size:.88rem;font-style:italic}
+.remember{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;font-size:.88rem;color:var(--muted);text-transform:none!important;letter-spacing:0!important;font-weight:500!important}
+.remember input{width:18px;height:18px;min-width:18px;padding:0;margin:0}
+
+/* ===== Quick add on shop cards (preview) ===== */
+.card{position:relative}
+.quick-add{position:absolute;right:10px;top:10px;z-index:2;background:var(--sage-deep);color:#fff;border:0;padding:10px 14px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;cursor:pointer;box-shadow:0 8px 18px -10px rgba(0,0,0,.6);min-height:40px}
+.quick-add:hover{filter:brightness(1.15)}
+
+/* ===== Accessibility: text colours with enough contrast on the light (Spina) side ===== */
+:root{--gold-text:#7b5d25}
+.events .ev-side{color:var(--gold-text);border-color:var(--gold-text)}
+.events .ev-side.both{background:var(--gold);color:#17122a;border-color:var(--gold)}
+html[data-realm="spiritus"] .events .ev-side{color:var(--gold);border-color:var(--gold)}
+.review figcaption b,.book-info h4,.bcard-chip{color:var(--gold-text)}
+html[data-realm="spiritus"] .review figcaption b,html[data-realm="spiritus"] .book-info h4,html[data-realm="spiritus"] .bcard-chip{color:var(--gold)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--gold-text);outline-offset:3px}
+html[data-realm="spiritus"] a:focus-visible,html[data-realm="spiritus"] button:focus-visible,html[data-realm="spiritus"] input:focus-visible,html[data-realm="spiritus"] select:focus-visible,html[data-realm="spiritus"] textarea:focus-visible,html[data-realm="spiritus"] summary:focus-visible{outline-color:var(--gold)}
+.filters h3{color:var(--gold-text)}
+html[data-realm="spiritus"] .filters h3{color:var(--gold)}

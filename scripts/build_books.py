@@ -54,7 +54,7 @@ def detail(b, h1, tag_id=""):
     return f'''
     <article class="book"{f' id="{tag_id}"' if tag_id else ""}>
       <div class="book-gallery">
-        <img class="book-main" src="{esc(b["front"])}" width="311" height="466" alt="{esc(b["front_alt"])}">
+        <img class="book-main" decoding="async" src="{esc(b["front"])}" width="311" height="466" alt="{esc(b["front_alt"])}">
         <div class="book-thumbs" role="group" aria-label="Book photos">
           <button type="button" class="on" data-src="{esc(b["front"])}" data-alt="{esc(b["front_alt"])}" aria-label="Show front cover"><img src="{esc(b["front"].replace(".webp", "-thumb.webp"))}" width="240" height="360" alt=""></button>
           <button type="button" data-src="{esc(b["back"])}" data-alt="{esc(b["back_alt"])}" aria-label="Show back cover"><img src="{esc(b["back"].replace(".webp", "-thumb.webp"))}" width="240" height="360" alt=""></button>

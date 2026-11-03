@@ -313,5 +313,35 @@
       }
     ],
     "spina": []
+  },
+  "care": {
+    "default": "",
+    "genus": {
+      "Trichocereus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Cereus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Myrtillocactus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Pilosocereus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Lophocereus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Polaskia": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Stenocereus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Acanthocereus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Echinocactus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Ferocactus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Tephrocactus": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Opuntia": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Cylindropuntia": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Consolea": "Bright sun. Water deeply, then let the soil dry out completely. Gritty, fast-draining soil.",
+      "Mammillaria": "Bright light with some afternoon shade in summer. Water when dry, and keep it drier in winter.",
+      "Gymnocalycium": "Bright light with afternoon shade in summer. Water when dry, and keep it drier in winter.",
+      "Euphorbia": "Bright light. Water sparingly and let it dry between waterings. The milky sap irritates skin, so wear gloves.",
+      "Adenium": "Full sun and warmth. Water when dry in the growing season, keep it dry in winter, and protect it from frost.",
+      "Adenia": "Bright light and warmth. Water in the growing season, keep it dry in winter, and protect it from frost.",
+      "Agave": "Full sun. Very little water once established. Sharp tips: keep away from walkways.",
+      "Aloe": "Bright light, with some afternoon shade in extreme heat. Water deeply, then let it dry fully.",
+      "Haworthia": "Bright, indirect light. Water when dry, and shade it from harsh afternoon sun.",
+      "Sansevieria": "Low to bright light. Water only when the soil is dry. Very forgiving.",
+      "Pachypodium": "Full sun and heat. Water in summer, keep it dry in winter, and protect it from frost.",
+      "Crassula": "Bright light. Water when the soil is dry."
+    }
   }
 }
