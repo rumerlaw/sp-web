@@ -5,7 +5,7 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
 // Spina (plants, green) / Spiritus (candles & tarot, dark mystic) theme. Same site; the choice is remembered on this device.
 (function () {
   var root = document.documentElement, KEY = "sp-realm";
-  function get() { if (!/(^\/$|\/index\.html$)/.test(location.pathname)) return "spina"; try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
+  function get() { if (/^\/books\//.test(location.pathname)) return "spiritus"; if (!/(^\/$|\/index\.html$)/.test(location.pathname)) return "spina"; try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
   function set(r) {
     root.setAttribute("data-realm", r);
     root.style.backgroundColor = r === "spiritus" ? "#17122a" : "";   // no white flash while the page loads

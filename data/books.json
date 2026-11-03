@@ -1,0 +1,182 @@
+[
+ {
+  "title": "The Mediums: A Guidebook",
+  "award_tag": "Award winner",
+  "award_text": "Booky Awards · Best Self-Help Voice",
+  "lead": "A complete, modern training manual for developing <b>psychic awareness</b>, <b>spirit communication</b> and <b>evidential mediumship</b>. Written for beginners and working mediums alike.",
+  "inside_heading": "What’s inside",
+  "inside": [
+   "<b>Grounding &amp; protection</b> to work safely with energy",
+   "<b>The clair senses</b> and how to manage your energy",
+   "<b>The mechanics of spirit communication</b>, step by step",
+   "<b>Evidential mediumship</b>: one-to-one sittings and platform demonstrations",
+   "<b>A professional, ethical practice</b> you can build with confidence"
+  ],
+  "quotes": [],
+  "audience": "<b>For</b> developing psychics, spiritual healers and practicing evidential mediums who want a powerful, sustainable spiritual practice.",
+  "meta": [
+   "233 pages",
+   "English",
+   "Published Nov 22, 2025",
+   "ISBN 9798990024663"
+  ],
+  "front": "assets/spiritus/book-front.webp",
+  "front_alt": "Cover of The Mediums: A Guidebook, a purple cosmic sky over a person meditating by the ocean",
+  "back": "assets/spiritus/book-back.webp",
+  "back_alt": "Back cover of The Mediums: A Guidebook with the authors Susan Grayson and Donald Rumer-Rivera",
+  "slug": "the-mediums",
+  "id": "book-mediums",
+  "subtitle": "A Guidebook",
+  "authors": "Susan Grayson & Donald Rumer-Rivera",
+  "short": "A complete, modern training manual for developing psychic awareness, spirit communication and evidential mediumship.",
+  "chip": "Booky Awards winner",
+  "desc": "The Mediums: A Guidebook by Susan Grayson and Donald Rumer-Rivera: an award-winning training manual for psychic awareness, spirit communication and evidential mediumship. Spina & Spiritus, Phoenix AZ.",
+  "edition": {
+   "id": "book-mediums-es",
+   "title": "Los Médiums: Una Guía",
+   "lead": "The complete Spanish edition of <b>The Mediums</b>: a training manual for <b>psychic awareness</b>, <b>spirit communication</b> and <b>evidential mediumship</b>.",
+   "inside": [
+    "<b>Grounding &amp; protection</b> to work safely with energy",
+    "<b>The clair senses</b> and how to manage your energy",
+    "<b>The mechanics of spirit communication</b>, step by step",
+    "<b>Evidential mediumship</b>: accurate messages, delivered with confidence and compassion",
+    "<b>A professional, ethical practice</b> you can build with confidence"
+   ],
+   "quotes": [
+    {
+     "text": "“Descubre el arte y la ciencia de la verdadera mediumnidad.”",
+     "cite": "Discover the art and science of true mediumship"
+    }
+   ],
+   "meta": [
+    "251 pages",
+    "Spanish",
+    "Published Nov 20, 2025",
+    "ISBN 9798990024670"
+   ],
+   "front": "assets/spiritus/mediums-es-front.webp",
+   "front_alt": "Portada de Los Médiums: Una Guía, un cielo cósmico morado sobre una persona meditando junto al mar",
+   "back": "assets/spiritus/mediums-es-back.webp",
+   "back_alt": "Contraportada de Los Médiums: Una Guía con los autores Susan Grayson y Donald Rumer-Rivera",
+   "note": "Spanish edition of The Mediums: A Guidebook"
+  }
+ },
+ {
+  "title": "The Ultimate Power Within",
+  "award_tag": "2× award winner",
+  "award_text": "International Impact Book Awards · Body/Mind/Spirit & Personal Growth",
+  "lead": "A new way to <b>understand, create and use affirmations</b> to advance your dreams, goals and desires. A guidebook and instruction manual for <b>unlocking the power within you</b>.",
+  "inside_heading": "What’s inside",
+  "inside": [
+   "<b>Resilience &amp; self-empowerment</b> built on daily practice",
+   "<b>Goal achievement</b> and personal growth",
+   "<b>Shape the world around you</b> by directing the energy your body naturally creates",
+   "<b>Align your reality</b> with your deepest desires through thoughts and beliefs",
+   "<b>A journey of self-discovery</b> and transformation"
+  ],
+  "quotes": [
+   {
+    "text": "“This is a must have book for anyone wishing to bring about the changes in their life to manifest what they want, so that their life is more positive and successful.”",
+    "cite": "Susan Grayson, author of Love Your Spiritual Gifts"
+   },
+   {
+    "text": "“Don skillfully articulates the influence of thoughts and beliefs on personal development, making a compelling case for the efficacy of affirmations.”",
+    "cite": "Shawna Sellars, author of AstroGod 2024 Planner"
+   }
+  ],
+  "audience": "",
+  "meta": [
+   "167 pages",
+   "English",
+   "Published Mar 31, 2024",
+   "ISBN 9798990024601"
+  ],
+  "front": "assets/spiritus/power-front.webp",
+  "front_alt": "Cover of The Ultimate Power Within: Unleashing the Magic of Affirmations, a woman with open arms in a rainbow of light",
+  "back": "assets/spiritus/power-back.webp",
+  "back_alt": "Back cover of The Ultimate Power Within with the book description and reviews",
+  "slug": "the-ultimate-power-within",
+  "id": "book-power",
+  "subtitle": "Unleashing the Magic of Affirmations",
+  "authors": "Donald Rumer-Rivera",
+  "short": "A new way to understand, create and use affirmations to reach your dreams, goals and desires.",
+  "chip": "2× Impact Awards winner",
+  "desc": "The Ultimate Power Within: Unleashing the Magic of Affirmations by Donald Rumer-Rivera, a two-time International Impact Book Awards winner. Spina & Spiritus, Phoenix AZ."
+ },
+ {
+  "title": "A Silence Too Loud",
+  "award_tag": "Novel",
+  "award_text": "Paranormal murder mystery · Jerome, Arizona",
+  "lead": "A murdered singer. A haunted hotel. <b>A secret too loud to hide.</b> A gripping paranormal murder mystery of secrets, spirits and the power of truth.",
+  "inside_heading": "What’s inside",
+  "inside": [
+   "<b>A haunted hotel</b>: the Jerome Grand, in the mountain town of Jerome, Arizona",
+   "<b>A murdered singer</b>: Libby Groves, a red-haired singer and nurse who will not stay quiet",
+   "<b>A medium&rsquo;s investigation</b>: cold rooms, flickering lights and visions of her final night",
+   "<b>A hidden crime</b>: a corrupted mining empire and the microfilm evidence she died to protect",
+   "<b>A town full of secrets</b> and a spirit who refuses to rest until justice speaks"
+  ],
+  "quotes": [
+   {
+    "text": "“In Jerome, the dead talk. Don listens. And justice is louder than silence.”",
+    "cite": "From the back cover"
+   }
+  ],
+  "audience": "<b>For</b> fans of Midnight Mass, The Haunting of Hill House, Alice Hoffman and atmospheric murder mysteries with a supernatural edge.",
+  "meta": [
+   "160 pages",
+   "English",
+   "Published Dec 3, 2025",
+   "ISBN 9798990024687"
+  ],
+  "front": "assets/spiritus/silence-front.webp",
+  "front_alt": "Cover of A Silence Too Loud: Whispers at the Jerome Grand, a woman in silhouette wearing a glowing locket before a red sky and a hotel on a hill",
+  "back": "assets/spiritus/silence-back.webp",
+  "back_alt": "Back cover of A Silence Too Loud with the story description and the author",
+  "slug": "a-silence-too-loud",
+  "id": "book-silence",
+  "subtitle": "Whispers at the Jerome Grand",
+  "authors": "Donald Rumer-Rivera",
+  "short": "A paranormal murder mystery set in haunted Jerome, Arizona: a murdered singer, a haunted hotel, and a secret too loud to hide.",
+  "chip": "Paranormal mystery",
+  "desc": "A Silence Too Loud: Whispers at the Jerome Grand by Donald Rumer-Rivera, a paranormal murder mystery set in haunted Jerome, Arizona. Spina & Spiritus, Phoenix AZ."
+ },
+ {
+  "title": "A Space Between Breaths",
+  "award_tag": "Mindfulness",
+  "award_text": "No dogma · no perfectionism · no spiritual performance",
+  "lead": "A grounded, practical path back to presence. <b>Mindfulness as a relationship to restore</b>, drawn from law, engineering, real estate, mediumship and desert-rooted wisdom.",
+  "inside_heading": "Inside you’ll discover",
+  "inside": [
+   "<b>Presence over control</b>: why presence matters more than control",
+   "<b>Breath, body and attention</b>: how they create real choice",
+   "<b>A gentle 8-week reset</b> that fits real life",
+   "<b>Slowing down</b> without falling behind",
+   "<b>Living awake</b> without labels or pressure"
+  ],
+  "quotes": [
+   {
+    "text": "“You don’t need to escape your life to live it fully.”",
+    "cite": "No promises of transformation. No spiritual shortcuts. Just practice."
+   }
+  ],
+  "audience": "",
+  "meta": [
+   "135 pages",
+   "English",
+   "Published Apr 12, 2026",
+   "ISBN 9798990024694"
+  ],
+  "front": "assets/spiritus/space-front.webp",
+  "front_alt": "Cover of A Space Between Breaths: A Grounded Path to Mindfulness in a Noisy World, a calm dusk sky over a soft horizon",
+  "back": "assets/spiritus/space-back.webp",
+  "back_alt": "Back cover of A Space Between Breaths with the description and the author, Donald Rumer-Rivera",
+  "slug": "a-space-between-breaths",
+  "id": "book-space",
+  "subtitle": "A Grounded Path to Mindfulness in a Noisy World",
+  "authors": "Donald Rumer-Rivera",
+  "short": "A grounded, practical path back to presence, without dogma, perfectionism or spiritual performance.",
+  "chip": "Mindfulness",
+  "desc": "A Space Between Breaths: A Grounded Path to Mindfulness in a Noisy World by Donald Rumer-Rivera. Spina & Spiritus, Phoenix AZ."
+ }
+]
