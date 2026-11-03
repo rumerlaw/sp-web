@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 base = (sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].strip() else "https://spinanspiritus.com").rstrip("/")
 today = date.today().isoformat()
 pages = [("/", "1.0", "weekly"), ("/shop.html", "0.9", "daily"), ("/about.html", "0.6", "monthly"), ("/faq.html", "0.6", "monthly")]
+pages += [("/shipping.html", "0.4", "yearly"), ("/privacy.html", "0.3", "yearly"), ("/terms.html", "0.3", "yearly")]
 pages += [(f"/books/{p.name}", "0.7", "monthly") for p in sorted((ROOT / "books").glob("*.html"))]   # one page per book (scripts/build_books.py)
 rows = [f"  <url><loc>{base}{p}</loc><lastmod>{today}</lastmod><changefreq>{c}</changefreq><priority>{pr}</priority></url>" for p, pr, c in pages]
 try: index = json.loads((ROOT / "data/plants_index.json").read_text(encoding="utf-8"))

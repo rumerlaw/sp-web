@@ -123,7 +123,7 @@ def build_page(shell, p, today):
 
     # visible, crawlable content (the browser version replaces it with the interactive page)
     sz = size_of(imgs[0]) if imgs else None
-    img_html = (f'<img src="{esc(imgs[0])}" alt="{esc(name)} {esc(genus)} cactus succulent for sale in Phoenix, Arizona"'
+    img_html = (f'<img src="{esc(imgs[0])}" alt="{esc(" ".join(f"{name} {genus}".split()))} cactus or succulent for sale in Phoenix, Arizona"'
                 + (f' width="{sz[0]}" height="{sz[1]}"' if sz else "") + ' fetchpriority="high">') if imgs else ""
     specs = []
     if genus: specs.append(f"<div><dt>Genus</dt><dd>{esc(genus)}</dd></div>")

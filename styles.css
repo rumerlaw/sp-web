@@ -1537,3 +1537,24 @@ html[data-realm="spiritus"] .cart-foot label small{color:var(--muted);font-weigh
 html[data-realm="spiritus"] .cart-foot select,html[data-realm="spiritus"] .cart-foot input,html[data-realm="spiritus"] .cart-foot textarea{color:#fff;font-weight:600}
 html[data-realm="spiritus"] .pay-opt small{color:var(--muted)}
 .rcard blockquote::before{display:none}
+
+/* ===== Footer policy links + policy pages ===== */
+.footer-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 26px;padding:18px 20px 4px}
+.footer-legal a{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:5px;padding:6px 2px}
+.footer-legal a:hover{color:var(--ink)}
+.legal .wrap{max-width:760px}
+.legal h1{font-size:clamp(2.3rem,5vw,3.4rem);margin:4px 0 26px;text-align:left}
+.legal-updated{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted);margin:0}
+.legal-sec{padding:22px 0;border-top:1px solid var(--line)}
+.legal-sec h2{font-size:1.7rem;font-weight:500;margin:0 0 10px}
+.legal-sec p,.legal-sec li{font-size:1.08rem;line-height:1.75;color:var(--ink)}
+.legal-sec ul{margin:0;padding-left:1.2rem;display:grid;gap:8px}
+.legal-sec a{text-decoration:underline;text-underline-offset:4px;font-weight:600}
+.legal-back{margin-top:34px}
+html[data-realm="spiritus"] .legal-sec a{color:var(--gold)}
+
+/* fade-in (added by app.js only to things below the first screen) */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.rv-in{opacity:1;transform:none}
+.bcard.rv:nth-child(2){transition-delay:.08s}.bcard.rv:nth-child(3){transition-delay:.16s}.bcard.rv:nth-child(4){transition-delay:.24s}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}

@@ -473,9 +473,11 @@ const plantSlug = (id) => String(id).toLowerCase().replace(/[^a-z0-9-]+/g, "-").
 // In-stock plants have their own real page (plants/<name>.html, built by scripts/build_plants.py); anything else uses the generic page.
 const pageUrl = (p) => (p.isCandle ? "index.html?realm=spiritus#spiritus" : isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
 const QUICK = true;   // quick "+ Add" button on every plant card; plants with photos are listed first
+// Descriptive picture text for screen readers and search: name, plant family, what it is.
+function altFor(p) { return `${p.name}${p.genus && !new RegExp("^" + p.genus, "i").test(p.name) ? " (" + p.genus + ")" : ""}, ${p.isBook ? "book" : p.isCandle ? "candle" : "cactus or succulent"} from Spina & Spiritus, Phoenix AZ`; }
 function cardHtml(p) {
   const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
-  const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
+  const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(altFor(p))}" loading="lazy" decoding="async">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
   return `<article class="card">
     <a class="card-hit" href="${esc(pageUrl(p))}" data-view="${esc(p.id)}" aria-label="${esc(p.name)}, ${esc(money(now(p)))}">
       <span class="thumb">${badge}${img}<span class="peek">Quick view</span></span>
@@ -498,7 +500,7 @@ function openQuickView(id, opener) {
   const pics = p.images;
   const show = (k) => {
     qvProduct.cur = k;
-    $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
+    $("#qvMain").innerHTML = pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(altFor(p))}${pics.length > 1 ? " — photo " + (k + 1) + " of " + pics.length : ""}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`;
     document.querySelectorAll(".qv-thumbs button").forEach((b, j) => b.classList.toggle("on", j === k));
   };
   $("#qvThumbs").innerHTML = pics.length > 1 ? pics.map((u, k) => `<button data-qvpic="${k}" aria-label="Photo ${k + 1}"><img src="${esc(variant(u, "thumb"))}" alt=""></button>`).join("") : "";
@@ -954,7 +956,7 @@ function renderPlantPage() {
     ${related.length ? `<section class="related"><h2 data-path="text.relatedHeading">${esc((SITE.text && SITE.text.relatedHeading) || "You may also like")}</h2><div class="product-grid">${related.map(cardHtml).join("")}</div></section>` : ""}
   </div>`;
   const show = (k) => {
-    $("#plantMain").innerHTML = (bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "") + (pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(p.name)} — photo ${k + 1}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`);
+    $("#plantMain").innerHTML = (bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "") + (pics[k] ? `<img src="${esc(variant(pics[k], "web"))}" alt="${esc(altFor(p))}${pics.length > 1 ? " — photo " + (k + 1) + " of " + pics.length : ""}">` : `<div class="ph" data-slot="Photos coming soon">${CACTUS_SVG}</div>`);
     document.querySelectorAll("#plantThumbs button").forEach((b, j) => b.classList.toggle("on", j === k));
   };
   $("#plantThumbs").innerHTML = pics.length > 1 ? pics.map((u, k) => `<button data-plantpic="${k}" aria-label="Photo ${k + 1}"><img src="${esc(variant(u, "thumb"))}" alt=""></button>`).join("") : "";
@@ -1244,3 +1246,24 @@ document.addEventListener("click", (e) => {
   const t = document.querySelector(l.getAttribute("href")); if (!t) return;
   e.preventDefault(); t.scrollIntoView({ behavior: "smooth", block: "start" });
 });
+
+// ---- Gentle fade-in as sections scroll into view ----
+// Only things that start BELOW the first screen are hidden, and only after the page has loaded, so nothing flashes or stays hidden if JavaScript or the observer fails.
+(function () {
+  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const SEL = ".section, .trust, .bcard, .review-row, .rcard, .footer .signup";
+  function start() {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("rv-in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px", threshold: 0 });
+    document.querySelectorAll(SEL).forEach((el) => {
+      if (el.closest(".cart,.qv-wrap") || el.dataset.rv) return;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.top < innerHeight * 0.9 || SP.editing) return;   // already on screen (or hidden for now): leave it alone
+      el.dataset.rv = "1"; el.classList.add("rv"); io.observe(el);
+    });
+    setTimeout(() => document.querySelectorAll(".rv:not(.rv-in)").forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < innerHeight) el.classList.add("rv-in"); }), 1500);
+  }
+  let st = 0;   // safety net: once scrolling stops, anything on screen that is still hidden is shown (e.g. after a link jumps far down the page)
+  addEventListener("scroll", () => { clearTimeout(st); st = setTimeout(() => document.querySelectorAll(".rv:not(.rv-in)").forEach((el) => { const r = el.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) el.classList.add("rv-in"); }), 180); }, { passive: true });
+  addEventListener("load", () => setTimeout(start, 400));
+  document.addEventListener("realmchange", () => setTimeout(start, 300));
+})();
