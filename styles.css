@@ -1256,3 +1256,12 @@ html[data-realm="spiritus"] .hero{background:#17122a}
 .book-meta span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);border:1px solid var(--line);padding:6px 12px}
 .book-cta .btn{padding:16px 30px;letter-spacing:.24em}
 @media(max-width:820px){.book{grid-template-columns:1fr;gap:30px}.book-gallery{position:static;max-width:300px;margin:0 auto}#book{padding-top:60px;padding-bottom:60px}}
+
+.book+.book{margin-top:90px;padding-top:70px;border-top:1px solid var(--line)}
+.book-title{font-family:var(--serif);font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:500;color:var(--ink);line-height:1.15;margin:0 0 6px;letter-spacing:0;text-transform:none}
+.book-by{font-size:.95rem;letter-spacing:.06em;color:var(--muted);margin:0 0 18px;font-weight:500}
+.book-info h4{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;font-family:var(--sans);font-weight:700;color:var(--gold);margin:0 0 12px}
+.book-quote{margin:0 0 16px;padding:4px 0 4px 16px;border-left:2px solid var(--gold);font-family:var(--serif);font-size:1.2rem;line-height:1.55;font-style:italic;color:var(--ink)}
+.book-quote cite{display:block;margin-top:6px;font-family:var(--sans);font-style:normal;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+@media(max-width:820px){.book+.book{margin-top:60px;padding-top:44px}}
+.book-info h3.book-title{font-family:var(--serif);font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:500;color:var(--ink);line-height:1.15;margin:0 0 6px;letter-spacing:0;text-transform:none}

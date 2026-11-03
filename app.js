@@ -1098,11 +1098,11 @@ document.addEventListener("click", (e) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-// Spiritus side: front / back cover switcher for the book.
+// Spiritus side: front / back cover switcher for each book.
 document.addEventListener("click", (e) => {
   const b = e.target.closest && e.target.closest(".book-thumbs button");
   if (!b) return;
-  const main = document.getElementById("bookMain"); if (!main) return;
+  const g = b.closest(".book-gallery"), main = g && g.querySelector(".book-main"); if (!main) return;
   main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");
-  document.querySelectorAll(".book-thumbs button").forEach((x) => x.classList.toggle("on", x === b));
+  g.querySelectorAll(".book-thumbs button").forEach((x) => x.classList.toggle("on", x === b));
 });
