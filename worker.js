@@ -121,11 +121,16 @@ async function handleOrder(request, env, body) {
   const bySku = new Map(inv.map((r) => [r.sku, r]));
   let site = null; try { site = await (await readAsset(env, request, "/data/site.json")).json(); } catch (e) {}
   const candle = site && site.candles && Number(site.candles.price) > 0 ? site.candles : null;
-  const seen = new Set(), lines = []; let total = 0, hasCandle = false;
+  const seen = new Set(), lines = []; let total = 0, hasCandle = false, hasBook = false;   // hasCandle also covers books: "a spirit-side item is in the cart"
   for (const it of body.items) {
     const id = clean(it && it.id, 100), qty = Math.floor(Number(it && it.qty));
     if (!id || seen.has(id) || !(qty >= 1 && qty <= 20)) return json({ error: "Something in your selection looks off. Please refresh and try again." }, 400);
     seen.add(id);
+    if (id.startsWith("book-")) {   // Don's books: fixed price each, flat shipping per order, picked up at spirit-side events like the candles
+      const bk = ((site && site.books) || []).find((x) => x.id === id);
+      if (!bk || !(Number(bk.price) > 0)) return json({ error: "A book in your selection isn't available. Please refresh the page." }, 409);
+      lines.push({ name: bk.name, qty, sub: Number(bk.price) * qty, book: true }); total += Number(bk.price) * qty; hasCandle = true; hasBook = true; continue;
+    }
     if (id.startsWith("candle-")) {   // intention candles: one price for every scent, free shipping
       const sc = candle && (candle.scents || []).find((n) => "candle-" + String(n).toLowerCase().replace(/[^a-z]/g, "") === id);
       if (!sc) return json({ error: "A candle in your selection isn't available. Please refresh the page." }, 409);
@@ -140,7 +145,7 @@ async function handleOrder(request, env, body) {
   // The pickup event must be one we actually list.
   try {
     const site = await (await readAsset(env, request, "/data/site.json")).json();
-    const hasPlant = lines.some((l) => !l.candle);
+    const hasPlant = lines.some((l) => !l.candle && !l.book);
     // plants go to plant events, candles to spirit events, a mixed order only to events both sides attend
     const names = (site.events || []).filter((e) => { const r = e.realm || "spina"; return (!hasPlant || r === "spina" || r === "both") && (!hasCandle || r === "spiritus" || r === "both"); }).map((e) => String(e.name || "").toLowerCase()).filter(Boolean);
     if (!ship && names.length && !names.some((n) => market.toLowerCase().includes(n))) return json({ error: "Please choose one of the listed events." }, 400);
@@ -157,11 +162,15 @@ async function handleOrder(request, env, body) {
     const cls = cfg.classes || { small: 10, medium: 15, large: 20 }, rank = ["small", "medium", "large"];
     let top = 0, count = 0;
     for (const l of lines) {
-      if (l.candle) continue;   // candles ship free
+      if (l.candle || l.book) continue;   // candles ship free, books have their own flat fee
       const c = rank.includes(l.size) ? l.size : (cfg.defaultClass || "medium");
       top = Math.max(top, Math.max(0, rank.indexOf(c))); count += l.qty;
     }
     shipFee = count ? Number(cls[rank[top]] || 0) + Number(cfg.extraPlant || 0) * (count - 1) : 0;   // a candles-only order ships free
+    if (hasBook) {   // books: one flat fee per order
+      if (cfg.bookFlat === null || cfg.bookFlat === undefined || !(Number(cfg.bookFlat) >= 0)) return json({ error: "Shipping for books isn't set up yet. Please choose pickup at an event." }, 400);
+      shipFee += Number(cfg.bookFlat);
+    }
     if (!(shipFee >= 0)) return json({ error: "unavailable" }, 503);
     shipTo = { line1, city, state: st, zip };
   }

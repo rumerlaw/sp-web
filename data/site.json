@@ -240,7 +240,8 @@
       "large": 20
     },
     "extraPlant": 5,
-    "defaultClass": "medium"
+    "defaultClass": "medium",
+    "bookFlat": null
   },
   "candles": {
     "price": 20,
@@ -261,5 +262,17 @@
       "frankincense": "Rich, grounding and timeless. A sacred scent for prayer, meditation and inner connection.",
       "passion": "Vibrant and captivating. A fragrance for creativity, confidence and heartfelt expression."
     }
-  }
+  },
+  "books": [
+    {
+      "id": "book-mediums",
+      "name": "The Mediums: A Guidebook",
+      "price": 19.99
+    },
+    {
+      "id": "book-power",
+      "name": "The Ultimate Power Within",
+      "price": 19.95
+    }
+  ]
 }

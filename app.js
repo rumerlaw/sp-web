@@ -213,7 +213,7 @@ function renderPortrait() {
 // so it is filled on every page (not only where the contact block exists).
 // Plants are picked up at the plant markets; once a candle is in the cart every listed event can be used.
 function pickupEvents() {
-  const today = new Date().toISOString().slice(0, 10), hasCandle = cart.some((c) => String(c.id).startsWith("candle-")), hasPlant = cart.some((c) => !String(c.id).startsWith("candle-"));
+  const today = new Date().toISOString().slice(0, 10), hasCandle = cart.some((c) => /^(candle|book)-/.test(String(c.id))), hasPlant = cart.some((c) => !/^(candle|book)-/.test(String(c.id)));
   // plants go to plant events, candles to spirit events, a mixed cart only to events both sides attend
   return CONFIG.events.filter((e) => { const r = e.realm || "spina"; return (!e.date || e.date >= today) && (!hasPlant || r === "spina" || r === "both") && (!hasCandle || r === "spiritus" || r === "both"); });
 }
@@ -426,7 +426,8 @@ const maxQty = (p) => (p.stock === null ? 20 : Math.max(1, Math.min(20, p.stock)
 const stockLine = (p) => (isOut(p) ? "Currently sold out" : (isPre(p) ? "Available for pre-order" : isSale(p) ? "On sale" : "In stock") + (p.stock === null ? "" : ` — ${p.stock} available`));
 // The intention candles (Spiritus side) are not in the plant inventory: one product per scent, price from data/site.json.
 const candleProducts = () => { const c = SITE.candles; if (!c || !(Number(c.price) > 0)) return []; return (c.scents || []).map((n) => ({ id: "candle-" + String(n).toLowerCase().replace(/[^a-z]/g, ""), name: n + " Intention Candle", genus: "Candle", category: "Candles", price: Number(c.price), salePrice: 0, stock: null, status: "In Stock", size: "", shipSize: "", description: ((c.descriptions || {})[String(n).toLowerCase().replace(/[^a-z]/g, "")] || ""), images: ["assets/spiritus/candle-table.webp"], isCandle: true })); };
-const findProduct = (id) => products.find((x) => x.id === id) || candleProducts().find((x) => x.id === id);
+const bookProducts = () => ((SITE.books || []).filter((b) => Number(b.price) > 0).map((b) => ({ id: b.id, name: b.name, genus: "Book", category: "Books", price: Number(b.price), salePrice: 0, stock: null, status: "In Stock", size: "", shipSize: "", description: "", images: [], isBook: true })));
+const findProduct = (id) => products.find((x) => x.id === id) || candleProducts().find((x) => x.id === id) || bookProducts().find((x) => x.id === id);
 function addToCart(id, qty) {
   const p = findProduct(id); if (!p) return;
   if (noPrice(p) || isOut(p)) return;
@@ -618,12 +619,15 @@ function shipFee() {
   const cls = c.classes || { small: 10, medium: 15, large: 20 }, rank = ["small", "medium", "large"];
   let top = 0, count = 0;
   for (const l of cartLines()) {
-    if (l.p.isCandle) continue;   // candles ship free
+    if (l.p.isCandle || l.p.isBook) continue;   // candles ship free; books have their own flat fee (below)
     const k = rank.includes(l.p.shipSize) ? l.p.shipSize : (c.defaultClass || "medium");
     top = Math.max(top, Math.max(0, rank.indexOf(k))); count += l.qty;
   }
-  return count ? Number(cls[rank[top]] || 0) + Number(c.extraPlant || 0) * (count - 1) : 0;
+  let fee = count ? Number(cls[rank[top]] || 0) + Number(c.extraPlant || 0) * (count - 1) : 0;
+  if (cartLines().some((l) => l.p.isBook) && c.bookFlat !== null && c.bookFlat !== undefined) fee += Number(c.bookFlat) || 0;   // one flat fee per order that has books
+  return fee;
 }
+const booksNeedFee = () => { const c = shipCfg(); return !!c && cartLines().some((l) => l.p.isBook) && (c.bookFlat === null || c.bookFlat === undefined); };
 function payMode() { const r = document.querySelector('input[name="pay"]:checked'); return r ? r.value : "pickup"; }
 function cartSub(items) { return (items || cartLines()).reduce((s, c) => s + now(c.p) * c.qty, 0); }
 function updateTotal(items) {
@@ -670,6 +674,7 @@ async function submitOrder(e) {
   const shipping = payMode() === "ship" && shipCfg();
   const market = shipping ? "Shipping" : String(f.get("market") || "");
   if (!market) return say("Please choose which event you'll pick up at.", true);
+  if (shipping && booksNeedFee()) return say("Shipping for books isn't set up yet. Please choose pickup at an event.", true);
   const address = shipping ? { line1: String(f.get("addr1") || "").trim(), city: String(f.get("city") || "").trim(), state: String(f.get("state") || ""), zip: String(f.get("zip") || "").trim() } : null;
   if (address && (!address.line1 || !address.city || !address.state || !/^\d{5}(-\d{4})?$/.test(address.zip))) return say("Please fill in your full shipping address.", true);
   const notes = String(f.get("notes") || "").trim().slice(0, 500);
@@ -1105,4 +1110,13 @@ document.addEventListener("click", (e) => {
   const g = b.closest(".book-gallery"), main = g && g.querySelector(".book-main"); if (!main) return;
   main.src = b.getAttribute("data-src"); main.alt = b.getAttribute("data-alt");
   g.querySelectorAll(".book-thumbs button").forEach((x) => x.classList.toggle("on", x === b));
+});
+
+// Spiritus side: Add to cart for the books.
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-add-spirit]");
+  if (!b) return;
+  addToCart(b.getAttribute("data-add-spirit"), 1);
+  const t = b.textContent; b.textContent = "Added. Add another?"; setTimeout(() => { b.textContent = t; }, 2200);
+  toggleCart(true);
 });
