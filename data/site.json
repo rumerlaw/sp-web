@@ -283,6 +283,11 @@
       "id": "book-mediums-es",
       "name": "Los Médiums: Una Guía",
       "price": 19.99
+    },
+    {
+      "id": "book-space",
+      "name": "A Space Between Breaths",
+      "price": 12.99
     }
   ]
 }
