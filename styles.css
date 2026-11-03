@@ -1309,3 +1309,9 @@ html[data-realm="spiritus"] .hero{background:#17122a}
 @media(max-width:820px){#book{padding-top:70px;padding-bottom:70px}#book .book{padding:22px 18px}#book .book+.book{padding-top:22px;margin-top:44px}#book .book-lead{font-size:1.3rem}}
 /* less zoom: the banner is never taller than the picture's own shape needs (at most a few percent cropped) */
 @media(min-width:641px){.hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{height:min(calc(100vh - 78px),52vw);min-height:320px}}
+/* the Spina / Spiritus buttons fit on the first screen under the banner (no scrolling) */
+@media(min-width:641px){
+  .hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{height:min(calc(100vh - 200px),52vw);min-height:300px}
+  .hero .realms{padding:16px 16px 20px}
+  .hero .realm{padding:10px 10px}
+}
