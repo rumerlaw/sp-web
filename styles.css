@@ -1380,3 +1380,8 @@ html[data-realm="spiritus"] .cart-head{background:#1f1838}
 .follow-spina{display:block}
 html[data-realm="spiritus"] .follow-spirit{display:block}
 html[data-realm="spiritus"] .follow-spina{display:none}
+
+/* the books section on the home page is wider */
+section#book .wrap{max-width:1400px}
+section#book .bcards{gap:30px}
+@media(min-width:1001px){section#book .wrap{padding-left:40px;padding-right:40px}}
