@@ -949,7 +949,7 @@ function renderPlantPage() {
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
           ${((SITE.care || {}).genus || {})[p.genus] ? `<div><dt>Care</dt><dd>${esc(SITE.care.genus[p.genus])}</dd></div>` : ""}
           <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
-          <div><dt>Shipping</dt><dd>Shipped plants arrive bare-root, with no pot.</dd></div>
+          <div><dt>Shipping</dt><dd>Pickup plants come in their pots; shipped plants arrive bare-root, with no pot.</dd></div>
         </dl>
 
       </div>

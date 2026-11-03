@@ -15,7 +15,7 @@ FAQS = [
  ("Do you ship?",
   "Yes, anywhere in the US except California and Hawaii, when you choose <b>Ship to me</b> and pay online. <b>Plants</b> ship bare-root (no pot) for a flat fee by size: $10 small, $15 medium, $20 large, plus $5 for each extra plant in the same box. <b>Candles</b> ship free. <b>Books</b> can be picked up at an event, and shipping for books is coming soon. Pickup at an event is always free. See <a href=\"index.html#events\">Upcoming events</a> for where we'll be."),
  ("How do shipped plants arrive?",
-  "Every plant we ship is <b>bare-root: no pot</b>. Our photos often show plants in pots for display. When your plant arrives, pot it in dry, gritty cactus mix and wait about a week before the first watering so the roots can settle. Plants picked up at an event are handed to you in person."),
+  "Every plant we ship is <b>bare-root: no pot</b>. Our photos show plants in pots, which is how they come when you pick them up at an event. For shipping we remove the pot. When your shipped plant arrives, pot it in dry, gritty cactus mix and wait about a week before the first watering so the roots can settle."),
  ("Where can I find you?",
   "<b>Spina (plants):</b> every Saturday, 8am–12pm, at Roadrunner Park Farmers Market, <a href=\"https://www.google.com/maps/search/?api=1&query=3502+E+Cactus+Rd%2C+Phoenix%2C+AZ+85032\">3502 E Cactus Rd, Phoenix, AZ 85032</a> (opens a map). Some events are for both sides and are tagged <b>Spina + Spiritus</b> in <a href=\"index.html#events\">Upcoming events</a>. For other locations we update the site and post on social media a couple of days before."),
  ("How do I pay?",
