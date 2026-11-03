@@ -257,7 +257,7 @@ function renderContactArea() {
   $("#contactEmail").textContent = CONFIG.email;
   $("#contactEmail").href = "mailto:" + CONFIG.email;
   $("#contactEmail").setAttribute("data-path", "contact.email");
-  $("#contactInsta").href = CONFIG.instagramUrl;
+  const ci = $("#contactInsta"); if (ci) ci.href = CONFIG.instagramUrl;
   const it = $("#contactInstaText"); if (it) { it.textContent = CONFIG.instagram; it.setAttribute("data-path", "contact.instagram"); }
   const ev = upcomingEvents();
   renderEventLd(ev);

@@ -1375,3 +1375,6 @@ html[data-realm="spiritus"] .cart-head{background:#1f1838}
 .bookpage #spanish{scroll-margin-top:100px}
 .book-back{text-align:center;margin-top:60px}
 @media(max-width:820px){.bookpage{padding-top:96px}}
+
+.follow-spirit{display:block}
+html[data-realm="spiritus"] .follow-spina{display:none}

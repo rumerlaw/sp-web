@@ -226,8 +226,8 @@
     "collection",
     "shop",
     "events",
-    "faq",
-    "follow"
+    "follow",
+    "faq"
   ],
   "shipping": {
     "enabled": true,
