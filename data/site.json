@@ -278,6 +278,11 @@
       "id": "book-silence",
       "name": "A Silence Too Loud: Whispers at the Jerome Grand",
       "price": 13.99
+    },
+    {
+      "id": "book-mediums-es",
+      "name": "Los Médiums: Una Guía",
+      "price": 19.99
     }
   ]
 }

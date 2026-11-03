@@ -1116,7 +1116,17 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   const b = e.target.closest && e.target.closest("[data-add-spirit]");
   if (!b) return;
+  if (!findProduct(b.getAttribute("data-add-spirit"))) { const t0 = b.textContent; b.textContent = "Price coming soon"; setTimeout(() => { b.textContent = t0; }, 2200); return; }   // a book without a price yet
   addToCart(b.getAttribute("data-add-spirit"), 1);
   const t = b.textContent; b.textContent = "Added. Add another?"; setTimeout(() => { b.textContent = t; }, 2200);
   toggleCart(true);
 });
+
+// Book price lines: show the real price from data/site.json (so the page and the cart can never disagree).
+function fillBookPrices() {
+  document.querySelectorAll("[data-book-price]").forEach((el) => {
+    const p = findProduct(el.getAttribute("data-book-price")), b = el.querySelector("b");
+    if (p && b) b.textContent = money(p.price);
+  });
+}
+siteReady.then(fillBookPrices);
