@@ -1597,3 +1597,14 @@ html.js .plant-index{display:none}
 .notfound-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px}
 
 .cf-box{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:90}
+
+/* Reviews: same look as the book cards and the rest of the page (body font, same card style, easy to read) */
+.reviews-row{gap:24px}
+.rcard{padding:28px 26px;gap:18px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));border:1px solid var(--line);border-radius:2px}
+.rcard blockquote{font-family:var(--sans);font-size:1.15rem;line-height:1.75;font-style:normal;font-weight:500;letter-spacing:0;color:var(--ink)}
+.rcard figcaption{padding-top:16px;border-top:1px solid var(--line);gap:3px}
+.rcard figcaption b{font-family:var(--sans);font-size:.8rem;letter-spacing:.16em;color:var(--gold-text,var(--gold))}
+html[data-realm="spiritus"] .rcard figcaption b{color:var(--gold)}
+.rcard figcaption span,.rcard figcaption em{font-family:var(--sans);font-size:.95rem;line-height:1.5;color:var(--ink);opacity:1}
+.rcard figcaption em{color:var(--muted);font-style:normal}
+@media(max-width:900px){.rcard blockquote{font-size:1.1rem}}
