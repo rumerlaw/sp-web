@@ -1481,3 +1481,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 html[data-realm="spiritus"] a:focus-visible,html[data-realm="spiritus"] button:focus-visible,html[data-realm="spiritus"] input:focus-visible,html[data-realm="spiritus"] select:focus-visible,html[data-realm="spiritus"] textarea:focus-visible,html[data-realm="spiritus"] summary:focus-visible{outline-color:var(--gold)}
 .filters h3{color:var(--gold-text)}
 html[data-realm="spiritus"] .filters h3{color:var(--gold)}
+
+/* Plant page: price + Add to cart sit together right under the title, so nobody has to scroll to buy */
+.buy-box{margin:6px 0 22px;padding:18px 18px 14px;border:1px solid var(--line);background:var(--card)}
+.buy-box .buy{margin:0}
+.buy-note{display:flex;flex-wrap:wrap;gap:6px 18px;margin:12px 0 0;font-size:.82rem;font-weight:600;color:var(--muted)}
+.buy-note span+span::before{content:"✓ ";color:var(--gold-text)}
+.buy-note.static{margin:0 0 16px}
+.plant-info .plant-desc{margin-top:0}
+html[data-realm="spiritus"] .buy-box{background:rgba(255,255,255,.04)}
+.added-toast{width:calc(100vw - 24px);max-width:520px}
+@media(max-width:900px){
+  .plant-media .main,.plant-media #plantMain{max-height:46vh;overflow:hidden}
+  .plant-media #plantMain img{width:100%;max-height:46vh;object-fit:cover}
+  .plant-title{margin-top:18px}
+}
+@media(max-width:900px){.plant-media #plantMain img{width:100%!important;height:min(46vh,420px)!important;max-height:none!important;object-fit:cover}}
+@media(max-width:760px){.quick-add{position:static;display:block;width:calc(100% - 8px);margin:2px 4px 10px;padding:9px 4px;font-size:.66rem;letter-spacing:.1em;box-shadow:none;min-height:40px}}
+.card>.card-hit{flex:1}

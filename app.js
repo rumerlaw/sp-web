@@ -459,7 +459,7 @@ function renderProducts() {
     priceDesc: (a, b) => b.price - a.price,
   };
   list.sort(sorts[state.sort]);
-  if (QUICK) list.sort((x, y) => (y.images.length > 0) - (x.images.length > 0));   // preview: plants with photos first (stable within each group)
+  if (QUICK) list.sort((x, y) => (y.images.length > 0) - (x.images.length > 0));   // plants with photos first (stable within each group)
   const grid = $("#productGrid");
   const preview = isHome && matchMedia("(max-width:760px)").matches;   // phones: short preview on the home page; desktop: the full shop
   grid.toggleAttribute("data-preview", preview);
@@ -472,7 +472,7 @@ function renderProducts() {
 const plantSlug = (id) => String(id).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
 // In-stock plants have their own real page (plants/<name>.html, built by scripts/build_plants.py); anything else uses the generic page.
 const pageUrl = (p) => (p.isCandle ? "index.html?realm=spiritus#spiritus" : isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
-const QUICK = /[?&]preview=quickadd\b/.test(location.search);   // preview: shop.html?preview=quickadd
+const QUICK = true;   // quick "+ Add" button on every plant card; plants with photos are listed first
 function cardHtml(p) {
   const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
   const img = p.images[0] ? `<img src="${esc(variant(p.images[0], "thumb"))}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph" data-slot="Photo coming soon">${CACTUS_SVG}</div>`;
@@ -931,6 +931,12 @@ function renderPlantPage() {
         <h1 class="plant-title">${esc(p.name)}</h1>
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
         <p class="plant-price">${priceHtml(p)}</p>
+        <div class="buy-box">
+        <div class="buy">
+          <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
+          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : `<span data-path="text.addToCart">${esc(addLabel())}</span>`}</button>
+        </div>
+        <p class="buy-note"><span>Pick it up at an event (free) or have it shipped</span><span>Secure checkout</span></p>        </div>
         <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${p.origKey}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
         <dl class="specs">
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
@@ -939,11 +945,7 @@ function renderPlantPage() {
           ${((SITE.care || {}).genus || {})[p.genus] ? `<div><dt>Care</dt><dd>${esc(SITE.care.genus[p.genus])}</dd></div>` : ""}
           <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
         </dl>
-        <div class="buy">
-          <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
-          <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : `<span data-path="text.addToCart">${esc(addLabel())}</span>`}</button>
-        </div>
-        <p class="fine">Not every plant comes to every event. Reserve it, pick the event you'll attend, and we'll bring it. Pay in person at pickup.</p>
+
       </div>
     </div>
     ${related.length ? `<section class="related"><h2 data-path="text.relatedHeading">${esc((SITE.text && SITE.text.relatedHeading) || "You may also like")}</h2><div class="product-grid">${related.map(cardHtml).join("")}</div></section>` : ""}

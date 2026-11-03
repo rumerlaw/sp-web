@@ -136,6 +136,7 @@ def build_page(shell, p, today):
             f'<div class="plant-grid"><div class="plant-media"><div class="plant-main">{img_html}</div></div>'
             f'<div class="plant-info"><h1 class="plant-title">{esc(name)}</h1>'
             + (f'<p class="plant-price">${price:g}</p>' if price > 0 else "")
+            + '<p class="buy-note static"><span>Pick it up at an event (free) or have it shipped</span><span>Secure checkout</span></p>'
             + f'<p class="plant-desc">{esc(base_desc)}</p><dl class="specs">{"".join(specs)}</dl>'
             f'<p><a class="btn" href="shop.html">Reserve at checkout — browse the shop</a></p></div></div></div>')
 
