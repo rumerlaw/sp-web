@@ -1227,3 +1227,5 @@ html[data-realm="spiritus"] .hero-brand-spirit picture{display:block}
 html[data-realm="spiritus"] .hero{background:#17122a}
 @media(min-width:641px){html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{width:100%;height:auto;max-height:640px;object-fit:cover;object-position:center top;min-height:0}}
 @media(min-width:641px){html[data-realm="spiritus"] .hero{padding-top:78px}}
+/* desktop banner: show the whole picture (it used to be cropped a little at the bottom) */
+@media(min-width:641px){.hero-brand .hero-spina,html[data-realm="spiritus"] .hero-brand-spirit .hero-spina{width:100%;height:auto;max-height:820px;min-height:0;object-fit:contain;aspect-ratio:1774/887}}
