@@ -1237,3 +1237,10 @@ function restoreDetails() {
     DET_FIELDS.forEach((k) => { const el = form.elements[k]; if (el && !el.value && typeof o[k] === "string") el.value = o[k]; });
   } catch (err) {}
 }
+
+// About page: the two jump buttons glide to the bio; everything else jumps instantly (smooth-scrolling the whole long home page lagged).
+document.addEventListener("click", (e) => {
+  const l = e.target.closest && e.target.closest(".about-jump a"); if (!l) return;
+  const t = document.querySelector(l.getAttribute("href")); if (!t) return;
+  e.preventDefault(); t.scrollIntoView({ behavior: "smooth", block: "start" });
+});

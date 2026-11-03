@@ -141,8 +141,11 @@ def cards():
           <h3 class="bcard-title"><a href="{url}">{esc(full)}</a></h3>
           <p class="bcard-by">By {esc(b["authors"])}</p>
           <p class="bcard-short">{esc(b["short"])}</p>{es}
-          <p class="bcard-foot"><span class="bcard-price" data-book-price="{esc(b["id"])}">{money(price_of.get(b["id"]))}</span><button type="button" class="btn" data-add-spirit="{esc(b["id"])}">Add to cart</button></p>
-          <a class="bcard-more" href="{url}">View details &rarr;</a>
+          <div class="bcard-foot">
+            <p class="bcard-priceRow"><span class="bcard-price" data-book-price="{esc(b["id"])}">{money(price_of.get(b["id"]))}</span><span class="bcard-format">Paperback</span></p>
+            <button type="button" class="btn bcard-add" data-add-spirit="{esc(b["id"])}">Add to cart</button>
+            <a class="btn ghost bcard-more" href="{url}">View details</a>
+          </div>
         </div>
       </article>''')
     return "".join(out)
@@ -159,7 +162,9 @@ def reviews_section(s):
     inner = block("spiritus", "reviews-spirit") + block("spina", "reviews-spina")
     sec = ('<!-- REVIEWS:START (built by scripts/build_books.py) -->\n<section class="section reviews" id="reviews">\n  <div class="wrap">\n    \n    <h2 class="center">What readers are saying</h2>\n    ' + inner + '\n  </div>\n</section>\n<!-- REVIEWS:END -->\n\n') if inner else ""
     s = re.sub(r"<!-- REVIEWS:START.*?<!-- REVIEWS:END -->\s*", "", s, flags=re.S)
-    if sec: s = s.replace("<!-- FOLLOW -->", sec + "<!-- FOLLOW -->", 1)
+    if sec:   # right under the books section
+        k = s.index("<!-- BOOKS:END -->"); k = s.index("</section>", k) + len("</section>")
+        s = s[:k] + "\n\n" + sec.rstrip() + s[k:]
     return s
 
 

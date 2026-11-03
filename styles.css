@@ -1214,7 +1214,6 @@ html[data-realm="spiritus"] .faq-a{background:rgba(255,255,255,.04);padding:14px
 .about-jump a:last-child:hover{background:#3d2f6b;color:#fff}
 .about-jump a:last-child:hover span{color:#e4dcf7}
 .about-jump+.two-col{padding-top:20px}
-html{scroll-behavior:smooth}
 @media(max-width:560px){.about-jump{flex-direction:column;padding-top:96px}}
 .about-jump{padding-top:0}
 @media(max-width:560px){.about-jump{padding-top:0}}
@@ -1499,3 +1498,42 @@ html[data-realm="spiritus"] .buy-box{background:rgba(255,255,255,.04)}
 @media(max-width:900px){.plant-media #plantMain img{width:100%!important;height:min(46vh,420px)!important;max-height:none!important;object-fit:cover}}
 @media(max-width:760px){.quick-add{position:static;display:block;width:calc(100% - 8px);margin:2px 4px 10px;padding:9px 4px;font-size:.66rem;letter-spacing:.1em;box-shadow:none;min-height:40px}}
 .card>.card-hit{flex:1}
+
+/* ===== Book cards: modern footer (price, Add to cart, View details) ===== */
+.bcard{padding:20px 20px 22px;border-radius:2px}
+.bcard-title{font-size:1.6rem}
+.bcard-chip{display:inline-block;align-self:flex-start;padding:5px 10px;border:1px solid rgba(216,184,104,.5);border-radius:99px;font-size:.62rem}
+html[data-realm="spiritus"] .bcard-chip{color:var(--gold)}
+.bcard-foot{display:grid;gap:10px;margin:auto 0 0;padding-top:16px;border-top:1px solid var(--line)}
+.bcard-priceRow{display:flex;align-items:baseline;justify-content:space-between;margin:0}
+.bcard-price{font-family:var(--serif);font-size:2.1rem;font-weight:600;color:var(--gold);line-height:1}
+.bcard-format{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.bcard-foot .btn{display:block;width:100%;text-align:center;padding:15px 16px;letter-spacing:.22em;font-size:.74rem;cursor:pointer;transition:transform .25s,filter .25s,background .25s,color .25s}
+.bcard-foot .bcard-add:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.bcard-foot .bcard-more{background:transparent;color:var(--ink);border:1px solid var(--line);text-decoration:none}
+html[data-realm="spiritus"] .bcard-foot .bcard-more{color:var(--gold);border-color:rgba(216,184,104,.5)}
+.bcard-foot .bcard-more:hover{border-color:var(--gold);background:rgba(216,184,104,.12)}
+@media(max-width:520px){.bcard-foot{grid-template-columns:1fr}}
+
+/* ===== Reviews: bigger and easier to read ===== */
+.reviews{padding:90px 0}
+.reviews h2{font-size:clamp(2.1rem,4.2vw,3.1rem)}
+.reviews-row{gap:26px;max-width:1280px;margin:2.4rem auto 0}
+.rcard{padding:34px 30px;gap:22px;background:rgba(255,255,255,.05);border-color:rgba(216,184,104,.45)}
+.rcard blockquote{font-family:var(--serif);font-size:clamp(1.45rem,2vw,1.7rem);line-height:1.5;font-style:normal;font-weight:500;color:var(--ink);position:relative}
+.rcard blockquote::before{content:"\201C";display:block;font-size:4rem;line-height:.6;color:var(--gold);margin-bottom:8px}
+.rcard figcaption{padding-top:18px;border-top:1px solid var(--line);gap:4px;font-size:1rem}
+.rcard figcaption b{font-size:.95rem;letter-spacing:.12em;color:var(--gold)}
+.rcard figcaption span,.rcard figcaption em{font-size:.95rem;color:var(--ink);opacity:.9}
+
+/* book card footer: buttons fill the card width (the old flex rules were shrinking them) */
+.bcard-foot{grid-template-columns:1fr;justify-content:stretch;align-items:stretch}
+.bcard-priceRow{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+
+/* Spiritus checkout drawer: the event line and its label were too faint */
+html[data-realm="spiritus"] .market-picked{background:rgba(216,184,104,.16);border-left:3px solid var(--gold);color:#fff;font-size:1rem;font-weight:600}
+html[data-realm="spiritus"] .cart-foot label{color:var(--ink);font-weight:700;font-size:.8rem;letter-spacing:.14em}
+html[data-realm="spiritus"] .cart-foot label small{color:var(--muted);font-weight:500}
+html[data-realm="spiritus"] .cart-foot select,html[data-realm="spiritus"] .cart-foot input,html[data-realm="spiritus"] .cart-foot textarea{color:#fff;font-weight:600}
+html[data-realm="spiritus"] .pay-opt small{color:var(--muted)}
+.rcard blockquote::before{display:none}
