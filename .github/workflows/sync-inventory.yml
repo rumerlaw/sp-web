@@ -47,19 +47,30 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
         run: python scripts/build_legal.py "$SITE_URL"
+      - name: Rebuild the Spiritus page and the genus pages
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          python scripts/build_genus.py "$SITE_URL"
+          python scripts/build_spiritus.py "$SITE_URL"
       - name: Refresh sitemap
         env:
           SITE_URL: ${{ vars.SITE_URL }}
         run: python scripts/build_sitemap.py "$SITE_URL"
       - name: Commit if changed
         run: |
-          if [ -n "$(git status --porcelain data assets plants books sitemap.xml shop.html index.html shipping.html privacy.html terms.html)" ]; then
+          if [ -n "$(git status --porcelain data assets plants books genus sitemap.xml shop.html index.html spiritus.html shipping.html privacy.html terms.html 404.html)" ]; then
             git config user.name "inventory-sync"
             git config user.email "inventory-sync@users.noreply.github.com"
-            git add -A data assets plants books sitemap.xml shop.html index.html shipping.html privacy.html terms.html
+            git add -A data assets plants books genus sitemap.xml shop.html index.html spiritus.html shipping.html privacy.html terms.html 404.html
             git commit -m "Sync inventory from Dropbox"
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
             git push
           else
             echo "No changes"
           fi
+      - name: Tell search engines what changed (IndexNow)
+        continue-on-error: true
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: python scripts/indexnow.py "$SITE_URL"

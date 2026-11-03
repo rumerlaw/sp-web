@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 Disallow: /incoming/
 Disallow: /scripts/
 Sitemap: https://spinanspiritus.com/sitemap.xml

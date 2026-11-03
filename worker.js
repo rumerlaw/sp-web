@@ -369,7 +369,7 @@ export default {
     if (url.pathname === "/") return env.ASSETS.fetch(new Request(new URL("/index.html", request.url).toString(), request));
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
     if (url.pathname === "/api/stripe-webhook") return handleStripeWebhook(request, env);
-    if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY) });
+    if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY), turnstile: (env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY) ? String(env.TURNSTILE_SITE_KEY) : null });
     const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : url.pathname === "/api/confirm" ? handleConfirm : null;
     if (!route) return json({ error: "not_found" }, 404);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -385,6 +385,16 @@ export default {
     if (raw.length > MAX_BODY) return json({ error: "too_large" }, 413);
     let body; try { body = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
     if (!body || typeof body !== "object") return json({ error: "bad_request" }, 400);
+    // Cloudflare Turnstile (the invisible "are you human" check): enforced only once the site key and secret are both set up.
+    if (env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY && url.pathname !== "/api/confirm") {
+      let ok = false;
+      try {
+        const tf = new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: clean(body.cf, 2100), remoteip: ip });
+        const tr = await fetch(env.TURNSTILE_API_URL || "https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: tf });
+        ok = !!(tr.ok && (await tr.json()).success);
+      } catch (e) { ok = false; }
+      if (!ok) return json({ error: "Please refresh the page and try again." }, 403);
+    }
     // Online payments only need Stripe (Stripe emails the receipt); everything else sends mail through Resend.
     const stripeOnly = (url.pathname === "/api/order" && (body.pay === "online" || body.pay === "ship") && env.STRIPE_SECRET_KEY) || (url.pathname === "/api/confirm" && env.STRIPE_SECRET_KEY);
     if (!stripeOnly && (!env.RESEND_API_KEY || !env.FROM_EMAIL || !env.OWNER_EMAIL)) return json({ error: "unavailable" }, 503);

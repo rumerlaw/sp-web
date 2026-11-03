@@ -57,7 +57,7 @@ def load_plants():
             p = {"id": r.get("sku") or "", "name": r.get("name") or "", "genus": r.get("genus") or "", "category": r.get("category") or "",
                  "price": num(r.get("price")), "sale": num(r.get("sale_price")), "status": r.get("status") or "In Stock",
                  "stock": (int(float(r["stock"])) if str(r.get("stock") or "").strip() != "" else None),
-                 "desc": (r.get("description") or "").strip(), "size": r.get("size") or "",
+                 "desc": (r.get("description") or "").strip(), "size": r.get("size") or "", "ship_size": (r.get("ship_size") or "").strip().lower(),
                  "images": [u for u in (r.get("image") or "").split("|") if safe_path(u)]}
             ov = ovs.get(normkey(p["name"])) or {}
             if str(ov.get("name") or "").strip(): p["name"] = ov["name"].strip()
@@ -70,6 +70,17 @@ def load_plants():
             if isinstance(ov.get("images"), list) and ov["images"]: p["images"] = [u for u in ov["images"] if safe_path(str(u))]
             if p["id"] and p["name"]: out.append(p)
     return out
+
+
+_SITE = json.loads((ROOT / "data/site.json").read_text(encoding="utf-8")) if (ROOT / "data/site.json").exists() else {}
+_SHIP = _SITE.get("shipping") or {}
+US_STATES = "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split()
+
+
+def ship_fee(p):
+    cls = _SHIP.get("classes") or {"small": 10, "medium": 15, "large": 20}
+    k = p.get("ship_size") if p.get("ship_size") in cls else (_SHIP.get("defaultClass") or "medium")
+    return float(cls.get(k, 15))
 
 
 def is_out(p): return bool(re.search(r"sold", p["status"], re.I)) or p["stock"] == 0
@@ -112,8 +123,11 @@ def build_page(shell, p, today):
     if genus: product["additionalProperty"] = [{"@type": "PropertyValue", "name": "Genus", "value": genus}]
     if price > 0:
         product["offers"] = {"@type": "Offer", "url": url, "price": ("%g" % price), "priceCurrency": "USD", "availability": avail,
-                             "itemCondition": "https://schema.org/NewCondition", "availableDeliveryMethod": "https://schema.org/OnSitePickup",
+                             "itemCondition": "https://schema.org/NewCondition", "availableDeliveryMethod": ["https://schema.org/OnSitePickup", "https://schema.org/ParcelService"],
                              "priceValidUntil": (today + timedelta(days=45)).isoformat(),
+                             **({"shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "%g" % ship_fee(p), "currency": "USD"},
+                                                     "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "US", "addressRegion": [st for st in US_STATES if st not in (_SHIP.get("excludedStates") or [])]}},
+                                 "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "US", "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted", "merchantReturnLink": SITE + "/shipping.html"}} if _SHIP.get("enabled") else {}),
                              "seller": {"@type": "Organization", "name": "Spina & Spiritus", "alternateName": ["Spina and Spiritus", "AZ Cactus Doctor", "AzCactusDoctor"], "url": SITE + "/"}}
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
@@ -126,11 +140,15 @@ def build_page(shell, p, today):
     img_html = (f'<img src="{esc(imgs[0])}" alt="{esc(" ".join(f"{name} {genus}".split()))} cactus or succulent for sale in Phoenix, Arizona"'
                 + (f' width="{sz[0]}" height="{sz[1]}"' if sz else "") + ' fetchpriority="high">') if imgs else ""
     specs = []
-    if genus: specs.append(f"<div><dt>Genus</dt><dd>{esc(genus)}</dd></div>")
+    if genus:
+        _n = sum(1 for q in ALL_PLANTS if q["genus"].strip().lower() == genus.strip().lower() and not is_out(q) and q["price"] > 0) if "ALL_PLANTS" in globals() else 0
+        specs.append(f'<div><dt>Genus</dt><dd>' + (f'<a href="genus/{slug(genus)}.html">{esc(genus)}</a>' if _n >= 2 else esc(genus)) + '</dd></div>')
     if p["size"]: specs.append(f"<div><dt>Size</dt><dd>{esc(p['size'])}</dd></div>")
     specs.append("<div><dt>Availability</dt><dd>In stock" + (f" — {p['stock']} available" if p["stock"] is not None else "") + "</dd></div>")
     care = ((json.loads((ROOT / "data/site.json").read_text(encoding="utf-8")).get("care") or {}).get("genus") or {}).get(genus, "")
     if care: specs.append(f"<div><dt>Care</dt><dd>{esc(care)}</dd></div>")
+    if _SHIP.get("enabled"):
+        specs.append(f"<div><dt>Shipping</dt><dd>${ship_fee(p):g} flat for this plant, plus ${float(_SHIP.get('extraPlant', 5)):g} for each extra plant in the same box. Not shipped to California or Hawaii.</dd></div>")
     specs.append("<div><dt>Pickup</dt><dd>Pick up at Arizona farmers market events (Phoenix, AZ), or pay online and have it shipped (US except CA and HI). Pickup plants come in their pots; shipped plants arrive bare-root, with no pot.</dd></div>")
     body = (f'<div class="wrap-wide"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <a href="shop.html">Shop</a> › <span>{esc(name)}</span></nav>'
             f'<div class="plant-grid"><div class="plant-media"><div class="plant-main">{img_html}</div></div>'
@@ -197,6 +215,7 @@ def main():
     shell = (ROOT / "plant.html").read_text(encoding="utf-8")
     if 'id="plantPage"' not in shell: sys.exit("plant.html shell not found")
     plants = [p for p in load_plants() if not is_out(p)]
+    global ALL_PLANTS; ALL_PLANTS = plants
     if not plants: sys.exit("No plants in stock; leaving plants/ unchanged")
     OUTDIR.mkdir(exist_ok=True)
     keep, index = set(), []

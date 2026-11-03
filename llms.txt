@@ -1,14 +1,28 @@
-# Spina & Spiritus (AZ Cactus Doctor / AzCactusDoctor)
+# Spina & Spiritus (Spina and Spiritus, Spina n Spiritus, SpinaAndSpiritus, spinanspiritus)
 
-> Spina & Spiritus (also written Spina and Spiritus, spinaandspiritus, spinanspiritus) is the plant shop of AzCactusDoctor, also known as AZ Cactus Doctor (@azcactusdoctor). Rare and curated cacti, succulents, euphorbia, agave and caudex plants (Adenium / desert rose) grown in Arizona and sold at Phoenix, AZ farmers markets and events. Customers browse the inventory online and reserve plants for pickup. No shipping.
+> Spina & Spiritus is one shop with two sides. SPINA is the plant side: rare and curated cacti, succulents, euphorbia, agave and caudex plants grown in Arizona by AzCactusDoctor (also written AZ Cactus Doctor, @azcactusdoctor). SPIRITUS is the spirit side by Sonoran Mystic Tarot (Don Rumer-Rivera): intention candles, books and tarot readings. Based in Phoenix, Arizona.
+
+## How to buy
+- Pickup at events in Phoenix, AZ: reserve online, pay in person (cash or card). Pickup is free.
+- Shipping within the US (not California or Hawaii): pay online by card, Apple Pay or Google Pay through Stripe. Plants ship bare-root with no pot; plants picked up at events come in pots. Plant shipping is a flat fee by size ($10 small, $15 medium, $20 large, plus $5 per extra plant). Candles ship free.
 
 ## Pages
-- [Home](https://spinanspiritus.com/): about, personal collection photos, shop, upcoming events, FAQ
-- [Shop](https://spinanspiritus.com/shop.html): full catalog of plants in stock; every plant has its own page
-- [About AzCactusDoctor](https://spinanspiritus.com/about.html): 15 years growing, 2,300+ plants
-- [FAQ](https://spinanspiritus.com/faq.html): reservations, pickup, payment, cactus care
-- [Sitemap](https://spinanspiritus.com/sitemap.xml): every plant page
+- [Home (Spina, plants)](https://spinanspiritus.com/): plants, personal collection, events, FAQ
+- [Spiritus (candles, books, tarot)](https://spinanspiritus.com/spiritus.html): intention candles, books by Don Rumer-Rivera, readings
+- [Shop](https://spinanspiritus.com/shop.html): every plant in stock, each with its own page
+- [About](https://spinanspiritus.com/about.html): AzCactusDoctor and Sonoran Mystic Tarot
+- [FAQ](https://spinanspiritus.com/faq.html)
+- [Shipping & returns](https://spinanspiritus.com/shipping.html), [Privacy](https://spinanspiritus.com/privacy.html), [Terms](https://spinanspiritus.com/terms.html)
 
-## Key facts
-- Pickup (free) at Arizona farmers market events; shipping within the US (except California and Hawaii) is available when paying online (plants ship bare-root, no pot), with a flat fee by order size ($12 under $50, $18 under $100, $25 under $200, $35 over). Pickup events: Arizona farmers market events (Roadrunner Park Farmers Market, 3502 E Cactus Rd, Phoenix, AZ 85032, Saturdays 8am to 12pm) and special events; payment in person or online.
-- Contact: spinanspiritus@gmail.com, Instagram @azcactusdoctor
+## Products
+- Plants: cacti, succulents, euphorbia, agave, adenium (desert rose) and caudex plants; prices and stock on each plant page.
+- Sonoran Mystic Tarot Intention Candles, $20 each, six scents: Essence, Awakening, Abundance, Meditation, Frankincense, Passion.
+- Books by Don Rumer-Rivera: The Mediums: A Guidebook (English and Spanish), The Ultimate Power Within, A Silence Too Loud, A Space Between Breaths.
+- Tarot readings: book through https://sonoranmystictarot.com/
+
+## Social
+- https://instagram.com/azcactusdoctor
+- https://instagram.com/sonoranmystictarot, https://www.facebook.com/Sonoranmystictarot/, https://www.youtube.com/@SonoranMysticTarot
+
+## Contact
+spinanspiritus@gmail.com

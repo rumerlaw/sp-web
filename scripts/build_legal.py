@@ -94,5 +94,20 @@ def build(slug, d):
     (ROOT / f"{slug}.html").write_text(s, encoding="utf-8")
 
 
+def build404():
+    s = (ROOT / "thanks.html").read_text(encoding="utf-8")
+    for n, v in stamps().items():
+        if v: s = re.sub(re.escape(n) + r"\?v=[0-9a-f]+", f"{n}?v={v}", s)
+    s = s.replace("<head>\n", '<head>\n<base href="/">\n', 1)
+    s = re.sub(r"<title>.*?</title>", "<title>Page not found | Spina &amp; Spiritus</title>", s, count=1, flags=re.S)
+    s = re.sub(r'<link rel="canonical" href="[^"]*">', "", s, count=1)
+    main = ('<main class="faqpage legal" id="faqPage"><div class="wrap narrow center"><h1>We couldn\'t find that page</h1>'
+            '<p class="sub">The link may be old, or the plant may have sold. Try one of these:</p>'
+            '<p class="notfound-links"><a class="btn" href="shop.html">Shop the plants</a> <a class="btn ghost" href="spiritus.html">Candles, books &amp; tarot</a> <a class="btn ghost" href="index.html">Home</a></p></div></main>')
+    i = s.index('<main class="faqpage"'); j = s.index("</main>", i) + len("</main>")
+    (ROOT / "404.html").write_text(s[:i] + main + s[j:], encoding="utf-8")
+
+
 for slug, d in PAGES.items(): build(slug, d)
+build404()
 print("legal pages built:", ", ".join(f"{k}.html" for k in PAGES))

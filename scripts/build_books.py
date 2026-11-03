@@ -80,7 +80,7 @@ def page(b):
     pages, lang, date, isbn = meta_parts(b["meta"])
     url = f"{SITE}/books/{b['slug']}.html"
     full = b["title"] + (": " + b["subtitle"] if b.get("subtitle") and b["subtitle"] not in b["title"] else "")
-    title = f"{full} by {b['authors']} | Spina & Spiritus"
+    title = next(t for t in (f"{b['title']} by {b['authors']} | Spina & Spiritus", f"{b['title']} | Spina & Spiritus", f"{b['title']} | Books") if len(t) <= 70 or t.endswith("| Books"))
     ld = {"@context": "https://schema.org", "@type": "Book", "name": full, "url": url, "image": f"{SITE}/{b['front']}",
           "author": [{"@type": "Person", "name": n.strip()} for n in re.split(r"\s*&\s*", b["authors"])], "description": b["desc"],
           "bookFormat": "https://schema.org/Paperback", "publisher": {"@type": "Organization", "name": "Spina & Spiritus"}}

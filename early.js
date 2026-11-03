@@ -5,7 +5,7 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
 // Spina (plants, green) / Spiritus (candles & tarot, dark mystic) theme. Same site; the choice is remembered on this device.
 (function () {
   var root = document.documentElement, KEY = "sp-realm";
-  function get() { if (/^\/books\//.test(location.pathname)) return "spiritus"; if (!/(^\/$|\/index\.html$)/.test(location.pathname)) return "spina"; try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
+  function get() { if (/^\/books\//.test(location.pathname) || /^\/spiritus\.html$/.test(location.pathname)) return "spiritus"; if (!/(^\/$|\/index\.html$)/.test(location.pathname)) return "spina"; try { var q = /[?&]realm=(spina|spiritus)/.exec(location.search); if (q) { localStorage.setItem(KEY, q[1]); return q[1]; } return localStorage.getItem(KEY) === "spiritus" ? "spiritus" : "spina"; } catch (e) { return "spina"; } }
   function set(r) {
     root.setAttribute("data-realm", r);
     root.style.backgroundColor = r === "spiritus" ? "#17122a" : "";   // no white flash while the page loads
@@ -25,7 +25,7 @@ try { if (sessionStorage.getItem("sp-restore") === "1" && !document.body) docume
     var t = e.target && e.target.closest ? e.target.closest("[data-realm-btn]") : null;
     if (!t) return;
     e.preventDefault();
-    if (!document.querySelector(".hero")) { location.href = "index.html?realm=" + t.getAttribute("data-realm-btn"); return; }   // other pages: go to that side's home page
+    if (!document.querySelector(".hero") || (/^\/spiritus\.html$/.test(location.pathname) && t.getAttribute("data-realm-btn") === "spina")) { location.href = "index.html?realm=" + t.getAttribute("data-realm-btn"); return; }   // other pages: go to that side's home page
     set(t.getAttribute("data-realm-btn")); document.dispatchEvent(new Event("realmchange"));
     if (document.querySelector(".hero")) window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -38,5 +38,15 @@ try {
   if ((nav === "reload" || nav === "back_forward") && /(^\/$|\/index\.html$|\/shop\.html$)/.test(location.pathname) && parseInt(sessionStorage.getItem("sp-y") || "", 10) > 0) {
     document.documentElement.style.opacity = "0";
     setTimeout(function () { document.documentElement.style.opacity = ""; }, 2500);
+  }
+} catch (e) {}
+
+// Mark the page as JavaScript-capable right away (so static fallback blocks that scripts replace never flash), and, on the Spiritus side, start fetching its banner immediately.
+try {
+  document.documentElement.classList.add("js");
+  if (document.documentElement.getAttribute("data-realm") === "spiritus" && /(^\/$|\/index\.html$|^\/spiritus\.html$)/.test(location.pathname)) {
+    var l = document.createElement("link"); l.rel = "preload"; l.as = "image"; l.fetchPriority = "high";
+    l.href = matchMedia("(max-width:640px)").matches ? "assets/brand/hero-spiritus-mobile.webp" : "assets/brand/hero-spiritus.webp";
+    document.head.appendChild(l);
   }
 } catch (e) {}

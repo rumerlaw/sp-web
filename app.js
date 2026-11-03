@@ -480,6 +480,12 @@ const plantSlug = (id) => String(id).toLowerCase().replace(/[^a-z0-9-]+/g, "-").
 const pageUrl = (p) => (p.isCandle ? "index.html?realm=spiritus#spiritus" : isOut(p) ? `plant.html?id=${encodeURIComponent(p.id)}` : `plants/${plantSlug(p.id)}.html`);
 const QUICK = true;   // quick "+ Add" button on every plant card; plants with photos are listed first
 // Descriptive picture text for screen readers and search: name, plant family, what it is.
+// The plant page's Shipping line: the flat fee for this plant (from data/site.json) plus the bare-root note.
+function shipLine(p) {
+  const sh = SITE.shipping || {}, cls = sh.classes || {}, k = cls[p.shipSize] !== undefined ? p.shipSize : (sh.defaultClass || "medium");
+  const fee = sh.enabled && cls[k] !== undefined ? "$" + cls[k] + " flat for this plant, plus $" + (sh.extraPlant ?? 5) + " for each extra plant in the same box. " : "";
+  return fee + "Shipped plants arrive bare-root, with no pot; plants picked up at an event come in their pots. Not shipped to California or Hawaii.";
+}
 function altFor(p) { return `${p.name}${p.genus && !new RegExp("^" + p.genus, "i").test(p.name) ? " (" + p.genus + ")" : ""}, ${p.isBook ? "book" : p.isCandle ? "candle" : "cactus or succulent"} from Spina & Spiritus, Phoenix AZ`; }
 function cardHtml(p) {
   const bn = banner(p), badge = bn ? `<span class="banner ${bn[0]}">${bn[1]}</span>` : "";
@@ -617,7 +623,8 @@ function cartLines() {
 // Our own mail service (worker.js, /api/...). If it isn't set up yet, or is down, we quietly fall back to the Formspree form.
 async function postApi(path, body) {
   try {
-    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(window.__cf ? { ...body, cf: window.__cf } : body) });
+    if (window.turnstile && window.__cfId !== undefined) { window.__cf = ""; try { window.turnstile.reset(window.__cfId); } catch (e) {} }   // each check can be used once
     if (r.status === 404 || r.status === 405 || r.status >= 500) return { fallback: true };
     const data = await r.json().catch(() => ({}));
     return { ok: r.ok, status: r.status, data };
@@ -666,13 +673,22 @@ function setupShipping() {
   if (!shipCfg()) { const r = document.querySelector('input[name="pay"][value="pickup"]'); if (r && payMode() === "ship") r.checked = true; }
   applyPayMode();
 }
+// Cloudflare Turnstile: a quiet human check that guards the order and signup forms. Only switched on once its keys are added in Cloudflare.
+function loadTurnstile(siteKey) {
+  if (window.__cfLoading) return; window.__cfLoading = true;
+  const box = document.createElement("div"); box.id = "cfBox"; box.className = "cf-box"; document.body.appendChild(box);
+  window.__cfReady = () => { try { window.__cfId = window.turnstile.render("#cfBox", { sitekey: siteKey, appearance: "interaction-only", callback: (t) => { window.__cf = t; }, "expired-callback": () => { window.__cf = ""; }, "error-callback": () => { window.__cf = ""; } }); } catch (e) {} };
+  const s = document.createElement("script"); s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__cfReady"; s.async = true; s.defer = true; document.head.appendChild(s);
+}
 async function loadPayConfig() {
   try {
     const r = await fetch("/api/pay-config", { cache: "no-store" });
     if (!r.ok) return;
-    onlinePay = !!(await r.json()).online;
+    const cfg = await r.json();
+    onlinePay = !!cfg.online;
     const box = $("#payChoice"); if (box) box.hidden = !onlinePay;
     setupShipping();
+    if (cfg.turnstile && /^[0-9A-Za-z_-]{10,60}$/.test(cfg.turnstile)) loadTurnstile(cfg.turnstile);
   } catch (e) {}
 }
 document.addEventListener("change", (e) => { if (e.target && e.target.name === "pay") applyPayMode(); });
@@ -951,11 +967,11 @@ function renderPlantPage() {
         <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${p.origKey}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
         <dl class="specs">
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>
-          ${p.genus ? `<div><dt>Genus</dt><dd><i>${esc(p.genus)}</i></dd></div>` : ""}
+          ${p.genus ? `<div><dt>Genus</dt><dd>${products.filter((x) => x.genus === p.genus && !isOut(x)).length >= 2 ? `<a href="genus/${plantSlug(p.genus)}.html"><i>${esc(p.genus)}</i></a>` : `<i>${esc(p.genus)}</i>`}</dd></div>` : ""}
           ${p.size ? `<div><dt>Size</dt><dd>${esc(p.size)}</dd></div>` : ""}
           ${((SITE.care || {}).genus || {})[p.genus] ? `<div><dt>Care</dt><dd>${esc(SITE.care.genus[p.genus])}</dd></div>` : ""}
-          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") + "<br>No shipping." : "At our next event. No shipping."}</dd></div>
-          <div><dt>Shipping</dt><dd>Pickup plants come in their pots; shipped plants arrive bare-root, with no pot.</dd></div>
+          <div><dt>Pickup</dt><dd>${upcomingEvents().length ? upcomingEvents().map((e) => `<b>${esc(e.name)}</b><br>${e.where ? mapLink(e) + "<br>" : ""}<span class="when">${esc(e.when)}</span>${exceptNote(e) ? `<br><small>${esc(exceptNote(e))}</small>` : ""}`).join("<br><br>") : "At our next event."}</dd></div>
+          <div><dt>Shipping</dt><dd>${shipLine(p)}</dd></div>
         </dl>
 
       </div>

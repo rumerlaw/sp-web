@@ -1571,3 +1571,29 @@ html[data-realm="spiritus"] .nav,html[data-realm="spiritus"] .footer{border-colo
 html[data-realm="spiritus"] .book-for,html[data-realm="spiritus"] .book-quote,html[data-realm="spiritus"] #book .book-quote,html[data-realm="spiritus"] #book .book-for{border-left-color:rgba(216,184,104,.55)}
 html[data-realm="spiritus"] .bcard-foot .bcard-more{border-color:var(--line);color:var(--ink)}
 html[data-realm="spiritus"] .candle-scent{border-left-color:rgba(216,184,104,.55)}
+
+/* the plain-HTML A-Z plant list is for search engines; scripts replace it, so hide it at once (no jump when it disappears) */
+html.js .plant-index{display:none}
+/* skip drawing plant cards that are far off screen (the shop has ~95 of them) */
+#productGrid .card{content-visibility:auto;contain-intrinsic-size:auto 420px}
+/* keep the footer below the first screen while the plant cards are still loading (otherwise it jumps down when they appear) */
+#productGrid:empty{min-height:130vh}
+
+/* genus (category) pages and the shop's browse-by-genus row */
+.genus .wrap{max-width:1200px}
+.genus h1{text-align:left;font-size:clamp(2.2rem,5vw,3.3rem);margin:4px 0 10px}
+.genus .crumbs{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);margin:0}
+.genus .crumbs a{text-decoration:underline;text-underline-offset:4px;color:var(--muted)}
+.genus-intro{max-width:60ch;margin:0 0 12px;text-align:left}
+.genus-care{max-width:60ch;margin:0 0 18px;font-size:1.05rem;line-height:1.6}
+.genus-count{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 16px}
+.genus-more{text-align:center;margin-top:36px}
+.genus-links{padding-top:28px;padding-bottom:6px}
+.genus-links h2{font-size:1.4rem;margin:0 0 10px}
+.genus-links p{display:flex;flex-wrap:wrap;gap:8px 10px;margin:0}
+.genus-links a{display:inline-flex;gap:6px;align-items:baseline;padding:8px 14px;border:1px solid var(--line);font-size:.92rem;font-weight:600}
+.genus-links a:hover{border-color:var(--gold)}
+.genus-links small{color:var(--muted);font-weight:600}
+.notfound-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px}
+
+.cf-box{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:90}
