@@ -512,7 +512,7 @@ function openQuickView(id, opener) {
 function closeQuickView() {
   $("#qv").classList.remove("on"); $("#qv").setAttribute("aria-hidden", "true");
   lockPage(false);
-  if (qvOpener) qvOpener.focus(); qvProduct = null;
+  if (qvOpener) qvOpener.focus({ preventScroll: true }); qvProduct = null;
 }
 
 /* ---------- CART ---------- */
@@ -550,7 +550,10 @@ function lockPage(on) {
   if (on) {
     if (lockCount++ === 0) { lockY = window.scrollY; document.body.style.top = -lockY + "px"; document.body.classList.add("lock"); }
   } else if (lockCount > 0 && --lockCount === 0) {
+    const root = document.documentElement, prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";   // the page uses smooth scrolling for links; restoring the position must be instant, not an animation from the top
     document.body.classList.remove("lock"); document.body.style.top = ""; window.scrollTo(0, lockY);
+    root.style.scrollBehavior = prev;
   }
 }
 // Optional: email the customer a copy of their reservation (EmailJS, sent from your Gmail). Skipped unless it is set up in CONFIG.
