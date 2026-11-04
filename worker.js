@@ -98,17 +98,17 @@ async function stripe(env, method, path, params) {
 // ---- Orders and stock holds (Cloudflare D1, binding "DB"). If the database isn't connected the shop works exactly as before. ----
 const HOLD_SECS = 31 * 60, PAID_HOLD_SECS = 7 * 24 * 3600;
 const now = () => Math.floor(Date.now() / 1000);
-async function reserveLine(env, orderId, sku, qty, sheetStock) {
+async function reserveLine(env, orderId, sku, qty, sheetStock, state = "hold", ttl = HOLD_SECS) {
   // One atomic statement: take the units only if enough are left after other people's holds and not-yet-synced paid orders.
   const t = now();
   const r = await env.DB.prepare(
-    "INSERT INTO reservations (order_id, sku, qty, sheet_stock, state, expires_at) SELECT ?1, ?2, ?3, ?4, 'hold', ?5 WHERE ?4 - (SELECT COALESCE(SUM(qty), 0) FROM reservations WHERE sku = ?2 AND ((state = 'hold' AND expires_at > ?6) OR (state = 'paid' AND expires_at > ?6 AND sheet_stock <= ?4))) >= ?3"
-  ).bind(orderId, sku, qty, sheetStock, t + HOLD_SECS, t).run();
+    "INSERT INTO reservations (order_id, sku, qty, sheet_stock, state, expires_at) SELECT ?1, ?2, ?3, ?4, ?7, ?5 WHERE ?4 - (SELECT COALESCE(SUM(qty), 0) FROM reservations WHERE sku = ?2 AND order_id NOT IN (SELECT id FROM orders WHERE status IN ('cancelled', 'failed', 'refunded', 'expired')) AND ((state = 'hold' AND expires_at > ?6) OR (state = 'paid' AND expires_at > ?6 AND sheet_stock <= ?4))) >= ?3"
+  ).bind(orderId, sku, qty, sheetStock, t + ttl, t, state).run();
   return r.meta && r.meta.changes === 1;
 }
 async function leftFor(env, sku, sheetStock) {
   const t = now();
-  const row = await env.DB.prepare("SELECT COALESCE(SUM(qty), 0) AS n FROM reservations WHERE sku = ?1 AND ((state = 'hold' AND expires_at > ?2) OR (state = 'paid' AND expires_at > ?2 AND sheet_stock <= ?3))").bind(sku, t, sheetStock).first();
+  const row = await env.DB.prepare("SELECT COALESCE(SUM(qty), 0) AS n FROM reservations WHERE sku = ?1 AND order_id NOT IN (SELECT id FROM orders WHERE status IN ('cancelled', 'failed', 'refunded', 'expired')) AND ((state = 'hold' AND expires_at > ?2) OR (state = 'paid' AND expires_at > ?2 AND sheet_stock <= ?3))").bind(sku, t, sheetStock).first();
   return Math.max(0, sheetStock - (row ? row.n : 0));
 }
 async function releaseHold(env, orderId, status) {
@@ -276,14 +276,36 @@ async function handleOrder(request, env, body) {
     if (env.DB) { try { await env.DB.prepare("UPDATE orders SET stripe_session = ?2 WHERE id = ?1").bind(holdId, clean(s.data.id, 100)).run(); } catch (e) {} }
     return json({ ok: true, checkoutUrl: s.data.url });
   }
+  // Pay-at-pickup: hold the plants for the customer (until the Dropbox sheet shows the sale, or a few days) so nobody else can buy them online.
+  const holdDays = Math.max(1, Math.min(30, Number(site && site.pickupHoldDays) || 7));
+  let pickupId = null, heldUntil = 0;
+  if (env.DB) {
+    try {
+      const rh = await sha256hex(JSON.stringify(["pickup", contact.toLowerCase(), market, lines.map((l) => [l.sku || l.name, l.qty])]));
+      const dup = await env.DB.prepare("SELECT id FROM orders WHERE req_hash = ?1 AND status = 'pickup' AND created_at > ?2 LIMIT 1").bind(rh, now() - 300).first();
+      if (dup) return json({ ok: true, copy: false, held: true, holdDays });   // the same request again: already recorded and emailed
+      const id = crypto.randomUUID();
+      for (const l of lines) {
+        if (!l.sku || l.sheet_stock == null) continue;
+        if (!(await reserveLine(env, id, l.sku, l.qty, l.sheet_stock, "paid", holdDays * 86400))) {
+          await env.DB.prepare("DELETE FROM reservations WHERE order_id = ?1").bind(id).run();
+          const left = await leftFor(env, l.sku, l.sheet_stock);
+          return json({ error: left > 0 ? `Only ${left} of ${l.name} left right now. Please lower the quantity.` : `${l.name} was just reserved by another customer. Please choose something else, or check back soon.` }, 409);
+        }
+      }
+      await env.DB.prepare("INSERT INTO orders (id, status, pay_mode, name, contact, market, ship_to, notes, items_json, total_cents, ship_cents, created_at, req_hash) VALUES (?1, 'pickup', 'pickup', ?2, ?3, ?4, '', ?5, ?6, ?7, 0, ?8, ?9)")
+        .bind(id, name, contact, market, notes || "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total), now(), rh).run();
+      pickupId = id; heldUntil = now() + holdDays * 86400;
+    } catch (e) { console.error("pickup hold failed:", e && e.message); }
+  }
   const plantsText = lines.map((l) => `${l.qty} x ${l.name} - ${money(l.sub)}`).join("\n");
   const plantsHtml = lines.map((l) => `<div>${esc(l.qty)} × <b>${esc(l.name)}</b> — ${esc(money(l.sub))}</div>`).join("");
   const totalTxt = money(total);
 
-  const ownerText = `NEW PLANT RESERVATION\n\n1. PLANTS\n${plantsText}\n\n2. PICKUP EVENT\n${market}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. TOTAL (pay at pickup)\n${totalTxt}\n\n6. NOTES\n${notes || "-"}\n`;
+  const ownerText = `NEW PLANT RESERVATION\n\n1. PLANTS\n${plantsText}\n\n2. PICKUP EVENT\n${market}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. TOTAL (pay at pickup)\n${totalTxt}\n\n6. NOTES\n${notes || "-"}\n${pickupId ? `\nHELD: these plants are held for the customer for ${holdDays} days, or until your Dropbox sheet shows the sale. To release them sooner, set the order's status to 'cancelled' in the Cloudflare database.\n` : ""}`;
   const ownerHtml = shell("New plant reservation", block("1. Plants", plantsHtml) + block("2. Pickup event", esc(market)) + block("3. Name", esc(name)) + block("4. Phone or email", esc(contact)) + block("5. Total (pay at pickup)", `<b>${esc(totalTxt)}</b>`) + block("6. Notes", esc(notes || "-")));
   const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(email ? { reply_to: email } : {}), subject: `Plant reservation: ${name} (${totalTxt})`, text: ownerText, html: ownerHtml });
-  if (!okOwner) return json({ error: "send_failed" }, 502);
+  if (!okOwner) { if (pickupId && env.DB) { try { await env.DB.batch([env.DB.prepare("DELETE FROM reservations WHERE order_id = ?1").bind(pickupId), env.DB.prepare("UPDATE orders SET status = 'failed' WHERE id = ?1").bind(pickupId)]); } catch (e) {} } return json({ error: "send_failed" }, 502); }
 
   let copy = false;
   if (email) {
@@ -291,7 +313,7 @@ async function handleOrder(request, env, body) {
     const html = shell("Reservation received", `<p style="font-size:15px;line-height:1.5">Hi ${esc(name)}, thanks! We got your plant reservation and we'll message you to confirm.</p>` + block("Your plants", plantsHtml) + block("Pickup event", esc(market)) + block("Total (pay in person at pickup)", `<b>${esc(totalTxt)}</b>`) + `<p style="margin-top:20px;font-size:13px;color:#5d594e">No payment is taken online. Questions? Just reply to this email.<br>— Spina &amp; Spiritus (AZ Cactus Doctor)</p>`);
     copy = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [email], reply_to: env.OWNER_EMAIL, subject: "We got your plant reservation — Spina & Spiritus", text, html });
   }
-  return json({ ok: true, copy });
+  return json({ ok: true, copy, held: Boolean(pickupId) && lines.some((l) => l.sku && l.sheet_stock != null), holdDays });
 }
 
 async function handleSignup(request, env, body) {

@@ -730,6 +730,7 @@ async function submitOrder(e) {
     const done = { items: items.map((c) => ({ name: c.p.name, qty: c.qty, price: now(c.p) * c.qty })), total, market, name, contact };
     cart = []; saveCart(); form.reset(); say("");
     showOrderDone(done);
+    if (api.data && api.data.held) { const fine0 = $("#orderDone .od-fine"); if (fine0) fine0.insertAdjacentHTML("beforebegin", `<p class="od-copy">We're holding these for you for up to ${Math.max(1, Math.min(30, Number(api.data.holdDays) || 7))} days.</p>`); }
     if (api.data && api.data.copy) { const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy">We've also emailed a copy to ${esc(contact)}.</p>`); }
     btn.disabled = !cartLines().length;
     return;

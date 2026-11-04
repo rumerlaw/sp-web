@@ -347,5 +347,6 @@
       "Pachypodium": "Full sun and heat. Water in summer, keep it dry in winter, and protect it from frost.",
       "Crassula": "Bright light. Water when the soil is dry."
     }
-  }
+  },
+  "pickupHoldDays": 7
 }

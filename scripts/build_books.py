@@ -35,6 +35,17 @@ def stamps():
     return {n: (re.search(re.escape(n) + r"\?v=([0-9a-f]+)", s) or [None, ""])[1] for n in ("app.js", "styles.css", "early.js")}
 
 
+def stars(b, small=False):
+    """Amazon star rating next to a book. Shown only when data/books.json has a real rating for it (value, count, url); nothing is invented."""
+    r = b.get("rating")
+    if not r or not r.get("value") or not r.get("count"): return ""
+    v = max(0.0, min(5.0, float(r["value"]))); n = int(r["count"]); url = r.get("url") or b.get("amazon") or ""
+    label = f"Rated {v:g} out of 5 on Amazon from {n} rating{'s' if n != 1 else ''}"
+    inner = f'<span class="stars r{round(v * 10)}" role="img" aria-label="{esc(label)}"></span><span class="rating-text">{v:g} <small>({n} Amazon rating{"s" if n != 1 else ""})</small></span>'
+    if url.startswith("https://www.amazon.com/"): inner = f'<a href="{esc(url)}" target="_blank" rel="noopener nofollow" class="rating-link">{inner}</a>'
+    return f'<p class="rating{" rating-sm" if small else ""}">{inner}</p>'
+
+
 def inside(b):
     return "".join(f"<li>{x}</li>" for x in b["inside"])
 
@@ -63,6 +74,7 @@ def detail(b, h1, tag_id=""):
       <div class="book-info">
         {heading}
         {sub}
+        {stars(b)}
         {award}
         <p class="book-lead">{b["lead"]}</p>
         <p class="book-price" data-book-price="{esc(b["id"])}"><b>{money(price)}</b> <span>Ships for a flat fee, or pick it up at an event</span></p>
@@ -140,6 +152,7 @@ def cards():
           <p class="bcard-chip">{esc(b.get("chip", ""))}</p>
           <h3 class="bcard-title"><a href="{url}">{esc(full)}</a></h3>
           <p class="bcard-by">By {esc(b["authors"])}</p>
+          {stars(b, True)}
           <p class="bcard-short">{esc(b["short"])}</p>{es}
           <div class="bcard-foot">
             <p class="bcard-priceRow"><span class="bcard-price" data-book-price="{esc(b["id"])}">{money(price_of.get(b["id"]))}</span><span class="bcard-format">Paperback</span></p>
