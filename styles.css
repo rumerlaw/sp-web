@@ -1742,3 +1742,12 @@ section#spiritus .wrap{max-width:1400px}
 .nl-menu a:hover,.nl-menu a:focus-visible{background:var(--card);color:var(--gold-text)}
 html[data-realm="spiritus"] .nl-menu a:hover,html[data-realm="spiritus"] .nl-menu a:focus-visible{color:var(--gold)}
 @media(max-width:900px){.nl-wrap{display:none}}
+
+/* Shop intro: three short points instead of a sentence */
+.shop-steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:0;max-width:900px;margin:1.6rem auto 0;padding:0}
+.shop-steps li{display:flex;flex-direction:column;gap:6px;text-align:center;padding:6px 24px}
+.shop-steps li+li{border-left:1px solid var(--line)}
+.shop-steps b{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--gold-text)}
+.shop-steps span{font-size:1.05rem;line-height:1.45;color:var(--ink)}
+html[data-realm="spiritus"] .shop-steps b{color:var(--gold)}
+@media(max-width:700px){.shop-steps{grid-template-columns:1fr;gap:14px}.shop-steps li+li{border-left:0;border-top:1px solid var(--line);padding-top:14px}}
