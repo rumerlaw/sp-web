@@ -192,6 +192,8 @@ def reviews_section(s):
     s = re.sub(r"<!-- REVIEWS:START.*?<!-- REVIEWS:END -->\s*", "", s, flags=re.S)
     if sec:   # right under the books section
         k = s.index("<!-- BOOKS:END -->"); k = s.index("</section>", k) + len("</section>")
+        if 'id="readingsSection"' in s[k:k + 400]:   # the "Book a reading" box sits right under the books; reviews go under it
+            k = s.index("</section>", k) + len("</section>")
         s = s[:k] + "\n\n" + sec.rstrip() + s[k:]
     return s
 
