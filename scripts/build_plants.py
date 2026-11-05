@@ -152,7 +152,7 @@ def build_page(shell, p, today):
     specs.append("<div><dt>Pickup</dt><dd>Pick up at Arizona farmers market events (Phoenix, AZ), or pay online and have it shipped (US except CA and HI). Pickup plants come in their pots; shipped plants arrive bare-root, with no pot.</dd></div>")
     body = (f'<div class="wrap-wide"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <a href="shop.html">Shop</a> › <span>{esc(name)}</span></nav>'
             f'<div class="plant-grid"><div class="plant-media"><div class="plant-main">{img_html}</div></div>'
-            f'<div class="plant-info"><h1 class="plant-title">{esc(name)}</h1>'
+            f'<div class="plant-info"><h1 class="plant-title">{esc(name)}</h1>' + (f'<p class="plant-gen">({esc(genus)})</p>' if genus else '')
             + (f'<p class="plant-price">${price:g}</p>' if price > 0 else "")
             + '<p class="buy-note static"><span>Pick it up at an event (free) or have it shipped bare-root, no pot</span><span>Secure checkout</span></p>'
             + f'<p class="plant-desc">{esc(base_desc)}</p><dl class="specs">{"".join(specs)}</dl>'

@@ -493,7 +493,7 @@ function cardHtml(p) {
   return `<article class="card">
     <a class="card-hit" href="${esc(pageUrl(p))}" data-view="${esc(p.id)}" aria-label="${esc(p.name)}, ${esc(money(now(p)))}">
       <span class="thumb">${badge}${img}<span class="peek">Quick view</span></span>
-      <span class="body"><span class="name">${esc(p.name)}</span><span class="price">${priceHtml(p)}</span></span>
+      <span class="body"><span class="name">${esc(p.name)}</span>${p.genus && !p.isBook && !p.isCandle ? `<span class="gen">(${esc(p.genus)})</span>` : ""}<span class="price">${priceHtml(p)}</span></span>
     </a>${QUICK && !isOut(p) && !noPrice(p) ? `<button type="button" class="quick-add" data-quick="${esc(p.id)}" aria-label="Add ${esc(p.name)} to your order">+ Add</button>` : ""}</article>`;
 }
 
@@ -956,7 +956,7 @@ function renderPlantPage() {
           <div class="pf-row"><label>Price $<input data-pf="price" inputmode="decimal" value="${p.price ? p.price : ""}"></label><label>Sale price $<input data-pf="salePrice" inputmode="decimal" value="${p.salePrice ? p.salePrice : ""}"></label><label>In stock<input data-pf="stock" inputmode="numeric" value="${p.stock === null ? "" : p.stock}"></label></div>
           <label>Status<select data-pf="status">${[...new Set(["In Stock", "Sale", "Pre-Order", "Sold Out", p.status])].map((o) => `<option${o === p.status ? " selected" : ""}>${esc(o)}</option>`).join("")}</select></label>
           <p class="edit-tip">These replace the spreadsheet values for this plant only. Clear a box to go back to the spreadsheet.</p></div>` : ""}
-        <h1 class="plant-title">${esc(p.name)}</h1>
+        <h1 class="plant-title">${esc(p.name)}</h1>${p.genus && !p.isBook && !p.isCandle ? `<p class="plant-gen">(${esc(p.genus)})</p>` : ""}
         ${bn ? `<span class="status ${bn[0]}">${bn[1]}</span>` : ""}
         <p class="plant-price">${priceHtml(p)}</p>
         <div class="buy-box">

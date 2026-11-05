@@ -1639,3 +1639,7 @@ html[data-realm="spiritus"] .rcard figcaption b{color:var(--gold)}
 html[data-realm="spiritus"] .fmt-btn b{color:var(--gold)}
 .fmt-btn:hover{border-color:var(--gold)}
 .fmt-btn.on{border-color:var(--gold);background:rgba(216,184,104,.14)}
+
+/* Genus shown in brackets under plant names */
+.card .gen{display:block;font-style:italic;font-size:.9rem;color:var(--muted);margin-top:-2px}
+.plant-gen{margin:-6px 0 12px;font-style:italic;font-size:1.05rem;color:var(--muted)}
