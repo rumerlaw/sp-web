@@ -1658,3 +1658,22 @@ html[data-realm="spiritus"] .card .gen{color:var(--gold)}
 }
 section#spiritus .wrap{max-width:1400px}
 @media(min-width:1001px){section#spiritus .wrap{padding-left:40px;padding-right:40px}}
+
+/* Candle banner: more compact (desktop/tablet) */
+@media(min-width:761px){
+  section#spiritus{padding-top:70px;padding-bottom:60px}
+  #spiritus .candle{grid-template-columns:.7fr 1fr;gap:32px;padding:26px 30px;margin-top:2rem}
+  #spiritus .candle-main{max-height:300px}
+  #spiritus .candle-thumbs{gap:8px;margin-top:8px}
+  #spiritus .candle-thumbs button{aspect-ratio:1.6}
+  #spiritus .candle-info h3{font-size:1.75rem;margin-bottom:10px}
+  #spiritus .candle-copy{font-size:.95rem;line-height:1.6;margin-bottom:10px}
+  #spiritus .candle-price{margin:0 0 12px;padding-top:12px}
+  #spiritus .candle-price b{font-size:1.8rem}
+  #spiritus .candle-pick{margin:14px 0 8px}
+  #spiritus .scent-buttons{margin-bottom:10px}
+  #spiritus .scent-btn{padding:9px 6px;font-size:.74rem}
+  #spiritus .candle-scent{font-size:1.05rem;line-height:1.5;margin:0 0 12px;padding:4px 0 4px 16px}
+  #spiritus .candle-line{font-size:1.2rem;margin:4px 0 14px}
+  #spiritus .candle-cta .btn{padding:14px 20px}
+}
