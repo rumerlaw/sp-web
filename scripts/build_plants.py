@@ -96,7 +96,8 @@ def clip(text, n):
 def build_page(shell, p, today):
     sl = slug(p["id"]); url = f"{SITE}/plants/{sl}.html"
     name, genus = p["name"], p["genus"]
-    label = name if (not genus or normkey(genus) in normkey(name)) else f"{name} ({genus})"
+    if genus and normkey(genus) not in normkey(name): name = f"{genus} {name}"
+    label = name
     price = p["sale"] if (re.search(r"sale", p["status"], re.I) and 0 < p["sale"] < p["price"]) else p["price"]
     title = clip(f"{label} for Sale in Phoenix, AZ | Spina & Spiritus", 70)
     own = p["desc"] and not re.match(r"placeholder", p["desc"], re.I)
