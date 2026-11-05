@@ -1751,3 +1751,13 @@ html[data-realm="spiritus"] .nl-menu a:hover,html[data-realm="spiritus"] .nl-men
 .shop-steps span{font-size:1.05rem;line-height:1.45;color:var(--ink)}
 html[data-realm="spiritus"] .shop-steps b{color:var(--gold)}
 @media(max-width:700px){.shop-steps{grid-template-columns:1fr;gap:14px}.shop-steps li+li{border-left:0;border-top:1px solid var(--line);padding-top:14px}}
+
+/* ===== Books: award badge as a button-style tag, easier descriptions, clear View details (desktop/tablet) ===== */
+@media(min-width:761px){
+  .bcard-chip{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:9px 16px;margin:0 0 10px;background:var(--gold);border:1px solid var(--gold);border-radius:3px;color:#17122a;font-size:.74rem;font-weight:700;letter-spacing:.14em;line-height:1.2;text-transform:uppercase}
+  .bcard-chip::before{content:"\2605";font-size:.9rem;line-height:1}
+  .bcard-short{display:block;-webkit-line-clamp:unset;overflow:visible;font-size:1.06rem;line-height:1.7;opacity:1;color:var(--ink);margin-top:8px}
+  .bcard-foot .bcard-more.btn,.bcard-foot .bcard-more.ghost,.bcard-foot .bcard-more{flex:0 0 auto;order:3;margin:0;padding:12px 22px;min-height:0;border:1px solid var(--gold);background:transparent;color:var(--gold);font-size:.74rem;font-weight:700;letter-spacing:.2em;text-decoration:none;opacity:1;text-transform:uppercase}
+  .bcard-foot .bcard-more:hover,.bcard-foot .bcard-more:focus-visible{background:var(--gold);color:#17122a}
+}
+@media(min-width:761px){html[data-realm="spiritus"] .bcard-chip,.bcard-chip{color:#17122a}}
