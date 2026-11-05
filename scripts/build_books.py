@@ -35,13 +35,22 @@ def stamps():
     return {n: (re.search(re.escape(n) + r"\?v=([0-9a-f]+)", s) or [None, ""])[1] for n in ("app.js", "styles.css", "early.js")}
 
 
+def formats(b):
+    """Paperback / Hardcover choice, only for books that have a hardcover (data/books.json: hardcover {id, label}; its price is in data/site.json)."""
+    h = b.get("hardcover")
+    if not h or price_of.get(h["id"]) is None: return ""
+    opts = [("Paperback", b["id"]), (h.get("label", "Hardcover"), h["id"])]
+    btns = "".join(f'<button type="button" class="fmt-btn{" on" if i == 0 else ""}" role="radio" aria-checked="{"true" if i == 0 else "false"}" data-fmt="{esc(pid)}" data-label="{esc(lab)}" data-price="{esc(money(price_of.get(pid)))}">{esc(lab)} <b>{esc(money(price_of.get(pid)))}</b></button>' for i, (lab, pid) in enumerate(opts))
+    return f'<div class="fmt" role="radiogroup" aria-label="Format">{btns}</div>'
+
+
 def stars(b, small=False):
     """Amazon star rating next to a book. Shown only when data/books.json has a real rating for it (value, count, url); nothing is invented."""
     r = b.get("rating")
     if not r or not r.get("value") or not r.get("count"): return ""
     v = max(0.0, min(5.0, float(r["value"]))); n = int(r["count"]); url = r.get("url") or b.get("amazon") or ""
-    label = f"Rated {v:g} out of 5 on Amazon from {n} rating{'s' if n != 1 else ''}"
-    inner = f'<span class="stars r{round(v * 10)}" role="img" aria-label="{esc(label)}"></span><span class="rating-text">{v:g} <small>({n} Amazon rating{"s" if n != 1 else ""})</small></span>'
+    label = f"Rated {v:.1f} out of 5 on Amazon from {n} rating{'s' if n != 1 else ''}"
+    inner = f'<span class="stars r{round(v * 10)}" role="img" aria-label="{esc(label)}"></span><span class="rating-text">{v:.1f} <small>({n} Amazon rating{"s" if n != 1 else ""})</small></span>'
     if url.startswith("https://www.amazon.com/"): inner = f'<a href="{esc(url)}" target="_blank" rel="noopener nofollow" class="rating-link">{inner}</a>'
     return f'<p class="rating{" rating-sm" if small else ""}">{inner}</p>'
 
@@ -77,6 +86,7 @@ def detail(b, h1, tag_id=""):
         {stars(b)}
         {award}
         <p class="book-lead">{b["lead"]}</p>
+        {formats(b)}
         <p class="book-price" data-book-price="{esc(b["id"])}"><b>{money(price)}</b> <span>Ships for a flat fee, or pick it up at an event</span></p>
         <h4>{esc(b.get("inside_heading", "What's inside"))}</h4>
         <ul class="book-list">{inside(b)}</ul>
@@ -100,6 +110,10 @@ def page(b):
     if lang: ld["inLanguage"] = lang
     if date: ld["datePublished"] = date
     if isbn: ld["isbn"] = isbn
+    hc = b.get("hardcover")
+    if hc and price_of.get(hc["id"]) is not None:
+        ld["workExample"] = [{"@type": "Book", "bookFormat": "https://schema.org/Hardcover", "name": full + " (Hardcover)", "url": url,
+                              "offers": {"@type": "Offer", "price": "%.2f" % float(price_of[hc["id"]]), "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": url, "seller": {"@type": "Organization", "name": "Spina & Spiritus"}}}]
     p = price_of.get(b["id"])
     if p: ld["offers"] = {"@type": "Offer", "price": "%.2f" % float(p), "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": url, "seller": {"@type": "Organization", "name": "Spina & Spiritus"}}
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
@@ -155,6 +169,7 @@ def cards():
           {stars(b, True)}
           <p class="bcard-short">{esc(b["short"])}</p>{es}
           <div class="bcard-foot">
+            {formats(b)}
             <p class="bcard-priceRow"><span class="bcard-price" data-book-price="{esc(b["id"])}">{money(price_of.get(b["id"]))}</span><span class="bcard-format">Paperback</span></p>
             <button type="button" class="btn bcard-add" data-add-spirit="{esc(b["id"])}">Add to cart</button>
             <a class="btn ghost bcard-more" href="{url}">View details</a>

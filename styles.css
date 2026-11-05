@@ -1631,3 +1631,11 @@ html[data-realm="spiritus"] .rcard figcaption b{color:var(--gold)}
 .rating-text small{font-weight:500;color:var(--muted);font-size:.85rem}
 .rating-link:hover .rating-text{text-decoration:underline;text-underline-offset:4px}
 .rating-sm .stars{font-size:1.05rem}.rating-sm .rating-text{font-size:.85rem}
+
+/* Paperback / Hardcover choice */
+.fmt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.fmt-btn{font:inherit;font-size:.8rem;letter-spacing:.06em;font-weight:600;padding:11px 8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:48px;transition:.2s}
+.fmt-btn b{font-family:var(--serif);font-size:1.15rem;font-weight:600;color:var(--gold-text,var(--gold))}
+html[data-realm="spiritus"] .fmt-btn b{color:var(--gold)}
+.fmt-btn:hover{border-color:var(--gold)}
+.fmt-btn.on{border-color:var(--gold);background:rgba(216,184,104,.14)}

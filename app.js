@@ -1292,3 +1292,14 @@ document.addEventListener("click", (e) => {
   addEventListener("load", () => setTimeout(start, 400));
   document.addEventListener("realmchange", () => setTimeout(start, 300));
 })();
+
+// Books that come in two formats (paperback / hardcover): choosing one changes the price shown and what Add to cart adds.
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest(".fmt-btn"); if (!b) return;
+  const box = b.closest(".bcard, .book-info"); if (!box) return;
+  box.querySelectorAll(".fmt-btn").forEach((x) => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-checked", on ? "true" : "false"); });
+  const id = b.dataset.fmt;
+  const pr = box.querySelector("[data-book-price]"); if (pr) { pr.setAttribute("data-book-price", id); const t = pr.matches("b, span") ? pr : pr.querySelector("b"); if (t) t.textContent = b.dataset.price; }
+  const fm = box.querySelector(".bcard-format"); if (fm) fm.textContent = b.dataset.label;
+  const add = box.querySelector("[data-add-spirit]"); if (add) add.setAttribute("data-add-spirit", id);
+});

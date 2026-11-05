@@ -60,7 +60,12 @@
    "back_alt": "Contraportada de Los Médiums: Una Guía con los autores Susan Grayson y Donald Rumer-Rivera",
    "note": "Spanish edition of The Mediums: A Guidebook"
   },
-  "rating": null
+  "rating": {
+   "value": 5,
+   "count": 3,
+   "url": "",
+   "asOf": "2026-11-05"
+  }
  },
  {
   "title": "The Ultimate Power Within",
@@ -103,7 +108,16 @@
   "short": "A new way to understand, create and use affirmations to reach your dreams, goals and desires.",
   "chip": "2× Impact Awards winner",
   "desc": "The Ultimate Power Within: Unleashing the Magic of Affirmations by Donald Rumer-Rivera, a two-time International Impact Book Awards winner. Spina & Spiritus, Phoenix AZ.",
-  "rating": null
+  "rating": {
+   "value": 5,
+   "count": 18,
+   "url": "",
+   "asOf": "2026-11-05"
+  },
+  "hardcover": {
+   "id": "book-power-hc",
+   "label": "Hardcover"
+  }
  },
  {
   "title": "A Silence Too Loud",
@@ -142,7 +156,12 @@
   "short": "A paranormal murder mystery set in haunted Jerome, Arizona: a murdered singer, a haunted hotel, and a secret too loud to hide.",
   "chip": "Paranormal mystery",
   "desc": "A Silence Too Loud: Whispers at the Jerome Grand by Donald Rumer-Rivera, a paranormal murder mystery set in haunted Jerome, Arizona. Spina & Spiritus, Phoenix AZ.",
-  "rating": null,
+  "rating": {
+   "value": 5,
+   "count": 4,
+   "url": "https://www.amazon.com/dp/B0DTVS6H83",
+   "asOf": "2026-11-05"
+  },
   "amazon": "https://www.amazon.com/dp/B0DTVS6H83"
  },
  {
@@ -182,6 +201,11 @@
   "short": "A grounded, practical path back to presence, without dogma, perfectionism or spiritual performance.",
   "chip": "Mindfulness",
   "desc": "A Space Between Breaths: A Grounded Path to Mindfulness in a Noisy World by Donald Rumer-Rivera. Spina & Spiritus, Phoenix AZ.",
-  "rating": null
+  "rating": {
+   "value": 3,
+   "count": 1,
+   "url": "",
+   "asOf": "2026-11-05"
+  }
  }
 ]
