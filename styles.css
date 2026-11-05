@@ -1643,3 +1643,8 @@ html[data-realm="spiritus"] .fmt-btn b{color:var(--gold)}
 /* Genus shown in brackets under plant names */
 .card .gen{display:block;font-style:italic;font-size:.9rem;color:var(--muted);margin-top:-2px}
 .plant-gen{margin:-6px 0 12px;font-style:italic;font-size:1.05rem;color:var(--muted)}
+
+/* Genus line: bigger, upright and darker so it is easy to read */
+.card .gen{font-style:normal;font-size:1.02rem;font-weight:600;color:var(--ink);opacity:.85;letter-spacing:.02em;margin-top:0}
+.plant-gen{font-style:normal;font-size:1.3rem;font-weight:600;color:var(--ink);opacity:.85;margin:-4px 0 14px}
+html[data-realm="spiritus"] .card .gen{color:var(--gold)}
