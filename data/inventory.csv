@@ -1,6 +1,7 @@
 sku,name,genus,category,price,sale_price,status,stock,size,ship_size,description,image
 adelina,Adelina,,Plants,40,,In Stock,2,,,,assets/photos/photo-adelina.jpg
 aloes,Aloes,Aloe,Aloe,20,,In Stock,3,,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
+althea-op,Althea Op,,Plants,25,,In Stock,1,,,,
 althea-x-nfa,Althea x Nfa,Trichocereus,Trichocereus,35,,In Stock,1,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 arabicum-shada-form,Arabicum Shada Form,Adenium,Adenium,20,,In Stock,1,,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",assets/photos/photo-arabicumshadaform.jpg|assets/photos/photo-arabicumshadaform2.jpg
 arboricola,Arboricola,Trichocereus,Trichocereus,15,,In Stock,1,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",assets/photos/photo-arboricola1.jpg
@@ -55,6 +56,7 @@ lophocereus,Lophocereus,Lophocereus,Lophocereus,25,,In Stock,1,,,"A columnar cac
 madagascar-palm,Madagascar Palm,Pachypodium,Pachypodium,20,,In Stock,1,,,"A caudex succulent with a thick, spiny trunk and a crown of leaves, often called the Madagascar palm.",
 medium-adeniums,Medium Adeniums,,Plants,25,,In Stock,1,,,,
 medium-each,Medium Each,Trichocereus,Trichocereus,25,,In Stock,4,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
+melti-x-tbam,Melti x Tbam,,Plants,25,,In Stock,1,,,,
 mikea,Mikea,Pachypodium,Pachypodium,45,,In Stock,1,,,"A caudex succulent with a thick, spiny trunk and a crown of leaves, often called the Madagascar palm.",
 multiflorum,Multiflorum,Adenium,Adenium,20,,In Stock,1,,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",assets/photos/photo-adeniummultiflorum.jpg
 murphey-variegated,Murphey Variegated,Agave,Agave,40,,In Stock,1,,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
