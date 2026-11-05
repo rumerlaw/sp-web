@@ -1677,3 +1677,22 @@ section#spiritus .wrap{max-width:1400px}
   #spiritus .candle-line{font-size:1.2rem;margin:4px 0 14px}
   #spiritus .candle-cta .btn{padding:14px 20px}
 }
+
+/* ===== Books: cleaner, less crowded cards (desktop/tablet) ===== */
+@media(min-width:761px){
+  .bcards{gap:34px}
+  .bcard{position:relative;padding:48px 22px 24px}
+  .bcard-cover{margin-bottom:22px}
+  .bcard-chip{position:absolute;top:16px;left:12px;right:12px;z-index:2;margin:0;padding:0;background:none;border:0;text-align:center;font-size:.6rem;letter-spacing:.22em;line-height:1.3;max-width:none}
+  .bcard-body{gap:6px;text-align:center;align-items:center}
+  .bcard-title{font-size:1.5rem;line-height:1.2}
+  .bcard-by{font-size:.68rem;letter-spacing:.16em}
+  .bcard-short{font-size:.92rem;line-height:1.55;opacity:.85;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px}
+  .bcard-es{font-size:.78rem}
+  .fmt{margin-top:6px}
+  .bcard-foot{width:100%;padding-top:18px;margin-top:auto;gap:12px;border-top:1px solid var(--line)}
+  .bcard-priceRow{justify-content:center;gap:12px;align-items:baseline}
+  .bcard-format{font-size:.62rem;letter-spacing:.2em;opacity:.7}
+  .bcard-more.btn,.bcard-more.ghost{background:none;border:0;padding:2px 0;min-height:0;font-size:.68rem;letter-spacing:.2em;text-decoration:underline;text-underline-offset:5px;color:var(--ink);opacity:.8;box-shadow:none}
+  .bcard-more:hover{opacity:1;color:var(--gold)}
+}
