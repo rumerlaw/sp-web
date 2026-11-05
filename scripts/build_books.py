@@ -206,7 +206,7 @@ def main():
     sec = f'''<section class="section spirit-only" id="book">
   <!-- BOOKS:START (built by scripts/build_books.py from data/books.json) -->
   <div class="wrap">
-    <div class="section-head center"><h2>Books by Don Rumer-Rivera</h2><p class="sub">Mediumship, affirmations, mindfulness and a paranormal mystery</p></div>
+    <div class="section-head center"><h2>Books</h2><p class="sub">Mediumship, affirmations, mindfulness and a paranormal mystery</p></div>
     <div class="bcards">{cards()}
     </div>
   </div>

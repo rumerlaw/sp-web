@@ -1152,11 +1152,11 @@ html[data-realm="spiritus"] .spirit-social{display:block}
 html[data-realm="spiritus"] #contactInsta{display:none}
 .spirit-social .insta{margin:4px 0}
 
-#spiritus .readings{max-width:760px;margin:90px auto 0;padding:48px 28px;text-align:center;border:1px solid var(--gold)}
-#spiritus .readings h3{font-size:clamp(1.8rem,3.6vw,2.4rem);font-weight:500;color:var(--gold);margin:8px 0 14px}
-#spiritus .readings-copy{max-width:46ch;margin:0 auto 24px;font-size:1.1rem;line-height:1.7;font-weight:500;color:var(--ink)}
-#spiritus .readings .btn{padding:16px 34px;letter-spacing:.28em}
-@media(max-width:760px){#spiritus .readings{margin-top:56px;padding:34px 18px}}
+.readings{max-width:760px;margin:90px auto 0;padding:48px 28px;text-align:center;border:1px solid var(--gold)}
+.readings h3{font-size:clamp(1.8rem,3.6vw,2.4rem);font-weight:500;color:var(--gold);margin:8px 0 14px}
+.readings-copy{max-width:46ch;margin:0 auto 24px;font-size:1.1rem;line-height:1.7;font-weight:500;color:var(--ink)}
+.readings .btn{padding:16px 34px;letter-spacing:.28em}
+@media(max-width:760px){.readings{margin-top:56px;padding:34px 18px}}
 
 /* Don's bio (Spiritus) */
 .don-bio{padding:90px 0 80px;text-align:center}
@@ -1572,7 +1572,7 @@ html[data-realm="spiritus"] .legal-sec a{color:var(--gold)}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
 
 /* ===== Spiritus: gold used sparingly (prices, buttons, small labels) instead of on every border ===== */
-html[data-realm="spiritus"] .bcard,html[data-realm="spiritus"] .rcard,html[data-realm="spiritus"] #book .book,html[data-realm="spiritus"] #spiritus .readings,html[data-realm="spiritus"] .review{border-color:var(--line)}
+html[data-realm="spiritus"] .bcard,html[data-realm="spiritus"] .rcard,html[data-realm="spiritus"] #book .book,html[data-realm="spiritus"] .readings,html[data-realm="spiritus"] .review{border-color:var(--line)}
 html[data-realm="spiritus"] #book .book::before,html[data-realm="spiritus"] #book .book::after{display:none}
 html[data-realm="spiritus"] .bcard-cover img,html[data-realm="spiritus"] .book-main,html[data-realm="spiritus"] #spiritus .candle-main,html[data-realm="spiritus"] .don-photo{border-color:var(--line)}
 html[data-realm="spiritus"] .bcard:hover{border-color:rgba(216,184,104,.6)}
@@ -1648,3 +1648,13 @@ html[data-realm="spiritus"] .fmt-btn b{color:var(--gold)}
 .card .gen{font-style:normal;font-size:1.02rem;font-weight:600;color:var(--ink);opacity:.85;letter-spacing:.02em;margin-top:0}
 .plant-gen{font-style:normal;font-size:1.3rem;font-weight:600;color:var(--ink);opacity:.85;margin:-4px 0 14px}
 html[data-realm="spiritus"] .card .gen{color:var(--gold)}
+
+/* ===== Spiritus: candle shown as a wide gold-framed banner card, matching the book cards (desktop/tablet) ===== */
+@media(min-width:761px){
+  #spiritus .candle{max-width:none;margin-top:3rem;position:relative;padding:34px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(216,184,104,.08),rgba(255,255,255,.02));box-shadow:0 0 60px -18px rgba(216,184,104,.45);align-items:center}
+  #spiritus .candle::before{content:"Signature";position:absolute;top:0;left:50%;transform:translate(-50%,-50%);background:var(--gold);color:#17122a;font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;font-weight:700;padding:7px 18px}
+  #spiritus .candle-gallery{position:static}
+  #book .section-head{margin-bottom:0}
+}
+section#spiritus .wrap{max-width:1400px}
+@media(min-width:1001px){section#spiritus .wrap{padding-left:40px;padding-right:40px}}
