@@ -171,8 +171,8 @@ def cards():
           <div class="bcard-foot">
             {formats(b)}
             <p class="bcard-priceRow"><span class="bcard-price" data-book-price="{esc(b["id"])}">{money(price_of.get(b["id"]))}</span><span class="bcard-format">Paperback</span></p>
-            <button type="button" class="btn bcard-add" data-add-spirit="{esc(b["id"])}">Add to cart</button>
             <a class="btn ghost bcard-more" href="{url}">View details</a>
+            <button type="button" class="btn bcard-add" data-add-spirit="{esc(b["id"])}">Add to cart</button>
           </div>
         </div>
       </article>''')

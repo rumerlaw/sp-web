@@ -1761,3 +1761,11 @@ html[data-realm="spiritus"] .shop-steps b{color:var(--gold)}
   .bcard-foot .bcard-more:hover,.bcard-foot .bcard-more:focus-visible{background:var(--gold);color:#17122a}
 }
 @media(min-width:761px){html[data-realm="spiritus"] .bcard-chip,.bcard-chip{color:#17122a}}
+
+/* Books: View details sits above Add to cart, both full width (desktop/tablet) */
+@media(min-width:761px){
+  .bcard-foot .bcard-priceRow{flex:0 0 100%;order:1}
+  .bcard-foot .bcard-more{flex:0 0 100%;order:2;text-align:center;justify-content:center}
+  .bcard-foot .bcard-add{flex:0 0 100%;order:3;width:100%}
+}
+@media(min-width:761px){html[data-realm="spiritus"] .bcard-foot a.bcard-more{border:1px solid var(--gold);color:var(--gold);font-weight:700;background:transparent}html[data-realm="spiritus"] .bcard-foot a.bcard-more:hover,html[data-realm="spiritus"] .bcard-foot a.bcard-more:focus-visible{background:var(--gold);color:#17122a}}
