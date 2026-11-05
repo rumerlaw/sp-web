@@ -347,8 +347,6 @@ function applyPlantOverrides() {
     if (typeof ov.description === "string" && ov.description.trim()) p.description = ov.description;
     if (Array.isArray(ov.images) && ov.images.length) p.images = ov.images.map(safeUrl).filter(Boolean);
   });
-  // Show the genus in every plant name (e.g. "Aloe Aloes"); skipped when the name already contains it.
-  products.forEach((p) => { const g = String(p.genus || "").trim(); if (g && !p.isBook && !p.isCandle && !normKey(p.name).includes(normKey(g))) p.name = g + " " + p.name; });
 }
 Object.assign(SP, { fullOrder, builtinEl, renderBlocks, applyLayout, safeHref, normKey, getPath, setPath, esc, md, renderAll, renderAbout, renderFaq, renderCollection: () => renderCollection(), safeUrl, variant, applyPaths, applyPlantOverrides, renderPortrait,
   getSite: () => SITE, setSite: (x) => { SITE = x; }, upcomingEvents });
