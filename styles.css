@@ -1696,3 +1696,22 @@ section#spiritus .wrap{max-width:1400px}
   .bcard-more.btn,.bcard-more.ghost{background:none;border:0;padding:2px 0;min-height:0;font-size:.68rem;letter-spacing:.2em;text-decoration:underline;text-underline-offset:5px;color:var(--ink);opacity:.8;box-shadow:none}
   .bcard-more:hover{opacity:1;color:var(--gold)}
 }
+
+/* ===== Books: wide rows, two columns, cover left and details right (desktop/tablet) ===== */
+@media(min-width:761px){
+  .bcards{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+  .bcard{display:grid;grid-template-columns:190px minmax(0,1fr);gap:28px;align-items:center;padding:24px}
+  .bcard-cover{margin:0}
+  .bcard-chip{position:static;text-align:left;margin:0 0 4px;font-size:.62rem;letter-spacing:.2em}
+  .bcard-body{align-items:flex-start;text-align:left;gap:6px}
+  .bcard-title{font-size:1.55rem}
+  .bcard-short{-webkit-line-clamp:3;margin-top:4px}
+  .bcard-foot{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:14px;padding-top:14px;width:100%}
+  .bcard-foot .fmt{flex:0 0 100%;margin:0}
+  .bcard-priceRow{justify-content:flex-start;margin:0;order:1}
+  .bcard-foot .bcard-add{order:2;flex:0 0 auto;width:auto;padding:12px 22px}
+  .bcard-foot .bcard-more{order:3;flex:0 0 100%;margin:0;text-align:left}
+}
+@media(min-width:761px) and (max-width:1000px){
+  .bcards{grid-template-columns:1fr}
+}
