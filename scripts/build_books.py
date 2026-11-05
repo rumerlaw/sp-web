@@ -206,7 +206,7 @@ def main():
     sec = f'''<section class="section spirit-only" id="book">
   <!-- BOOKS:START (built by scripts/build_books.py from data/books.json) -->
   <div class="wrap">
-    <div class="section-head center"><h2>Between Curiosity and Possibility</h2><p class="sub">Mediumship, affirmations, mindfulness and a paranormal mystery</p></div>
+    <div class="section-head center"><h2>Between Curiosity and Possibility</h2><p class="sub">Mediumship, affirmations, mindfulness and a paranormal mystery. Every book is $20 (hardcover $30) with free shipping.</p></div>
     <div class="bcards">{cards()}
     </div>
   </div>

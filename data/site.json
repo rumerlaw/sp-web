@@ -133,7 +133,7 @@
     },
     {
       "q": "What books do you sell?",
-      "a": "Books by Don Rumer-Rivera on the Spiritus side: *The Mediums: A Guidebook* (English and Spanish editions), *The Ultimate Power Within* (paperback $19.95 or hardcover $29.95), *A Silence Too Loud* and *A Space Between Breaths*. You can see every title and price in the Books section. Pick them up at an event; shipping for books is coming soon."
+      "a": "Books by Don Rumer-Rivera on the Spiritus side: *The Mediums: A Guidebook* (English and Spanish editions), *The Ultimate Power Within* (paperback $20 or hardcover $30), *A Silence Too Loud* and *A Space Between Breaths*. Every book is $20 (the hardcover is $30) and ships free. Pick them up at an event or have them shipped."
     },
     {
       "q": "How do I book a tarot reading?",
@@ -247,7 +247,7 @@
     },
     "extraPlant": 5,
     "defaultClass": "medium",
-    "bookFlat": null
+    "bookFlat": 0
   },
   "candles": {
     "price": 20,
@@ -273,32 +273,32 @@
     {
       "id": "book-mediums",
       "name": "The Mediums: A Guidebook",
-      "price": 19.99
+      "price": 20
     },
     {
       "id": "book-power",
       "name": "The Ultimate Power Within",
-      "price": 19.95
+      "price": 20
     },
     {
       "id": "book-silence",
       "name": "A Silence Too Loud: Whispers at the Jerome Grand",
-      "price": 13.99
+      "price": 20
     },
     {
       "id": "book-mediums-es",
       "name": "Los Médiums: Una Guía",
-      "price": 19.99
+      "price": 20
     },
     {
       "id": "book-space",
       "name": "A Space Between Breaths",
-      "price": 12.99
+      "price": 20
     },
     {
       "id": "book-power-hc",
       "name": "The Ultimate Power Within (Hardcover)",
-      "price": 29.95
+      "price": 30
     }
   ],
   "reviews": {

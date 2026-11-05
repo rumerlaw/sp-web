@@ -23,7 +23,7 @@ EMAIL = (site.get("contact") or {}).get("email") or "spinanspiritus@gmail.com"
 UPDATED = "November 3, 2026"
 m = lambda v: ("$%g" % float(v))
 book_flat = ship.get("bookFlat")
-book_line = (f"Books ship for one flat fee of {m(book_flat)} per order." if book_flat not in (None, "") else "Shipping for books is coming soon; for now, books are picked up at an event.")
+book_line = ("Books ship free." if book_flat in (0, 0.0) else f"Books ship for one flat fee of {m(book_flat)} per order." if book_flat not in (None, "") else "Shipping for books is coming soon; for now, books are picked up at an event.")
 
 PAGES = {
  "shipping": dict(
