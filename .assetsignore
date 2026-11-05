@@ -21,6 +21,3 @@ data/digest_state.json
 data/ship_sizes.csv
 SECURITY.md
 migrations
-.agents
-.claude
-skills-lock.json
