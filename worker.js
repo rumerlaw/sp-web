@@ -250,7 +250,8 @@ async function handleOrder(request, env, body) {
           taken.push(l.sku);
         }
         await env.DB.prepare("INSERT INTO orders (id, status, pay_mode, name, contact, market, ship_to, notes, items_json, total_cents, ship_cents, created_at, req_hash) VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)")
-          .bind(holdId, ship ? "ship" : "online", name, contact, market, shipTo ? `${shipTo.line1}, ${shipTo.city}, ${shipTo.state} ${shipTo.zip}` : "", notes || "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total + shipFee), cents(shipFee), now(), reqHash).run();
+          .bind(holdId, ship ? "ship" : "online", "", "", market, "", "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total + shipFee), cents(shipFee), now(), reqHash).run();
+        try { await env.DB.prepare("UPDATE orders SET req_hash = NULL WHERE created_at < ?1").bind(now() - 900).run(); } catch (e) {}   // the duplicate-click fingerprint is only needed for a few minutes
       } catch (e) { console.error("order record failed:", e && e.message); /* never block a sale because the record failed */ }
     }
     const items = {}; lines.forEach((l, i) => { items[i] = { quantity: l.qty, price_data: { currency: "usd", unit_amount: cents(l.sub / l.qty), product_data: { name: l.name } } }; });
@@ -296,7 +297,8 @@ async function handleOrder(request, env, body) {
         }
       }
       await env.DB.prepare("INSERT INTO orders (id, status, pay_mode, name, contact, market, ship_to, notes, items_json, total_cents, ship_cents, created_at, req_hash) VALUES (?1, 'pickup', 'pickup', ?2, ?3, ?4, '', ?5, ?6, ?7, 0, ?8, ?9)")
-        .bind(id, name, contact, market, notes || "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total), now(), rh).run();
+        .bind(id, "", "", market, "", JSON.stringify(lines.map((l) => ({ sku: l.sku || null, name: l.name, qty: l.qty, sub: l.sub, sheet_stock: l.sheet_stock ?? null }))), cents(total), now(), rh).run();
+      try { await env.DB.prepare("UPDATE orders SET req_hash = NULL WHERE created_at < ?1").bind(now() - 900).run(); } catch (e) {}
       pickupId = id; heldUntil = now() + holdDays * 86400;
     } catch (e) { console.error("pickup hold failed:", e && e.message); }
   }
