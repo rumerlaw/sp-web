@@ -71,6 +71,8 @@ def detail(b, h1, tag_id=""):
     sub = f'<p class="book-by">{esc(st)}{" &middot; " if st else ""}By {esc(b["authors"])}</p>' if "authors" in b else f'<p class="book-by">{esc(b.get("note", ""))}</p>'
     aud = f'<p class="book-for">{b["audience"]}</p>' if b.get("audience") else ""
     heading = f'<h{h1} class="book-title">{esc(b["title"])}</h{h1}>'
+    am = b.get("amazon") if not b.get("rating") else ""   # a book with an Amazon rating already links through its stars; an edition without one gets its own link
+    amz = f' <a class="btn ghost" href="{esc(am)}" target="_blank" rel="noopener nofollow">View on Amazon</a>' if am and am.startswith("https://www.amazon.com/") else ""
     return f'''
     <article class="book"{f' id="{tag_id}"' if tag_id else ""}>
       <div class="book-gallery">
@@ -87,13 +89,13 @@ def detail(b, h1, tag_id=""):
         {award}
         <p class="book-lead">{b["lead"]}</p>
         {formats(b)}
-        <p class="book-price" data-book-price="{esc(b["id"])}"><b>{money(price)}</b> <span>Ships for a flat fee, or pick it up at an event</span></p>
+        <p class="book-price" data-book-price="{esc(b["id"])}"><b>{money(price)}</b> <span>Free shipping, or pick it up at an event</span></p>
         <h4>{esc(b.get("inside_heading", "What's inside"))}</h4>
         <ul class="book-list">{inside(b)}</ul>
         {quotes(b)}
         {aud}
         <p class="book-meta">{meta}</p>
-        <p class="book-cta"><button type="button" class="btn" data-add-spirit="{esc(b["id"])}">Add to cart</button></p>
+        <p class="book-cta"><button type="button" class="btn" data-add-spirit="{esc(b["id"])}">Add to cart</button>{amz}</p>
       </div>
     </article>'''
 
