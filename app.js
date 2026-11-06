@@ -578,10 +578,10 @@ function showOrderDone(d) {
     </div>
     <p class="od-fine">Nothing was charged. You pay in person at pickup. If anything changes we'll message you.</p>
     <button type="button" class="btn full" id="orderDoneClose">Continue shopping</button>`;
-  box.hidden = false; box.scrollTop = 0;
+  box.hidden = false; box.scrollTop = 0; cartEl.scrollTop = 0; cartEl.classList.add("is-done");   // the confirmation replaces the cart; nothing of the cart shows behind or below it
   const btn = $("#orderDoneClose"); btn.onclick = () => toggleCart(false); btn.focus();
 }
-function hideOrderDone() { const b = $("#orderDone"); if (b) b.hidden = true; }
+function hideOrderDone() { const b = $("#orderDone"); if (b) b.hidden = true; const c = $("#cart"); if (c) c.classList.remove("is-done"); }
 let cartLocked = false;
 function toggleCart(on) {
   $("#cart").classList.toggle("on", on);

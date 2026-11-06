@@ -1779,3 +1779,15 @@ html[data-realm="spiritus"] .shop-steps b{color:var(--gold)}
 .bcard-free{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold)}
 .bcard-free::before{content:"\2713";font-weight:700}
 @media(min-width:761px){.bcard-foot .bcard-free{flex:0 0 100%;order:1;justify-content:flex-start;margin-top:-4px}.bcard-foot .bcard-priceRow{order:1}}
+
+/* Order confirmation: readable on the Spiritus (dark) side, and it replaces the cart instead of sitting over it */
+#cart.is-done{overflow:hidden}
+#cart.is-done>*:not(#orderDone){display:none}
+#cart.is-done .order-done{position:relative;inset:auto;min-height:100%}
+.order-done{background:var(--bg)}
+html[data-realm="spiritus"] .od-card{background:rgba(255,255,255,.06);border-color:var(--gold);color:var(--ink)}
+html[data-realm="spiritus"] .od-card li,html[data-realm="spiritus"] .od-total,html[data-realm="spiritus"] .od-event,html[data-realm="spiritus"] .order-done h3,html[data-realm="spiritus"] .od-lead,html[data-realm="spiritus"] .od-lead b{color:var(--ink)}
+html[data-realm="spiritus"] .od-event span,html[data-realm="spiritus"] .od-fine{color:var(--muted)}
+html[data-realm="spiritus"] .od-check{background:var(--gold)}
+html[data-realm="spiritus"] .od-check svg{stroke:#17122a}
+html[data-realm="spiritus"] .od-copy{color:var(--gold)}
