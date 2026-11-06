@@ -1774,3 +1774,8 @@ html[data-realm="spiritus"] .shop-steps b{color:var(--gold)}
 @media(min-width:761px){
   #spiritus .candle-info .candle-copy{font-size:1.2rem;line-height:1.7;margin-bottom:14px}
 }
+
+/* "Free shipping" shown on every book card */
+.bcard-free{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.bcard-free::before{content:"\2713";font-weight:700}
+@media(min-width:761px){.bcard-foot .bcard-free{flex:0 0 100%;order:1;justify-content:flex-start;margin-top:-4px}.bcard-foot .bcard-priceRow{order:1}}

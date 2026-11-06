@@ -258,6 +258,7 @@ async function handleOrder(request, env, body) {
       mode: "payment", line_items: items,
       success_url: origin + "/thanks.html?s={CHECKOUT_SESSION_ID}", cancel_url: origin + backPath(body),   // "back" returns to the page they were on
       ...(email ? { customer_email: email } : {}),
+      ...(shipTo && shipFee === 0 ? { custom_text: { submit: { message: "Shipping is free on this order." } } } : {}),   // books and candles ship free: say so on Stripe's page
       expires_at: Math.floor(Date.now() / 1000) + 1800,
       payment_intent_data: {
         description: `Plant order for ${name} - ${shipTo ? "SHIP to " + shipTo.line1 + ", " + shipTo.city + ", " + shipTo.state + " " + shipTo.zip : "pickup: " + market} - ${lines.map((l) => `${l.qty} x ${l.name}`).join(", ")}`.slice(0, 900),

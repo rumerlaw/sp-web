@@ -1198,7 +1198,7 @@ function renderCheckoutHelp() {
     parts.push("You'll pay on Stripe's secure page with any major card, Apple Pay or Google Pay. We never see your card details.");
     if (m.plants) parts.push("Plants ship bare-root (no pot).");
     if (m.candles && !m.plants && !m.books) parts.push("Candles ship free.");
-    else if (m.books) parts.push("Books ship for one flat fee per order.");
+    else if (m.books) parts.push((shipCfg() || {}).bookFlat === 0 ? (m.candles ? "Books and candles ship free." : "Books ship free.") : "Books ship for one flat fee per order.");
     parts.push("We ship across the US except California and Hawaii. We'll message you when your order ships.");
   } else {
     parts.push("Nothing is charged now. You pay in person at the event (cash or card), and we'll message you to confirm.");
