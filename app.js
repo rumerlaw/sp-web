@@ -8,14 +8,9 @@ const CONFIG = {
   // then paste that link here. Keep the same column headers as data/inventory.csv.
   inventoryUrl: "data/inventory.csv",
 
-  // ORDER NOTIFICATIONS — where reservations are sent (he gets an email for each one).
-  // Easiest: create a free form at https://formspree.io (set it to email the Doctor) and paste
-  // the endpoint here, e.g. "https://formspree.io/f/abcdwxyz".
-  // Or use https://web3forms.com: endpoint "https://api.web3forms.com/submit" + paste its access key below.
-  // Leave blank and the form falls back to opening an email draft.
+  // Order and signup emails are sent by our own server (worker.js, through Resend). These stay blank; if the server is ever down,
+  // the form opens the customer's email app instead.
   orderEndpoint: "",
-  // Optional: a separate Formspree/Web3Forms form just for the "new arrivals" email signups.
-  // If blank, signups go to the orderEndpoint above (or open an email draft).
   signupEndpoint: "",
   web3formsKey: "",
 
