@@ -150,6 +150,22 @@ const shell = (title, inner) => `<!doctype html><html lang="en"><head><meta char
 const block = (label, html) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px"><tr><td class="gold rule" style="padding:0 0 5px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7b5d25;font-weight:bold;border-bottom:1px solid #eee7d8">${esc(label)}</td></tr><tr><td style="padding:9px 0 0;font-size:15px;line-height:1.55;color:#2b2a24">${html}</td></tr></table>`;
 const SUBSCRIBE_HTML = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="subbox" style="margin:26px 0 8px;background:#f8f5ee;border:1px solid #e6dfd0"><tr><td align="center" style="padding:22px 22px 24px"><p class="gold" style="margin:0 0 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7b5d25;font-weight:bold">The weekly list</p><p style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:20px;line-height:1.3;color:#2b2a24">Never miss a new plant</p><p class="mut" style="margin:0 0 16px;font-size:14px;line-height:1.55;color:#5d594e">Every Monday we email what's new and the events coming up. No spam, unsubscribe anytime.</p><a class="btn" href="${SITE_URL}/#signupForm" style="display:inline-block;background:#2f4a2c;color:#ffffff;text-decoration:none;padding:12px 24px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold">Join the weekly list</a></td></tr></table>`;
 const SUBSCRIBE_TXT = `\n\nWant new plants and events in your inbox every Monday? Join the weekly list: ${SITE_URL}/#signupForm`;
+// The email YOU get for each order: one clear summary card (what, who, where, how much) and the buttons you need next.
+const linkFor = (contact) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact) ? "mailto:" + contact : (/^[+\d][\d\s().-]{6,}$/.test(contact) ? "tel:" + contact.replace(/[^\d+]/g, "") : "");
+const ownerBtn = (href, label, bg) => `<a class="btn" href="${esc(href)}" style="display:inline-block;background:${bg};color:#ffffff;text-decoration:none;padding:12px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;margin:0 8px 8px 0">${esc(label)}</a>`;
+function ownerEmail({ title, pill, pillBg, rows, total, whereLabel, where, name, contact, notes, extra, buttons }) {
+  const items = rows.map((l) => `<tr><td class="rule gold" style="padding:9px 0;border-bottom:1px solid #eee7d8;width:46px;font-weight:bold;color:#7b5d25;font-size:15px">${esc(l.qty)}×</td><td class="rule" style="padding:9px 0;border-bottom:1px solid #eee7d8;font-size:15px">${esc(l.name)}</td><td class="rule" align="right" style="padding:9px 0;border-bottom:1px solid #eee7d8;font-size:15px;white-space:nowrap">${esc(money(l.sub))}</td></tr>`).join("");
+  const cLink = linkFor(contact);
+  const person = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="subbox" style="background:#f8f5ee;border:1px solid #e6dfd0;margin:0 0 16px"><tr><td style="padding:14px 16px;font-size:15px;line-height:1.6"><b style="font-size:16px">${esc(name)}</b><br>${cLink ? `<a href="${esc(cLink)}" style="color:#7b5d25;font-weight:bold;text-decoration:none">${esc(contact)}</a>` : esc(contact)}</td></tr></table>`;
+  return shell(title,
+    `<p style="margin:0 0 18px"><span style="display:inline-block;background:${pillBg};color:#ffffff;padding:7px 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:bold">${esc(pill)}</span></p>`
+    + person
+    + block("Order", `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${items}<tr><td colspan="2" align="right" style="padding:14px 12px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#7b5d25;font-weight:bold" class="gold">Total</td><td align="right" style="padding:12px 0 0;font-size:19px;font-weight:bold;white-space:nowrap">${esc(total)}</td></tr></table>`)
+    + block(whereLabel, esc(where))
+    + (notes && notes !== "-" ? block("Customer notes", esc(notes)) : "")
+    + (extra ? `<p class="mut" style="margin:4px 0 16px;font-size:13px;line-height:1.55;color:#5d594e">${extra}</p>` : "")
+    + (buttons ? `<p style="margin:18px 0 6px">${buttons}</p>` : ""));
+}
 
 // Where Stripe's Back link goes: the page the customer was on (our own paths only), else the side they were on.
 function backPath(body) {
@@ -311,9 +327,10 @@ async function handleOrder(request, env, body) {
   const plantsHtml = lines.map((l) => `<div>${esc(l.qty)} × <b>${esc(l.name)}</b> — ${esc(money(l.sub))}</div>`).join("");
   const totalTxt = money(total);
 
-  const ownerText = `NEW PLANT RESERVATION\n\n1. PLANTS\n${plantsText}\n\n2. PICKUP EVENT\n${market}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. TOTAL (pay at pickup)\n${totalTxt}\n\n6. NOTES\n${notes || "-"}\n${pickupId ? `\nHELD: these plants are held for the customer for ${holdDays} days, or until your Dropbox sheet shows the sale. To release them sooner, set the order's status to 'cancelled' in the Cloudflare database.\n` : ""}`;
-  const ownerHtml = shell("New plant reservation", block("1. Plants", plantsHtml) + block("2. Pickup event", esc(market)) + block("3. Name", esc(name)) + block("4. Phone or email", esc(contact)) + block("5. Total (pay at pickup)", `<b>${esc(totalTxt)}</b>`) + block("6. Notes", esc(notes || "-")));
-  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(email ? { reply_to: email } : {}), subject: `Plant reservation: ${name} (${totalTxt})`, text: ownerText, html: ownerHtml });
+  const ownerText = `NEW PICKUP RESERVATION\n\n1. ITEMS\n${plantsText}\n\n2. PICKUP EVENT\n${market}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. TOTAL (pay at pickup)\n${totalTxt}\n\n6. NOTES\n${notes || "-"}\n${pickupId ? `\nHELD: these plants are held for the customer for ${holdDays} days, or until your Dropbox sheet shows the sale. To release them sooner, set the order's status to 'cancelled' in the Cloudflare database.\n` : ""}`;
+  const ownerHtml = ownerEmail({ title: "New pickup reservation", pill: `Pickup · pay in person · ${totalTxt}`, pillBg: "#7b5d25", rows: lines, total: totalTxt, whereLabel: "Pickup event", where: market, name, contact, notes,
+    extra: pickupId ? `Held for this customer for ${holdDays} days, or until your Dropbox sheet shows the sale. They were told they are all set, so message them only if something changes.` : "", buttons: email ? ownerBtn("mailto:" + email, "Reply to " + name.split(" ")[0], "#2f4a2c") : "" });
+  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(email ? { reply_to: email } : {}), subject: `New reservation: ${name} (${totalTxt})`, text: ownerText, html: ownerHtml });
   if (!okOwner) { if (pickupId && env.DB) { try { await env.DB.batch([env.DB.prepare("DELETE FROM reservations WHERE order_id = ?1").bind(pickupId), env.DB.prepare("UPDATE orders SET status = 'failed' WHERE id = ?1").bind(pickupId)]); } catch (e) {} } return json({ error: "send_failed" }, 502); }
 
   let copy = false;
@@ -402,9 +419,11 @@ async function handleStripeWebhook(request, env) {
   const name = clean(md.name || (sess.customer_details && sess.customer_details.name) || "Customer", 80), contact = clean(md.contact || email, 120), market = clean(md.market, 220), notes = clean(md.notes, 500);
   const shipTo = clean(md.ship_to, 240);
   const where = shipTo ? "SHIP TO" : "PICKUP EVENT", whereVal = shipTo || market;
-  const ownerText = `NEW PLANT ORDER — PAID ONLINE (${paid})${shipTo ? " — SHIP" : ""}\n\n1. PLANTS\n${plantsText}\n\n2. ${where}\n${whereVal}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. PAID\n${paid} (Stripe)\n\n6. NOTES\n${notes || "-"}\n`;
-  const ownerHtml = shell("New reservation — PAID online", `<p style="background:#2f4a2c;color:#fff;padding:8px 12px;font-weight:bold;display:inline-block">PAID ${esc(paid)}</p>` + block("1. Plants", plantsHtml) + block("2. " + (shipTo ? "Ship to" : "Pickup event"), esc(whereVal)) + block("3. Name", esc(name)) + block("4. Phone or email", esc(contact)) + block("5. Paid", `<b>${esc(paid)}</b> (Stripe)`) + block("6. Notes", esc(notes || "-")));
-  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(isEmail(email) ? { reply_to: email } : {}), subject: `PAID${shipTo ? " — SHIP" : ""} — Plant order: ${name} (${paid})`, text: ownerText, html: ownerHtml }, `${ev.id}:owner`);
+  const ownerText = `NEW ORDER — PAID ONLINE (${paid})${shipTo ? " — SHIP" : ""}\n\n1. ITEMS\n${plantsText}\n\n2. ${where}\n${whereVal}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. PAID\n${paid} (Stripe)\n\n6. NOTES\n${notes || "-"}\n`;
+  const stripeUrl = sess.payment_intent ? "https://dashboard.stripe.com/payments/" + encodeURIComponent(String(sess.payment_intent)) : "";
+  const ownerHtml = ownerEmail({ title: shipTo ? "New order: ready to ship" : "New order: paid online", pill: `Paid ${paid}${shipTo ? " · ship" : " · pickup"}`, pillBg: "#2f4a2c", rows, total: paid, whereLabel: shipTo ? "Ship to" : "Pickup event", where: whereVal, name, contact, notes,
+    extra: shipTo ? "Paid in full through Stripe. Pack it and ship it, then message the customer with tracking." : "Paid in full through Stripe. Hand it over at the event.", buttons: (isEmail(email) ? ownerBtn("mailto:" + email, "Reply to " + name.split(" ")[0], "#2f4a2c") : "") + (stripeUrl ? ownerBtn(stripeUrl, "Open in Stripe", "#3d2f6b") : "") });
+  const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(isEmail(email) ? { reply_to: email } : {}), subject: `PAID${shipTo ? " — SHIP" : ""} — New order: ${name} (${paid})`, text: ownerText, html: ownerHtml }, `${ev.id}:owner`);
   if (!okOwner) return json({ error: "retry" }, 500);
   if (isEmail(email)) {
     const text = `Hi ${name},\n\nThanks! We received your payment of ${paid} and your plant order.\n\nPLANTS\n${plantsText}\n\n${shipTo ? "SHIPPING TO" : "PICKUP EVENT"}\n${whereVal}\n\n${shipTo ? "We'll pack your plants and message you with tracking once they ship." : "Just tell us your name at the booth."} Any questions? Email us at ${env.OWNER_EMAIL}.${SUBSCRIBE_TXT}\n\n— Spina & Spiritus\nspinanspiritus.com`;
