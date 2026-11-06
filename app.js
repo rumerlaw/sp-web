@@ -13,10 +13,10 @@ const CONFIG = {
   // the endpoint here, e.g. "https://formspree.io/f/abcdwxyz".
   // Or use https://web3forms.com: endpoint "https://api.web3forms.com/submit" + paste its access key below.
   // Leave blank and the form falls back to opening an email draft.
-  orderEndpoint: "https://formspree.io/f/mwllnnyv",
+  orderEndpoint: "",
   // Optional: a separate Formspree/Web3Forms form just for the "new arrivals" email signups.
   // If blank, signups go to the orderEndpoint above (or open an email draft).
-  signupEndpoint: "https://formspree.io/f/xjyyeelo",
+  signupEndpoint: "",
   web3formsKey: "",
   // CONFIRMATION EMAIL TO THE CUSTOMER (optional, free): create an account at https://www.emailjs.com, connect the Gmail account,
   // make one email template, then paste the three values here. Leave blank to skip.
@@ -620,7 +620,7 @@ function toggleCart(on) {
 function cartLines() {
   return cart.map((c) => ({ ...c, p: findProduct(c.id) })).filter((c) => c.p);
 }
-// Our own mail service (worker.js, /api/...). If it isn't set up yet, or is down, we quietly fall back to the Formspree form.
+// Our own mail service (worker.js, /api/...). If it isn't set up yet, or is down, we fall back to opening the customer's email app.
 async function postApi(path, body) {
   try {
     const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(window.__cf ? { ...body, cf: window.__cf } : body) });
