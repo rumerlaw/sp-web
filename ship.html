@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mark as shipped · Spina &amp; Spiritus</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self'; base-uri 'self'; object-src 'none'">
+<link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="ship-page">
+<main class="ship-wrap">
+  <img class="ship-logo" src="assets/brand/spina-wordmark.png" width="190" height="62" alt="Spina &amp; Spiritus">
+  <h1>Mark as shipped</h1>
+  <p class="ship-for" id="shipFor" hidden></p>
+  <form id="shipForm" novalidate hidden>
+    <label>Carrier
+      <select name="carrier" required><option value="">Choose…</option><option>USPS</option><option>UPS</option><option>FedEx</option><option>Other</option></select>
+    </label>
+    <label>Tracking number
+      <input name="tracking" required maxlength="40" autocomplete="off" inputmode="text" placeholder="Paste the tracking number">
+    </label>
+    <button type="submit" class="btn full" id="shipBtn">Send tracking to the customer</button>
+    <p class="ship-fine">The customer gets an email with the carrier, the tracking number and a link to track the package.</p>
+  </form>
+  <p class="ship-msg" id="shipMsg" role="status" aria-live="polite"></p>
+</main>
+<script src="ship.js"></script>
+</body>
+</html>

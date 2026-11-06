@@ -145,11 +145,45 @@ async function verifyStripeSignature(raw, header, secret) {
 
 const SITE_URL = "https://spinanspiritus.com";
 // Emails follow the reader's own setting: light by default, dark when their mail app is in dark mode (Apple Mail, iOS Mail, Outlook apps; Gmail darkens on its own).
-const EMAIL_CSS = `@media (prefers-color-scheme: dark){.bg{background:#120d22!important}.card{background:#1d1736!important;border-color:#3a3160!important}.card,.card td,.card p,.card div,.card b,.card h1{color:#f1e9ff!important}.card .mut{color:#b9b0d4!important}.card .gold{color:#d8b868!important}.card .rule{border-color:#3a3160!important}.card .subbox{background:#261f45!important;border-color:#3a3160!important}.card .subbox a.btn{background:#d8b868!important;color:#17122a!important}.card a{color:#d8b868!important}.card a.btn{color:#ffffff!important}.lg-l{display:none!important;max-height:0!important}.lg-d{display:block!important;max-height:none!important}}`;
+const EMAIL_CSS = `@media (prefers-color-scheme: dark){.bg{background:#0f0b1f!important}.card{background:#17122a!important;border-color:#3d2f6b!important}.card,.card td,.card p,.card div,.card b,.card h1{color:#f1e9ff!important}.card .mut{color:#b9b0d4!important}.card .gold{color:#d8b868!important}.card .rule{border-color:#3d2f6b!important}.card a{color:#d8b868!important}.card a.btn{background:#3d2f6b!important;color:#ffffff!important;border:1px solid #d8b868!important}.card .subbox{background:#221a3d!important;border-color:#3d2f6b!important}.lg-l{display:none!important;max-height:0!important}.lg-d{display:block!important;max-height:none!important}}`;
 const shell = (title, inner) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><style>${EMAIL_CSS}</style></head><body class="bg" style="margin:0;padding:0;background:#f3eee4"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="bg" style="background:#f3eee4;padding:28px 12px"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" class="card" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e6dfd0;font-family:Arial,Helvetica,sans-serif;color:#2b2a24"><tr><td align="center" style="padding:30px 24px 22px"><a href="${SITE_URL}"><img class="lg-l" src="${SITE_URL}/assets/brand/spina-wordmark.png" width="190" alt="Spina &amp; Spiritus" style="display:block;border:0;width:190px;height:auto"><img class="lg-d" src="${SITE_URL}/assets/brand/spina-wordmark-light.png" width="190" alt="" style="display:none;max-height:0;border:0;width:190px;height:auto"></a></td></tr><tr><td style="height:3px;line-height:3px;font-size:0;background:#c9a24a">&nbsp;</td></tr><tr><td style="padding:30px 36px 8px"><h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:26px;line-height:1.25;color:#2b2a24">${esc(title)}</h1>${inner}</td></tr><tr><td style="padding:8px 36px 30px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td class="rule mut" style="border-top:1px solid #e6dfd0;padding-top:20px;font-size:13px;line-height:1.6;color:#6a6657;text-align:center">Spina &amp; Spiritus<br><a href="${SITE_URL}" style="color:#7b5d25;text-decoration:none;font-weight:bold">spinanspiritus.com</a></td></tr></table></td></tr></table></td></tr></table></body></html>`;
 const block = (label, html) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px"><tr><td class="gold rule" style="padding:0 0 5px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7b5d25;font-weight:bold;border-bottom:1px solid #eee7d8">${esc(label)}</td></tr><tr><td style="padding:9px 0 0;font-size:15px;line-height:1.55;color:#2b2a24">${html}</td></tr></table>`;
 const SUBSCRIBE_HTML = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="subbox" style="margin:26px 0 8px;background:#f8f5ee;border:1px solid #e6dfd0"><tr><td align="center" style="padding:22px 22px 24px"><p class="gold" style="margin:0 0 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7b5d25;font-weight:bold">The weekly list</p><p style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:20px;line-height:1.3;color:#2b2a24">Never miss a new plant</p><p class="mut" style="margin:0 0 16px;font-size:14px;line-height:1.55;color:#5d594e">Every Monday we email what's new and the events coming up. No spam, unsubscribe anytime.</p><a class="btn" href="${SITE_URL}/#signupForm" style="display:inline-block;background:#2f4a2c;color:#ffffff;text-decoration:none;padding:12px 24px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold">Join the weekly list</a></td></tr></table>`;
 const SUBSCRIBE_TXT = `\n\nWant new plants and events in your inbox every Monday? Join the weekly list: ${SITE_URL}/#signupForm`;
+// "Mark as shipped": a private link in YOUR order email. The link itself carries the little the shipped email needs (customer's name and email,
+// what they ordered), signed so nobody can change or invent one. Nothing about the customer is stored on our side.
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const b64uText = (s) => b64u(new TextEncoder().encode(s));
+const fromB64uText = (t) => new TextDecoder().decode(Uint8Array.from(atob(String(t).replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0)));
+const linkSecret = (env) => String(env.ORDER_LINK_SECRET || env.STRIPE_WEBHOOK_SECRET || "");
+async function hmac(secret, text) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return b64u(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(text)));
+}
+async function makeShipToken(env, data) { const s = linkSecret(env); if (!s) return ""; const p = b64uText(JSON.stringify(data)); return p + "." + (await hmac(s, p)); }
+async function readShipToken(env, t) {
+  const s = linkSecret(env), [p, sig] = String(t || "").split("."); if (!s || !p || !sig) return null;
+  const good = await hmac(s, p); if (good.length !== sig.length) return null;
+  let diff = 0; for (let k = 0; k < good.length; k++) diff |= good.charCodeAt(k) ^ sig.charCodeAt(k); if (diff) return null;
+  try { const d = JSON.parse(fromB64uText(p)); return d && d.x > Math.floor(Date.now() / 1000) ? d : null; } catch (e) { return null; }
+}
+const CARRIERS = { USPS: (n) => "https://tools.usps.com/go/TrackConfirmAction?tLabels=" + encodeURIComponent(n), UPS: (n) => "https://www.ups.com/track?tracknum=" + encodeURIComponent(n), FedEx: (n) => "https://www.fedex.com/fedextrack/?trknbr=" + encodeURIComponent(n), Other: null };
+async function handleShip(request, env, body) {
+  const d = await readShipToken(env, clean(body.token, 3000));
+  if (!d || !isEmail(String(d.e || ""))) return json({ error: "This link is invalid or has expired." }, 400);
+  const carrier = Object.prototype.hasOwnProperty.call(CARRIERS, body.carrier) ? body.carrier : "";
+  const tracking = clean(body.tracking, 40);
+  if (!carrier || !/^[A-Za-z0-9][A-Za-z0-9 -]{5,39}$/.test(tracking)) return json({ error: "Please choose the carrier and type the tracking number." }, 400);
+  const url = CARRIERS[carrier] ? CARRIERS[carrier](tracking.replace(/\s+/g, "")) : "";
+  const first = clean(d.n, 60).split(" ")[0] || "there", items = clean(d.i, 300);
+  const text = `Hi ${first},\n\nGood news: your order has shipped.\n\n${carrier} tracking number: ${tracking}${url ? "\nTrack it here: " + url : ""}\n\nITEMS\n${items}\n\nAny questions? Email us at ${env.OWNER_EMAIL}.\n\n— Spina & Spiritus\nspinanspiritus.com`;
+  const html = shell("Your order has shipped", `<p style="font-size:15px;line-height:1.55;margin:0 0 18px">Hi ${esc(first)}, good news: your order is on its way.</p>` + block("Tracking", `${esc(carrier)} · <b>${esc(tracking)}</b>`) + (url ? `<p style="margin:6px 0 18px">${ownerBtn(url, "Track your package", "#2f4a2c")}</p>` : "") + block("In the box", esc(items)) + `<p class="mut" style="margin-top:20px;font-size:13px;color:#5d594e">Any questions? Email us at ${esc(env.OWNER_EMAIL)}.</p>`);
+  const ok = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [d.e], reply_to: env.OWNER_EMAIL, subject: "Your order has shipped: Spina & Spiritus", text, html }, `ship:${clean(d.o, 60)}:${tracking}`);
+  if (!ok) return json({ error: "The email could not be sent. Please try again in a minute." }, 502);
+  if (env.DB && d.o) { try { await env.DB.prepare("UPDATE orders SET status = 'shipped' WHERE id = ?1 AND status IN ('paid', 'review')").bind(clean(d.o, 60)).run(); } catch (e) {} }
+  return json({ ok: true, name: first });
+}
+
 // The email YOU get for each order: one clear summary card (what, who, where, how much) and the buttons you need next.
 const linkFor = (contact) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact) ? "mailto:" + contact : (/^[+\d][\d\s().-]{6,}$/.test(contact) ? "tel:" + contact.replace(/[^\d+]/g, "") : "");
 const ownerBtn = (href, label, bg) => `<a class="btn" href="${esc(href)}" style="display:inline-block;background:${bg};color:#ffffff;text-decoration:none;padding:12px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;margin:0 8px 8px 0">${esc(label)}</a>`;
@@ -420,9 +454,10 @@ async function handleStripeWebhook(request, env) {
   const shipTo = clean(md.ship_to, 240);
   const where = shipTo ? "SHIP TO" : "PICKUP EVENT", whereVal = shipTo || market;
   const ownerText = `NEW ORDER — PAID ONLINE (${paid})${shipTo ? " — SHIP" : ""}\n\n1. ITEMS\n${plantsText}\n\n2. ${where}\n${whereVal}\n\n3. NAME\n${name}\n\n4. PHONE OR EMAIL\n${contact}\n\n5. PAID\n${paid} (Stripe)\n\n6. NOTES\n${notes || "-"}\n`;
+  const shipTok = shipTo && isEmail(email) ? await makeShipToken(env, { o: clean(md.hold_id, 60), n: name, e: email, i: rows.map((r) => `${r.qty} x ${r.name}`).join(", ").slice(0, 300), x: now() + 60 * 86400 }) : "";
   const stripeUrl = sess.payment_intent ? "https://dashboard.stripe.com/payments/" + encodeURIComponent(String(sess.payment_intent)) : "";
   const ownerHtml = ownerEmail({ title: shipTo ? "New order: ready to ship" : "New order: paid online", pill: `Paid ${paid}${shipTo ? " · ship" : " · pickup"}`, pillBg: "#2f4a2c", rows, total: paid, whereLabel: shipTo ? "Ship to" : "Pickup event", where: whereVal, name, contact, notes,
-    extra: shipTo ? "Paid in full through Stripe. Pack it and ship it, then message the customer with tracking." : "Paid in full through Stripe. Hand it over at the event.", buttons: (isEmail(email) ? ownerBtn("mailto:" + email, "Reply to " + name.split(" ")[0], "#2f4a2c") : "") + (stripeUrl ? ownerBtn(stripeUrl, "Open in Stripe", "#3d2f6b") : "") });
+    extra: shipTo ? "Paid in full through Stripe. Pack it and ship it, then click Mark as shipped and enter the tracking number. We email it to the customer for you." : "Paid in full through Stripe. Hand it over at the event.", buttons: (shipTok ? ownerBtn(SITE_URL + "/ship.html#t=" + shipTok, "Mark as shipped", "#3d2f6b") : "") + (isEmail(email) ? ownerBtn("mailto:" + email, "Reply to " + name.split(" ")[0], "#2f4a2c") : "") + (stripeUrl ? ownerBtn(stripeUrl, "Open in Stripe", "#3d2f6b") : "") });
   const okOwner = await resend(env, "/emails", { from: env.FROM_EMAIL, to: [env.OWNER_EMAIL], ...(isEmail(email) ? { reply_to: email } : {}), subject: `PAID${shipTo ? " — SHIP" : ""} — New order: ${name} (${paid})`, text: ownerText, html: ownerHtml }, `${ev.id}:owner`);
   if (!okOwner) return json({ error: "retry" }, 500);
   if (isEmail(email)) {
@@ -443,7 +478,7 @@ export default {
     if (url.pathname === "/api/stripe-webhook") return handleStripeWebhook(request, env);
     if (url.pathname === "/api/zip" && request.method === "GET") return handleZip(request, env, url);
     if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY), turnstile: (env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY) ? String(env.TURNSTILE_SITE_KEY) : null });
-    const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : url.pathname === "/api/confirm" ? handleConfirm : null;
+    const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : url.pathname === "/api/confirm" ? handleConfirm : url.pathname === "/api/ship" ? handleShip : null;
     if (!route) return json({ error: "not_found" }, 404);
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
     const allowed = (env.ALLOWED_ORIGINS ? String(env.ALLOWED_ORIGINS).split(",").map((s) => s.trim()) : DEFAULT_ORIGINS);
@@ -459,7 +494,7 @@ export default {
     let body; try { body = JSON.parse(raw); } catch (e) { return json({ error: "bad_request" }, 400); }
     if (!body || typeof body !== "object") return json({ error: "bad_request" }, 400);
     // Cloudflare Turnstile (the invisible "are you human" check): enforced only once the site key and secret are both set up.
-    if (env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY && url.pathname !== "/api/confirm") {
+    if (env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY && url.pathname !== "/api/confirm" && url.pathname !== "/api/ship") {
       let ok = false;
       try {
         const tf = new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: clean(body.cf, 2100), remoteip: ip });
