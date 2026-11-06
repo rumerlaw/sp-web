@@ -70,8 +70,9 @@ async function resend(env, path, payload, idem) {
       headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json", ...(idem ? { "Idempotency-Key": idem } : {}) },
       body: JSON.stringify(payload),
     });
+    if (!r.ok) { const why = (await r.text().catch(() => "")).slice(0, 300); console.error("Resend refused " + path + ": " + r.status + " " + why); }   // shows in Cloudflare's Workers logs; never contains the key
     return r.ok;
-  } catch (e) { return false; } finally { clearTimeout(timer); }
+  } catch (e) { console.error("Resend request failed: " + String((e && e.message) || e).slice(0, 120)); return false; } finally { clearTimeout(timer); }
 }
 
 // ---- Stripe (online payment) ----
