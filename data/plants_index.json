@@ -185,6 +185,11 @@
 "image": "assets/photos/photo-greyghost.jpg"
 },
 {
+"slug": "gvb",
+"name": "GVB",
+"image": null
+},
+{
 "slug": "half-moon",
 "name": "Half Moon",
 "image": null
