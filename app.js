@@ -568,7 +568,7 @@ function showOrderDone(d) {
   const where = String(d.market || "").split(" — ");
   box.innerHTML = `<div class="od-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h3>Order received</h3>
-    <p class="od-lead">Thank you, ${esc(d.name)}! We'll have your order ready at the event below and message you at <b>${esc(d.contact)}</b> to confirm.</p>
+    <p class="od-lead">You're all set, ${esc(d.name)}! We'll have your order ready at the event below. If anything changes, we'll message you at <b>${esc(d.contact)}</b>.</p>
     <div class="od-card">
       <p class="od-label">Your order</p>
       <ul>${d.items.map((i) => `<li><span>${esc(i.qty)} × ${esc(i.name)}</span><span>${money(i.price)}</span></li>`).join("")}</ul>
@@ -1173,14 +1173,14 @@ function renderCheckoutHelp() {
     else if (m.books) parts.push((shipCfg() || {}).bookFlat === 0 ? (m.candles ? "Books and candles ship free." : "Books ship free.") : "Books ship for one flat fee per order.");
     parts.push("We ship across the US except California and Hawaii. We'll message you when your order ships.");
   } else {
-    parts.push("Nothing is charged now. You pay in person at the event (cash or card), and we'll message you to confirm.");
+    parts.push("Nothing is charged now. You pay in person at the event (cash or card), and we'll message you only if something changes.");
     if (needFee) parts.push("Books can be picked up at an event for now. Shipping for books is coming soon.");
     else if (document.querySelector('input[name="pay"][value="ship"]') && !(radio && radio.closest("label").hidden)) parts.push("Prefer it delivered? Choose Ship to me above.");
   }
   note.textContent = parts.join(" "); note.hidden = !m.n;
   // 5) the fine print matches the cart (no plant talk for a candle-only order)
   const fine = form.querySelector(".fine");
-  if (fine) fine.textContent = (shipping ? "We'll pack your order and message you when it ships. " : (m.plants ? "We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you to confirm. " : "We'll message you to confirm. ")) + "We only use your details to arrange your order.";
+  if (fine) fine.textContent = (shipping ? "We'll pack your order and message you when it ships. " : (m.plants ? "We don't bring every plant to every event, so your reservation tells us what to pack. We'll message you if anything changes. " : "We'll message you if anything changes. ")) + "We only use your details to arrange your order.";
 }
 
 // ---- "Added to your order" confirmation: small and out of the way, instead of covering the page with the whole drawer ----

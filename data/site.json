@@ -85,7 +85,7 @@
     },
     {
       "q": "How do orders work?",
-      "a": "Browse the shop and add what you want to your cart, then choose how you'd like to get it. **Pick up at an event**: you reserve online, we message you to confirm, and you pay in person. **Ship to me**: you pay online on Stripe's secure page. Plants are picked up at plant events, candles and books at spirit-side events, and an order with both at events both sides attend. We can't bring every plant to every event, so your reservation tells us what to pack."
+      "a": "Browse the shop and add what you want to your cart, then choose how you'd like to get it. **Pick up at an event**: you reserve online, we hold it for you, and you pay in person. **Ship to me**: you pay online on Stripe's secure page. Plants are picked up at plant events, candles and books at spirit-side events, and an order with both at events both sides attend. We can't bring every plant to every event, so your reservation tells us what to pack."
     },
     {
       "q": "Do you ship?",
