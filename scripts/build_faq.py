@@ -13,7 +13,7 @@ FAQS = [
  ("How do orders work?",
   "Browse the shop and add what you want to your cart, then choose how you'd like to get it. <b>Pick up at an event</b>: you reserve online, we hold it for you, and you pay in person. <b>Ship to me</b>: you pay online on Stripe's secure page. Plants are picked up at plant events, candles and books at spirit-side events, and an order with both at events both sides attend. We can't bring every plant to every event, so your reservation tells us what to pack."),
  ("Do you ship?",
-  "Yes, anywhere in the US except California and Hawaii, when you choose <b>Ship to me</b> and pay online. <b>Plants</b> ship bare-root (no pot) for a flat fee by size: $10 small, $15 medium, $20 large, plus $5 for each extra plant in the same box. <b>Candles</b> ship free. <b>Books</b> can be picked up at an event, and shipping for books is coming soon. Pickup at an event is always free. See <a href=\"index.html#events\">Upcoming events</a> for where we'll be."),
+  "Yes, anywhere in the US except California and Hawaii, when you choose <b>Ship to me</b> and pay online. <b>Plants</b> ship bare-root (no pot) for a flat fee by size: $10 small, $15 medium, $20 large, plus $5 for each extra plant in the same box. <b>Candles</b> ship free. <b>Books</b> ship free, like candles (every book is $20, the hardcover $30). Pickup at an event is always free. See <a href=\"index.html#events\">Upcoming events</a> for where we'll be."),
  ("How do shipped plants arrive?",
   "Every plant we ship is <b>bare-root: no pot</b>. Our photos show plants in pots, which is how they come when you pick them up at an event. For shipping we remove the pot. When your shipped plant arrives, pot it in dry, gritty cactus mix and wait about a week before the first watering so the roots can settle."),
  ("Where can I find you?",
@@ -35,7 +35,7 @@ FAQS = [
  ("How much are the candles, and do they ship?",
   "Our Sonoran Mystic Tarot intention candles are $20 each in six scents (Essence, Awakening, Abundance, Meditation, Frankincense and Passion). Candle shipping is free anywhere we ship, and you can also pick them up at an event."),
  ("What books do you sell?",
-  "Books by Don Rumer-Rivera on the Spiritus side: <i>The Mediums: A Guidebook</i> (English and Spanish editions), <i>The Ultimate Power Within</i>, <i>A Silence Too Loud</i> and <i>A Space Between Breaths</i>. You can see every title and price in the Books section. Pick them up at an event; shipping for books is coming soon."),
+  "Books by Don Rumer-Rivera on the Spiritus side: <i>The Mediums: A Guidebook</i> (English and Spanish editions), <i>The Ultimate Power Within</i>, <i>A Silence Too Loud</i> and <i>A Space Between Breaths</i>. Every book is $20 (the hardcover is $30) and ships free. Pick them up at an event or have them shipped."),
  ("How do I book a tarot reading?",
   "Readings are with Don of Sonoran Mystic Tarot. <a href=\"https://sonoranmystictarot.com/#book-personal-tarot-readings\">Book a reading</a> online and pick a time that works for you."),
 ]

@@ -20,7 +20,7 @@ NAMES = {"CA": "California", "HI": "Hawaii"}
 _ex = [NAMES.get(x, x) for x in (ship.get("excludedStates") or [])]
 excl = " and ".join(_ex) if len(_ex) <= 2 else ", ".join(_ex[:-1]) + " and " + _ex[-1]
 EMAIL = (site.get("contact") or {}).get("email") or "spinanspiritus@gmail.com"
-UPDATED = "November 3, 2026"
+UPDATED = "November 6, 2026"
 m = lambda v: ("$%g" % float(v))
 book_flat = ship.get("bookFlat")
 book_line = ("Books ship free." if book_flat in (0, 0.0) else f"Books ship for one flat fee of {m(book_flat)} per order." if book_flat not in (None, "") else "Shipping for books is coming soon; for now, books are picked up at an event.")
@@ -41,7 +41,7 @@ PAGES = {
   title="Privacy Policy", desc="What Spina & Spiritus collects, why, and who it is shared with. We never sell your information.",
   sections=[
    ("The short version", "<p>We collect only what we need to take your order and send you the emails you asked for. We never sell your information, we don't run ads, and we don't use tracking cookies.</p>"),
-   ("What we collect", "<ul><li><b>When you order:</b> your name, phone or email, your shipping address (for shipped orders), the pickup event you choose, your order and any notes you add.</li><li><b>When you join the email list:</b> your email address.</li><li><b>Payments:</b> card payments are handled by Stripe. We never see or store your card number.</li></ul>"),
+   ("What we collect", "<ul><li><b>When you order:</b> your name, phone or email, your shipping address (for shipped orders), the pickup event you choose, your order and any notes you add. These go to us in the order email and, for paid orders, are kept by Stripe. Our own order records keep only what was ordered, the total and the status. They do not keep your name, contact, address or notes.</li><li><b>When you join the email list:</b> your email address.</li><li><b>Payments:</b> card payments are handled by Stripe. We never see or store your card number.</li></ul>"),
    ("How we use it", "<ul><li>To prepare, ship or hand over your order and to message you about it.</li><li>To send the weekly email about new plants, candles, books and events, only if you joined the list. Every email has an unsubscribe link.</li></ul>"),
    ("Who helps us", "<p>We use a few trusted services to run the shop: <b>Stripe</b> (payments), <b>Resend</b> (sending emails and keeping the email list), <b>Cloudflare</b> (hosting the website). The website's fonts are served from our own site. The event maps are embedded from <b>Google Maps</b>, so Google may see your visit when a map loads. These services only receive what they need to do their job.</p>"),
    ("Storage on your device", "<p>Your cart is kept in your browser so it is still there when you come back. If you tick \"Remember my details on this device\" at checkout, your name, contact and address are saved in your browser only, never on our servers, and unticking the box deletes them. You can also clear them any time by clearing this site's data in your browser.</p>"),
@@ -53,7 +53,7 @@ PAGES = {
   title="Terms of Sale", desc="The terms for buying plants, candles and books from Spina & Spiritus: orders, pricing, shipping, plant and candle care, and readings.",
   sections=[
    ("Who we are", f"<p>Spina &amp; Spiritus is one shop with two sides: <b>Spina</b>, plants by AzCactusDoctor, and <b>Spiritus</b>, candles, books and readings by Sonoran Mystic Tarot. We are based in Phoenix, Arizona. Contact: <a href=\"mailto:{esc(EMAIL)}\">{esc(EMAIL)}</a>.</p>"),
-   ("Orders and availability", "<p>Many of our plants are one of a kind and stock is limited. Putting an item in your cart does not hold it. An order is confirmed when we message you (pickup orders) or when your payment goes through (shipped orders). If something sells out or we can't fulfil an order, we will tell you and refund anything you paid.</p>"),
+   ("Orders and availability", "<p>Many of our plants are one of a kind and stock is limited. Putting an item in your cart does not hold it. A pickup reservation holds your items for you for up to 7 days, and a shipped order is confirmed when your payment goes through. If something sells out or we can't fulfil an order, we will tell you and refund anything you paid.</p>"),
    ("Prices and payment", "<p>Prices are in US dollars and shown on each item. Pickup orders are paid in person at the event. Shipped orders are paid online by card, Apple Pay or Google Pay through Stripe. Shipping fees are shown before you pay. Sales tax is added where the law requires it.</p>"),  # CONFIRM: sales tax handling with your accountant
    ("Shipping, pickup and returns", "<p>See <a href=\"shipping.html\">Shipping &amp; Returns</a> for fees, delivery, damaged items and returns. We ship within the US except the states listed there.</p>"),
    ("Plants", "<p>Plants are living and their health depends on light, water and climate. Shipped plants arrive bare-root (no pot) and need to be potted on arrival. We share care tips, but we can't guarantee how a plant will do in your conditions. Some plants have sharp spines or a sap that can irritate skin or be harmful if eaten; keep them away from children and pets and handle them with care.</p>"),
