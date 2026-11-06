@@ -18,11 +18,6 @@ const CONFIG = {
   // If blank, signups go to the orderEndpoint above (or open an email draft).
   signupEndpoint: "",
   web3formsKey: "",
-  // CONFIRMATION EMAIL TO THE CUSTOMER (optional, free): create an account at https://www.emailjs.com, connect the Gmail account,
-  // make one email template, then paste the three values here. Leave blank to skip.
-  emailjsServiceId: "service_oriwt2f",
-  emailjsTemplateId: "template_0dvcfsc",
-  emailjsPublicKey: "eGqlr6RqYGhoxZgt0",
 
   // Upcoming events / farmers markets. Customers pick one when they reserve, so you know what to bring.
   // `date` (YYYY-MM-DD) is optional: once that day has passed the event disappears automatically.
@@ -570,23 +565,6 @@ function lockPage(on) {
     root.style.scrollBehavior = prev;
   }
 }
-// Optional: email the customer a copy of their reservation (EmailJS, sent from your Gmail). Skipped unless it is set up in CONFIG.
-async function sendCustomerCopy(d, lines, notes) {
-  if (!CONFIG.emailjsServiceId || !CONFIG.emailjsTemplateId || !CONFIG.emailjsPublicKey || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contact)) return;
-  try {
-    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ service_id: CONFIG.emailjsServiceId, template_id: CONFIG.emailjsTemplateId, user_id: CONFIG.emailjsPublicKey,
-        template_params: { to_email: d.contact, customer_name: d.name, plants: lines, pickup_event: d.market, total: d.total, notes: notes || "-", shop_email: CONFIG.email } }),
-    });
-    if (!res.ok) { const why = (await res.text().catch(() => "")).slice(0, 160); throw new Error(res.status + " " + why); }
-    const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy">We've also emailed a copy to ${esc(d.contact)}.</p>`);
-  } catch (err) {
-    // The order itself was already sent; the copy is a bonus. Say so, and show the reason (small) so it can be fixed.
-    console.warn("Confirmation email failed:", err);
-    const fine = $("#orderDone .od-fine"); if (fine) fine.insertAdjacentHTML("beforebegin", `<p class="od-copy bad">We couldn't email you a copy, but your reservation was received.<br><small>${esc(String(err.message || err).slice(0, 170))}</small></p>`);
-  }
-}
 // Confirmation screen shown right inside the checkout after a reservation is sent.
 function showOrderDone(d) {
   const cartEl = $("#cart"); if (!cartEl) return;
@@ -770,7 +748,6 @@ async function submitOrder(e) {
     const done = { items: items.map((c) => ({ name: c.p.name, qty: c.qty, price: now(c.p) * c.qty })), total, market, name, contact };
     cart = []; saveCart(); form.reset(); say("");
     showOrderDone(done);
-    sendCustomerCopy(done, lines, notes);
   } catch (err) {
     say("Couldn't send that. Please try again or email us directly.", true);
   }
