@@ -43,13 +43,14 @@
     "rating": {
       "value": 5,
       "count": 18,
-      "url": "",
+      "url": "https://www.amazon.com/dp/B0CZ2M8WCC",
       "asOf": "2026-11-05"
     },
     "hardcover": {
       "id": "book-power-hc",
       "label": "Hardcover"
-    }
+    },
+    "amazon": "https://www.amazon.com/dp/B0CZ2M8WCC"
   },
   {
     "title": "The Mediums: A Guidebook",
@@ -115,9 +116,10 @@
     "rating": {
       "value": 5,
       "count": 3,
-      "url": "",
+      "url": "https://www.amazon.com/dp/B0G2JFPZDN",
       "asOf": "2026-11-05"
-    }
+    },
+    "amazon": "https://www.amazon.com/dp/B0G2JFPZDN"
   },
   {
     "title": "A Silence Too Loud",
@@ -204,8 +206,9 @@
     "rating": {
       "value": 3,
       "count": 1,
-      "url": "",
+      "url": "https://www.amazon.com/dp/B0GW78ZVS8",
       "asOf": "2026-11-05"
-    }
+    },
+    "amazon": "https://www.amazon.com/dp/B0GW78ZVS8"
   }
 ]
