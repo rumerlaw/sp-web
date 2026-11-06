@@ -1769,3 +1769,8 @@ html[data-realm="spiritus"] .shop-steps b{color:var(--gold)}
   .bcard-foot .bcard-add{flex:0 0 100%;order:3;width:100%}
 }
 @media(min-width:761px){html[data-realm="spiritus"] .bcard-foot a.bcard-more{border:1px solid var(--gold);color:var(--gold);font-weight:700;background:transparent}html[data-realm="spiritus"] .bcard-foot a.bcard-more:hover,html[data-realm="spiritus"] .bcard-foot a.bcard-more:focus-visible{background:var(--gold);color:#17122a}}
+
+/* Candle description: bigger text (desktop/tablet) */
+@media(min-width:761px){
+  #spiritus .candle-info .candle-copy{font-size:1.2rem;line-height:1.7;margin-bottom:14px}
+}
