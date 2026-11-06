@@ -36,6 +36,7 @@ jobs:
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           RESEND_AUDIENCE_ID: ${{ secrets.RESEND_AUDIENCE_ID }}
+          MAILING_ADDRESS: ${{ secrets.MAILING_ADDRESS }}
           SITE_URL: ${{ vars.SITE_URL }}
           TEST_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.test_only || 'false' }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || 'false' }}

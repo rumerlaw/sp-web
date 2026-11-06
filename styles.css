@@ -1791,3 +1791,8 @@ html[data-realm="spiritus"] .od-event span,html[data-realm="spiritus"] .od-fine{
 html[data-realm="spiritus"] .od-check{background:var(--gold)}
 html[data-realm="spiritus"] .od-check svg{stroke:#17122a}
 html[data-realm="spiritus"] .od-copy{color:var(--gold)}
+
+/* Safety and disclaimer notes: small, readable, in the page's own colours */
+.readings-fine{max-width:46ch;margin:-8px auto 20px;font-size:.82rem;line-height:1.5;color:var(--muted)}
+.plant-safety{margin:0 0 14px;font-size:.84rem;line-height:1.5;color:var(--muted)}
+#spiritus .candle-info .candle-note{margin:14px 0 0;font-size:.82rem;line-height:1.5;color:var(--muted)}

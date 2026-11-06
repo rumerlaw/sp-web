@@ -936,7 +936,8 @@ function renderPlantPage() {
           <div class="qty-box"><button type="button" data-step="-1" aria-label="Less">−</button><input id="plantQty" value="1" inputmode="numeric" aria-label="Quantity" max="${maxQty(p)}"><button type="button" data-step="1" aria-label="More">+</button></div>
           <button class="btn" id="plantAdd" ${isOut(p) || noPrice(p) ? "disabled" : ""}>${isOut(p) ? "Sold out" : noPrice(p) ? "Ask at the market" : `<span data-path="text.addToCart">${esc(addLabel())}</span>`}</button>
         </div>
-        <p class="buy-note"><span>Pick it up at an event (free) or have it shipped bare-root, no pot</span><span>Secure checkout</span></p>        </div>
+        <p class="buy-note"><span>Pick it up at an event (free) or have it shipped bare-root, no pot</span><span>Secure checkout</span></p>
+        <p class="plant-safety">Handle with care: many cacti and euphorbias have sharp spines or an irritating sap. Keep them away from children and pets.</p>        </div>
         <p class="plant-desc"${SP.editing ? ` data-multiline data-placeholder="Write a description…" data-path="plants.${p.origKey}.description"` : ""}>${esc(p.description || (SP.editing ? "" : "More details coming soon."))}</p>
         <dl class="specs">
           <div><dt>Availability</dt><dd>${esc(stockLine(p))}</dd></div>

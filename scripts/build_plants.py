@@ -155,6 +155,7 @@ def build_page(shell, p, today):
             f'<div class="plant-info"><h1 class="plant-title">{esc(name)}</h1>' + (f'<p class="plant-gen">({esc(genus)})</p>' if genus else '')
             + (f'<p class="plant-price">${price:g}</p>' if price > 0 else "")
             + '<p class="buy-note static"><span>Pick it up at an event (free) or have it shipped bare-root, no pot</span><span>Secure checkout</span></p>'
+            + '<p class="plant-safety">Handle with care: many cacti and euphorbias have sharp spines or an irritating sap. Keep them away from children and pets.</p>'
             + f'<p class="plant-desc">{esc(base_desc)}</p><dl class="specs">{"".join(specs)}</dl>'
             f'<p><a class="btn" href="shop.html">Reserve at checkout — browse the shop</a></p></div></div></div>')
 

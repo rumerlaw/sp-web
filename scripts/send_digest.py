@@ -20,6 +20,7 @@ OWNER = os.environ.get("OWNER_EMAIL") or "spinanspiritus@gmail.com"
 API = os.environ.get("RESEND_API_URL") or "https://api.resend.com"
 KEY = os.environ.get("RESEND_API_KEY", "").strip()
 AUDIENCE = os.environ.get("RESEND_AUDIENCE_ID", "").strip()
+ADDRESS = html.escape(os.environ.get("MAILING_ADDRESS", "").strip())   # US email law: marketing emails carry a real postal address (a PO box is fine)
 truthy = lambda v: str(v or "").strip().lower() in ("1", "true", "yes", "on")
 esc = lambda s: html.escape(str(s), quote=True)
 slug = lambda sku: re.sub(r"[^a-z0-9-]+", "-", str(sku).lower()).strip("-")
@@ -123,7 +124,7 @@ def build(today):
             f'<div style="text-align:center;margin-bottom:6px"><img src="{esc(SITE)}/assets/brand/spina-logo-640.png" width="150" alt="Spina &amp; Spiritus" style="border:0"></div>'
             + "".join(parts) +
             '<hr style="border:0;border-top:1px solid #e6dfd0;margin:30px 0 14px"><p style="font-size:12px;color:#6b675b;line-height:1.5">You are getting this because you joined the Spina &amp; Spiritus weekly list. '
-            '<a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#6b675b">Unsubscribe</a></p></div></div>')
+            '<a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#6b675b">Unsubscribe</a>' + (f'<br>Spina &amp; Spiritus, {ADDRESS}' if ADDRESS else '') + '</p></div></div>')
     return subject, body, len(new_plants), len(coming)
 
 
@@ -152,6 +153,8 @@ def main():
 
     state_f = ROOT / "data/digest_state.json"
     test_only = truthy(os.environ.get("TEST_ONLY")) or not AUDIENCE
+    if not test_only and not ADDRESS:
+        print("MAILING_ADDRESS is not set: the weekly email is not sent to the list until it has a postal address (a PO box works). Set it as a GitHub secret named MAILING_ADDRESS. A TEST_ONLY preview to the owner still works."); return
     if not test_only and not truthy(os.environ.get("FORCE")) and state_f.exists():
         try:
             last = date.fromisoformat(json.loads(state_f.read_text())["last_sent"])
