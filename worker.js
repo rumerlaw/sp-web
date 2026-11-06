@@ -343,6 +343,28 @@ async function handleConfirm(request, env, body) {
   try { await finalizePaid(env, s.data); } catch (e) { console.error("confirm failed:", e && e.message); }
   return json({ ok: true });
 }
+// ZIP -> city and state for the checkout form. The browser asks this Worker (same site), the Worker asks a free ZIP directory, so the
+// visitor's browser never talks to a third party and the page's security policy stays strict. Only the 5-digit ZIP is sent.
+async function handleZip(request, env, url) {
+  const z = String(url.searchParams.get("z") || "");
+  if (!/^\d{5}$/.test(z)) return json({ error: "bad_zip" }, 400);
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (limited(ip, "zip", 40, 60000)) return json({ error: "slow_down" }, 429);
+  const cacheKey = new Request("https://zip.cache.local/" + z);
+  try { const hit = await caches.default.match(cacheKey); if (hit) return hit; } catch (e) {}
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 5000);
+  try {
+    const r = await fetch("https://api.zippopotam.us/us/" + z, { signal: ctl.signal });
+    if (!r.ok) return json({ error: "unknown_zip" }, 404);
+    const d = await r.json(), p = d && d.places && d.places[0];
+    const city = clean(p && p["place name"], 60), state = clean(p && p["state abbreviation"], 2).toUpperCase();
+    if (!city || !/^[A-Z]{2}$/.test(state)) return json({ error: "unknown_zip" }, 404);
+    const res = new Response(JSON.stringify({ city, state }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=2592000", "x-content-type-options": "nosniff" } });
+    try { await caches.default.put(cacheKey, res.clone()); } catch (e) {}
+    return res;
+  } catch (e) { return json({ error: "unavailable" }, 503); } finally { clearTimeout(timer); }
+}
+
 async function handleStripeWebhook(request, env) {
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_SECRET_KEY) return json({ error: "unavailable" }, 503);
@@ -392,6 +414,7 @@ export default {
     if (url.pathname === "/") return env.ASSETS.fetch(new Request(new URL("/index.html", request.url).toString(), request));
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
     if (url.pathname === "/api/stripe-webhook") return handleStripeWebhook(request, env);
+    if (url.pathname === "/api/zip" && request.method === "GET") return handleZip(request, env, url);
     if (url.pathname === "/api/pay-config" && request.method === "GET") return json({ online: Boolean(env.STRIPE_SECRET_KEY), turnstile: (env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY) ? String(env.TURNSTILE_SITE_KEY) : null });
     const route = url.pathname === "/api/order" ? handleOrder : url.pathname === "/api/signup" ? handleSignup : url.pathname === "/api/confirm" ? handleConfirm : null;
     if (!route) return json({ error: "not_found" }, 404);

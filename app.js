@@ -1243,6 +1243,23 @@ document.addEventListener("input", (e) => { if (e.target.closest && e.target.clo
 document.addEventListener("change", (e) => { if (e.target.closest && e.target.closest("#orderForm")) { renderCheckoutSteps(); saveDetails(); } });
 
 // ---- Remember my details on this device (browser storage only; never sent anywhere until you check out) ----
+// Type a ZIP and the city and state fill in (the Worker looks the ZIP up; nothing else is sent). A city the customer typed is never overwritten.
+let zipSeen = "";
+document.addEventListener("input", async (e) => {
+  const t = e.target; if (!t || t.name !== "zip" || !t.closest || !t.closest("#orderForm")) return;
+  const form = t.closest("#orderForm"), z = String(t.value || "").trim().slice(0, 5);
+  if (!/^\d{5}$/.test(z) || z === zipSeen) return;
+  zipSeen = z;
+  try {
+    const r = await fetch("/api/zip?z=" + z, { credentials: "same-origin" }); if (!r.ok) return;
+    const d = await r.json(); if (!d || !d.city || !d.state || String(t.value || "").trim().slice(0, 5) !== z) return;
+    const city = form.elements.city, st = form.elements.state;
+    if (city && (!city.value.trim() || city.dataset.auto === "1")) { city.value = d.city; city.dataset.auto = "1"; city.dispatchEvent(new Event("change", { bubbles: true })); }
+    if (st && [...st.options].some((o) => o.value === d.state)) { st.value = d.state; st.dispatchEvent(new Event("change", { bubbles: true })); }
+  } catch (err) {}
+});
+document.addEventListener("input", (e) => { const t = e.target; if (t && t.name === "city" && t.closest && t.closest("#orderForm") && e.isTrusted) delete t.dataset.auto; });
+
 const DET_KEY = "sp-details", DET_FIELDS = ["name", "contact", "addr1", "city", "state", "zip"];
 function saveDetails() {
   const form = $("#orderForm"); if (!form) return;
