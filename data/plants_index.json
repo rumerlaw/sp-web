@@ -365,11 +365,6 @@
 "image": null
 },
 {
-"slug": "reinwardtii",
-"name": "Reinwardtii",
-"image": "assets/photos/photo-reinwardtii.jpg"
-},
-{
 "slug": "restricta",
 "name": "Restricta",
 "image": null
@@ -383,11 +378,6 @@
 "slug": "riyad",
 "name": "Riyad",
 "image": "assets/photos/photo-riyad.jpg"
-},
-{
-"slug": "rorida-green",
-"name": "Rorida Green",
-"image": "assets/photos/photo-roridagreen.jpg"
 },
 {
 "slug": "salglione",
@@ -468,11 +458,6 @@
 "slug": "trich-stenocereus",
 "name": "trich/Stenocereus",
 "image": null
-},
-{
-"slug": "venenata",
-"name": "Venenata",
-"image": "assets/photos/photo-adeniavenenata.jpg"
 },
 {
 "slug": "verbenita",
