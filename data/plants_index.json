@@ -75,6 +75,11 @@
 "image": null
 },
 {
+"slug": "cereus",
+"name": "Cereus",
+"image": null
+},
+{
 "slug": "chacha",
 "name": "Chacha",
 "image": null
@@ -130,11 +135,6 @@
 "image": "assets/photos/photo-echinus.jpg"
 },
 {
-"slug": "elephantides",
-"name": "Elephantides",
-"image": null
-},
-{
 "slug": "erlangeris",
 "name": "Erlangeris",
 "image": null
@@ -150,13 +150,8 @@
 "image": null
 },
 {
-"slug": "forbesii",
-"name": "Forbesii",
-"image": null
-},
-{
-"slug": "forbesii-monstrose",
-"name": "Forbesii Monstrose",
+"slug": "forbesii-ming-thing-monstrose",
+"name": "Forbesii Ming Thing Monstrose",
 "image": null
 },
 {
@@ -247,6 +242,11 @@
 {
 "slug": "large-opuntias",
 "name": "Large Opuntias",
+"image": null
+},
+{
+"slug": "large-peruvianus",
+"name": "Large Peruvianus",
 "image": null
 },
 {

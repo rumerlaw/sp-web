@@ -14,6 +14,7 @@ buruana,Buruana,Euphorbia,Euphorbia,25,,In Stock,1,,,"A varied group of succulen
 cactus-6-pots,"Cactus 6"" pots",,Plants,20,,In Stock,15,,,,
 caerulescens,Caerulescens,Euphorbia,Euphorbia,25,,In Stock,1,,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",assets/photos/photo-caerulescens.jpg
 canariensis,Canariensis,Euphorbia,Euphorbia,20,,In Stock,1,,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
+cereus,Cereus,,Plants,15,,In Stock,1,,,,
 chacha,Chacha,Trichocereus,Trichocereus,25,,In Stock,1,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 chanin,Chanin,,Plants,40,,In Stock,1,,small,,assets/photos/photo-chanin.jpg
 chollas,Chollas,Cylindropuntia,Cylindropuntia,24,,In Stock,1,,,"A cholla: a desert cactus with jointed, cylindrical stems covered in dense spines.",
@@ -25,12 +26,10 @@ decaryi-x-milli,Decaryi x Milli,Euphorbia,Euphorbia,20,,In Stock,3,,,"A varied g
 dichtoma,Dichtoma,Aloe,Aloe,20,,In Stock,1,,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
 downsi-variegated,Downsi Variegated,Sansevieria,Sansevieria,75,,In Stock,1,,,"A tough, upright succulent with stiff, sword-shaped leaves.",assets/photos/photo-downsivrg.jpg
 echinus,Echinus,Euphorbia,Euphorbia,20,,In Stock,1,,large,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",assets/photos/photo-echinus.jpg
-elephantides,Elephantides,Dioscorea,Dioscorea,10,,In Stock,1,,,"A caudiciform vine grown for its large, textured, tortoise-shell-like base.",
 erlangeris,Erlangeris,Euphorbia,Euphorbia,20,,In Stock,1,,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
 falcata,Falcata,Consolea,Consolea,10,,In Stock,2,,,,
 fat-albert,Fat Albert,Haworthia,Haworthia,15,,In Stock,1,,,"A small rosette succulent with thick, often striped or translucent leaves.",
-forbesii,Forbesii,Cereus,Cereus,25,,In Stock,1,,,"A tall, upright columnar cactus with ribbed blue-green stems that grows into a sculptural plant.",
-forbesii-monstrose,Forbesii Monstrose,Cereus,Cereus,85,,In Stock,1,,,"A tall, upright columnar cactus with ribbed blue-green stems that grows into a sculptural plant.",
+forbesii-ming-thing-monstrose,Forbesii Ming Thing Monstrose,Cereus,Cereus,85,,In Stock,1,,,"A tall, upright columnar cactus with ribbed blue-green stems that grows into a sculptural plant.",
 fulvilinatus,Fulvilinatus,Pilosocereus,Pilosocereus,50,,In Stock,1,,,,
 gabriel-x-cordova,Gabriel x Cordova,Trichocereus,Trichocereus,40,,In Stock,2,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",assets/photos/photo-gabrielxcordova.jpg
 geayi,Geayi,Pachypodium,Pachypodium,20,,In Stock,3,,,"A caudex succulent with a thick, spiny trunk and a crown of leaves, often called the Madagascar palm.",assets/photos/photo-pgeayi.jpg|assets/photos/photo-pgeayi1.jpg
@@ -49,6 +48,7 @@ kesey,Kesey,Trichocereus,Trichocereus,25,,In Stock,1,,,"A fast-growing columnar 
 knuthii,Knuthii,Euphorbia,Euphorbia,20,,In Stock,3,,,"A varied group of succulents, from spiny columns to tiny balls, all with milky sap.",
 large-obesum,Large Obesum,Adenium,Adenium,80,,In Stock,1,,,"A caudex succulent known as the desert rose, with a swollen base and showy pink-to-red flowers.",
 large-opuntias,Large Opuntias,,Plants,24,,In Stock,3,,,,
+large-peruvianus,Large Peruvianus,Cereus,Cereus,25,,In Stock,1,,,"A tall, upright columnar cactus with ribbed blue-green stems that grows into a sculptural plant.",
 large-semi-glabrata,Large Semi Glabrata,,Plants,12,,In Stock,1,,,,assets/photos/photo-largesemiglabrata.jpg
 large-sweet-celery,Large Sweet Celery,Apium,Apium,15,,In Stock,1,,,,assets/photos/photo-largesweetcelery.jpg
 leptoucalis,Leptoucalis,Cylindropuntia,Cylindropuntia,12,,In Stock,1,,,"A cholla: a desert cactus with jointed, cylindrical stems covered in dense spines.",
