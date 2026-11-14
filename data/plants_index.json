@@ -20,19 +20,9 @@
 "image": null
 },
 {
-"slug": "arabicum-shada-form",
-"name": "Arabicum Shada Form",
-"image": "assets/photos/photo-arabicumshadaform.jpg"
-},
-{
 "slug": "arboricola",
 "name": "Arboricola",
 "image": "assets/photos/photo-arboricola1.jpg"
-},
-{
-"slug": "avasmontana",
-"name": "Avasmontana",
-"image": "assets/photos/photo-avasmontana.jpg"
 },
 {
 "slug": "barnadii",
@@ -110,11 +100,6 @@
 "image": "assets/photos/photo-cordovaxpersoni.jpg"
 },
 {
-"slug": "crested",
-"name": "Crested",
-"image": null
-},
-{
 "slug": "decaryi-x-milli",
 "name": "Decaryi x Milli",
 "image": null
@@ -147,11 +132,6 @@
 {
 "slug": "falcata",
 "name": "Falcata",
-"image": null
-},
-{
-"slug": "fat-albert",
-"name": "Fat Albert",
 "image": null
 },
 {
@@ -370,11 +350,6 @@
 "image": "assets/photos/photo-retusa.jpg"
 },
 {
-"slug": "riyad",
-"name": "Riyad",
-"image": "assets/photos/photo-riyad.jpg"
-},
-{
 "slug": "salglione",
 "name": "Salglione",
 "image": null
@@ -463,11 +438,6 @@
 "slug": "victoriae-reginae-prm",
 "name": "Victoriae-Reginae PRM",
 "image": null
-},
-{
-"slug": "viscosa",
-"name": "Viscosa",
-"image": "assets/photos/photo-vicosa.jpg"
 },
 {
 "slug": "zebra",
