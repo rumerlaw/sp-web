@@ -70,6 +70,11 @@
 "image": null
 },
 {
+"slug": "candelabra",
+"name": "Candelabra",
+"image": null
+},
+{
 "slug": "cereus",
 "name": "Cereus",
 "image": null
@@ -77,6 +82,11 @@
 {
 "slug": "chacha",
 "name": "Chacha",
+"image": null
+},
+{
+"slug": "chamaecereus",
+"name": "Chamaecereus",
 "image": null
 },
 {
@@ -163,6 +173,11 @@
 "slug": "gepeng",
 "name": "Gepeng",
 "image": "assets/photos/photo-gepeng.jpg"
+},
+{
+"slug": "golden-torch",
+"name": "Golden Torch",
+"image": null
 },
 {
 "slug": "grey-ghost",
@@ -335,6 +350,11 @@
 "image": null
 },
 {
+"slug": "red-torch",
+"name": "Red Torch",
+"image": null
+},
+{
 "slug": "restricta",
 "name": "Restricta",
 "image": null
@@ -357,6 +377,11 @@
 {
 "slug": "schidigera-variegated",
 "name": "Schidigera Variegated",
+"image": null
+},
+{
+"slug": "schottii",
+"name": "Schottii",
 "image": null
 },
 {
