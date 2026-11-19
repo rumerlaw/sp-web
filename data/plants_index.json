@@ -5,6 +5,11 @@
 "image": "assets/photos/photo-adelina.jpg"
 },
 {
+"slug": "albuca-bracteata",
+"name": "Albuca Bracteata",
+"image": null
+},
+{
 "slug": "aloes",
 "name": "Aloes",
 "image": null
@@ -422,6 +427,11 @@
 {
 "slug": "victoriae-reginae-prm",
 "name": "Victoriae-Reginae PRM",
+"image": null
+},
+{
+"slug": "whale-fin",
+"name": "Whale Fin",
 "image": null
 },
 {

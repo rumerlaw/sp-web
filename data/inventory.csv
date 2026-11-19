@@ -1,5 +1,6 @@
 sku,name,genus,category,price,sale_price,status,stock,size,ship_size,description,image
 adelina,Adelina,,Plants,40,,In Stock,5,,,,assets/photos/photo-adelina.jpg
+albuca-bracteata,Albuca Bracteata,Albuca,Albuca,10,,In Stock,1,,,,
 aloes,Aloes,Aloe,Aloe,20,,In Stock,3,,,"A rosette succulent with fleshy, often toothed leaves and spikes of tubular flowers.",
 althea-op,Althea Op,,Plants,25,,In Stock,1,,,,
 althea-x-nfa,Althea x Nfa,Trichocereus,Trichocereus,35,,In Stock,1,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
@@ -84,4 +85,5 @@ tom-juul-giant,Tom Juul Giant,Trichocereus,Trichocereus,40,,In Stock,2,,,"A fast
 trich-stenocereus,trich/Stenocereus,Trichocereus,Trichocereus,25,,In Stock,2,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",
 verbenita,Verbenita,Trichocereus,Trichocereus,20,,In Stock,1,,,"A fast-growing columnar cactus with thick, ribbed, often blue-green stems.",assets/photos/photo-verbenita.jpg|assets/photos/photo-verbenita1.jpg
 victoriae-reginae-prm,Victoriae-Reginae PRM,Agave,Agave,45,,In Stock,3,,,"A rosette succulent with thick, pointed leaves that grows into a bold architectural plant.",
+whale-fin,Whale Fin,Sansevieria,Sansevieria,25,,In Stock,1,,,"A tough, upright succulent with stiff, sword-shaped leaves.",
 zebra,Zebra,Haworthia,Haworthia,10,,In Stock,2,,,"A small rosette succulent with thick, often striped or translucent leaves.",assets/photos/photo-zebra.jpg
