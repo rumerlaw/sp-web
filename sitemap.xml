@@ -16,6 +16,7 @@
   <url><loc>https://spinanspiritus.com/genus/euphorbia.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/genus/haworthia.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/genus/lophocereus.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://spinanspiritus.com/genus/myrtillocactus.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/genus/opuntia.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/genus/pachypodium.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/genus/sansevieria.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -44,6 +45,7 @@
   <url><loc>https://spinanspiritus.com/plants/chacha.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/chamaecereus.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/chanin.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority><image:image><image:loc>https://spinanspiritus.com/assets/photos/photo-chanin.jpg</image:loc><image:title>Chanin</image:title></image:image></url>
+  <url><loc>https://spinanspiritus.com/plants/chararoi.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/chollas.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/chollas-campii.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/compressa.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -55,10 +57,12 @@
   <url><loc>https://spinanspiritus.com/plants/erlangeris.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/fagaroides.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/falcata.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://spinanspiritus.com/plants/forbesii-ming-thing.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/fulvilinatus.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/gabriel-x-cordova.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority><image:image><image:loc>https://spinanspiritus.com/assets/photos/photo-gabrielxcordova.jpg</image:loc><image:title>Gabriel x Cordova</image:title></image:image></url>
   <url><loc>https://spinanspiritus.com/plants/geayi.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority><image:image><image:loc>https://spinanspiritus.com/assets/photos/photo-pgeayi.jpg</image:loc><image:title>Geayi</image:title></image:image></url>
   <url><loc>https://spinanspiritus.com/plants/geometrizans.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://spinanspiritus.com/plants/geometrizans-crested.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/gepeng.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority><image:image><image:loc>https://spinanspiritus.com/assets/photos/photo-gepeng.jpg</image:loc><image:title>Gepeng</image:title></image:image></url>
   <url><loc>https://spinanspiritus.com/plants/golden-torch.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/grey-ghost.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority><image:image><image:loc>https://spinanspiritus.com/assets/photos/photo-greyghost.jpg</image:loc><image:title>Grey Ghost</image:title></image:image></url>
@@ -85,6 +89,7 @@
   <url><loc>https://spinanspiritus.com/plants/medium-adeniums.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/medium-each.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/melti-x-tbam.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://spinanspiritus.com/plants/milli-jerry-s-choice.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/murphey-variegated.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/noid.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://spinanspiritus.com/plants/noid-2.html</loc><lastmod>2026-11-20</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>

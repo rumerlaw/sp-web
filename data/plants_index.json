@@ -95,6 +95,11 @@
 "image": "assets/photos/photo-chanin.jpg"
 },
 {
+"slug": "chararoi",
+"name": "Chararoi",
+"image": null
+},
+{
 "slug": "chollas",
 "name": "Chollas",
 "image": null
@@ -150,6 +155,11 @@
 "image": null
 },
 {
+"slug": "forbesii-ming-thing",
+"name": "Forbesii Ming Thing",
+"image": null
+},
+{
 "slug": "fulvilinatus",
 "name": "Fulvilinatus",
 "image": null
@@ -167,6 +177,11 @@
 {
 "slug": "geometrizans",
 "name": "Geometrizans",
+"image": null
+},
+{
+"slug": "geometrizans-crested",
+"name": "Geometrizans Crested",
 "image": null
 },
 {
@@ -297,6 +312,11 @@
 {
 "slug": "melti-x-tbam",
 "name": "Melti x Tbam",
+"image": null
+},
+{
+"slug": "milli-jerry-s-choice",
+"name": "Milli Jerry'S Choice",
 "image": null
 },
 {
